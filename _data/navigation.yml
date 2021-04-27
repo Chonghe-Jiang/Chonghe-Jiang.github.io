@@ -1,7 +1,7 @@
 # main links links
 main:
   - title: "Experience"
-    url: /publications/
+    url: /experience/
 
   - title: "Publications"
     url: /publications/    
@@ -13,7 +13,7 @@ main:
     url: /awards/
         
   - title: "Blog Posts"
-    url: /year-achieves/
+    url: /year-archive/
     
   - title: "CV"
     url: /cv/

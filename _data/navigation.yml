@@ -1,13 +1,13 @@
 # main links links
 main:
   - title: "Experience"
-    url: /teaching/
+    url: /experience/
 
   - title: "Awards"
-    url: /publications/    
+    url: /awards/    
     
   - title: "Projects"
-    url: /talks/
+    url: /projects/
         
   - title: "Blog Posts"
     url: /year-archive/

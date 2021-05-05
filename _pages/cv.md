@@ -48,7 +48,6 @@ Departmental & University Service
 * Tongji Data Analysis Club
   * An organizer of the Matrix Calculus seminar
   
-  
  Skills
  ======
 * Mathematics Programs: MATLAB , SPSS , (La)TeX
@@ -63,4 +62,4 @@ Research Interests
 * Optimization
 * Financial Mathematics
 *	Other Interests
-  * Image processing and machine learning.
+  * Image processing and machine learning

@@ -11,7 +11,7 @@ redirect_from:
 
 Education
 ======
-* B.S. in Mathematics, Tongji University, 2023(expected)
+* B.S. in Mathematics(National Scientiﬁc Base for Talented Persons), Tongji University, 2023(expected)
 
 Work experience
 ======

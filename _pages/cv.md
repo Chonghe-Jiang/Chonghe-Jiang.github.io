@@ -11,7 +11,7 @@ redirect_from:
 
 Education
 ======
-* B.S. in Mathematics(National Scientiﬁc Base for Talented Persons), Tongji University, 2023(expected)
+* B.S. in Mathematics，National Scientiﬁc Base for Talented Persons, Tongji University, 2023(expected)
 
 Work experience
 ======
@@ -53,12 +53,12 @@ Skills
 * Mathematics Programs: MATLAB , SPSS , (La)TeX
 *	Presentational Programs: Beamer, Microsoft Word, Microsoft Powerpoint, Microsoft Excel, Pages, Keynote
 *	Programming: Python , C
-*	Languages: English(TOEFL:94)
+*	Languages: English
 *	Impressions: Great impression of a hotdog
-*	Other Skills: Running , Soccer , Tennis , Public Speaking
+*	Other Skills: Running , Soccer , Tennis 
 
 Research Interests
 ======
-* Optimization
+* Optimization Research
 * Financial Mathematics
 *	Image processing and machine learning

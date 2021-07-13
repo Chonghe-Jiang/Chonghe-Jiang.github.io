@@ -46,7 +46,6 @@ Departmental & University Service
 Skills
 ======
 * Mathematics Programs: MATLAB , SPSS , (La)TeX
-*	Presentational Programs: Beamer, Microsoft Word, Microsoft Powerpoint, Microsoft Excel, Pages, Keynote
 *	Programming: Python , C
 *	Languages: English
 *	Impressions: Great impression of a hotdog

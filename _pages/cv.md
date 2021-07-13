@@ -13,26 +13,21 @@ Education
 ======
 * B.S. in Mathematics，National Scientiﬁc Base for Talented Persons, Tongji University, 2023(expected)
 
-Work experience
-======
-* Summer 2019: Research Assistant
-  * Tongji University
-  * Duties included: Image Processing and Data Mining
-  * Supervisor: Professor Wei Wang
-
 Awards
 ======
 * National Scholarship & Merit Student(Top 2%)
   * Tongji University , Oct 2020
-* Second Prize in Tongji Mathematical Contest in Modeling
-  * Tongji University , May 2020
 * Third Prize in The Chinese Mathematics Competitions
   * Chinese Mathematical Society , Oct 2020
+* Honorable Mention
+  * Mathematical Contest In Modeling , April 2021
 
 Projects
 ======
 * American Option Pricing Theory with Regime Switching and Numerical Simulation Method
   * Tongji University , with professor Junfeng Yin
+* Normalizing Flows 
+  * Tongji University , with professor Hao Wu
 
 Extra Curricular Activity
 ======
@@ -59,6 +54,5 @@ Skills
 
 Research Interests
 ======
-* Optimization Research
+* Machine Learning
 * Financial Mathematics
-*	Image processing and machine learning

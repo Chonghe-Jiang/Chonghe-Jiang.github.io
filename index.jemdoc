@@ -1,0 +1,40 @@
+# jemdoc: menu{MENU}{index.html}, nofooter
+== Chonghe Jiang
+
+~~~
+{}{img_left}{photos/bio1.jpg}{alt text}{170px}{170pxpx}
+M.Phil Student \n
+[https://www.se.cuhk.edu.hk/ Department of Systems Engineering and Engineering Management]\n
+[https://www.cuhk.edu.hk/english/index.html/ The Chinese University of Hong Kong] \n
+\n
+Shatin, Hong Kong\n
+\n
+Contact: chjiang@link.cuhk.edu.hk \n
+\[[https://scholar.google.com/citations?user=KfuBD5kAAAAJ&hl=en Google Scholar]\] \n
+~~~
+
+== News
+- \[9-17-2024\] One paper accepted by WINE 2024.
+
+== About me
+I am a first-year M.Phil student at the Chinese University of Hong Kong advised 
+by Prof. [https://www1.se.cuhk.edu.hk/~manchoso/ Anthony Man-Cho So]. Previously, 
+I obtained my bachelor's degree in Mathematics (2019-2023; Elite Class) 
+from Tongji University supervised by Prof. [https://sem.tongji.edu.cn/semen/12378.html/ Zhaolin Hu].
+
+
+== Research
+=== Research Interests
+I am broadly interested in theory and applications of continuous optimization. Typically, my research focuses on:
+- Nonconvex optimization theory
+- Decision making under uncertainty
+- Computational economics
+=== Papers Online
+- [https://arxiv.org/pdf/2312.03438 On the Estimation Performance of Generalized Power Method for Heteroscedastic Probabilistic PCA] \n
+  Jinxin Wang, Chonghe Jiang, Huikang Liu, Anthony Man-Cho So.\n
+- [https://arxiv.org/pdf/2308.06262 Foundation Model is Efficient Multimodal Multitask Model Selector] \n
+Fanqing Meng, Wenqi Shao, Zhanglin Peng, Chonghe Jiang, Kaipeng Zhang, Yu Qiao, Ping Luo.\n
+Neural Information Processing Systems (NeurIPS), 2023.
+=== Working Papers
+
+

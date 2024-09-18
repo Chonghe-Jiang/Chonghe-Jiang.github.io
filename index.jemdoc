@@ -5,9 +5,9 @@
 {}{img_left}{photos/bio1.jpg}{alt text}{170px}{170pxpx}
 M.Phil Student \n
 [https://www.se.cuhk.edu.hk/ Department of Systems Engineering and Engineering Management]\n
-[https://www.cuhk.edu.hk/english/index.html/ The Chinese University of Hong Kong] \n
+[https://www.cuhk.edu.hk/english/ The Chinese University of Hong Kong] \n
 \n
-Shatin, Hong Kong\n
+Shatin, N.T., Hong Kong \n
 \n
 Contact: chjiang@link.cuhk.edu.hk \n
 \[[https://scholar.google.com/citations?user=KfuBD5kAAAAJ&hl=en Google Scholar]\] \n
@@ -25,16 +25,17 @@ from Tongji University supervised by Prof. [https://sem.tongji.edu.cn/semen/1237
 
 == Research
 === Research Interests
-I am broadly interested in theory and applications of continuous optimization. Typically, my research focuses on:
-- Nonconvex optimization theory
-- Decision making under uncertainty
-- Computational economics
+I am interested in continuous optimization. Typically, my research focuses on:
+- Theory: nonconvex optimization (local regularity and convex relaxation)
+- Application: signal processing; computational economics; decision making under uncertainty
+
 === Papers Online
 - [https://arxiv.org/pdf/2312.03438 On the Estimation Performance of Generalized Power Method for Heteroscedastic Probabilistic PCA] \n
   Jinxin Wang, Chonghe Jiang, Huikang Liu, Anthony Man-Cho So.\n
 - [https://arxiv.org/pdf/2308.06262 Foundation Model is Efficient Multimodal Multitask Model Selector] \n
 Fanqing Meng, Wenqi Shao, Zhanglin Peng, Chonghe Jiang, Kaipeng Zhang, Yu Qiao, Ping Luo.\n
 Neural Information Processing Systems (NeurIPS), 2023.
+
 === Working Papers
 
 

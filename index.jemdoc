@@ -25,9 +25,7 @@ from Tongji University supervised by Prof. [https://sem.tongji.edu.cn/semen/1237
 
 == Research
 === Research Interests
-I am interested in continuous optimization. Typically, my research focuses on:
-- Theory: nonconvex optimization (local regularity and convex relaxation)
-- Application: machine learning; computational economics; decision making under uncertainty
+continuous optimization theory; computational economics; decision-making under uncertainty
 
 === Papers Online
 - [https://arxiv.org/pdf/2312.03438 On the Estimation Performance of Generalized Power Method for Heteroscedastic Probabilistic PCA] \n

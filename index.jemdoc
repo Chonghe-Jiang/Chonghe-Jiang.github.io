@@ -15,10 +15,9 @@ Contact: chjiang@link.cuhk.edu.hk \n
 
 == News
 - \[2-10-2025\] One paper submitted to EC 2025.
-- \[1-23-2025\] One paper accepted by NAACL 2025 (with Bao Nguyen, Anthony Man-Cho So,Viet Anh Nguyen).
-- \[1-4-2025\] Presentation at The Chinese University of Hong Kong (POMSHK 2025).
-- \[12-1-2024\] Presentation at University of Edinburgh (WINE 2024).
-- \[9-17-2024\] One paper accepted by WINE 2024 (with He Chen, Anthony Man-Cho So). 
+- \[1-23-2025\] One paper accepted by NAACL 2025.
+- \[1-22-2025\] Two paper accepted by ICLR 2025.
+- \[9-17-2024\] One paper accepted by WINE 2024. 
 
 == About me
 I am a second-year M.Phil student at the Chinese University of Hong Kong fortunately advised 
@@ -29,7 +28,7 @@ from Tongji University where I worked with Prof. [https://sem.tongji.edu.cn/seme
 
 == Research
 === Research Interests
- I study *optimization* theory and its applications in economics and machine learning.
+ I study *optimization* theory and its applications in economics and machine learning. I am also interested in understanding the large language models (i.e. neuron-level information flow), and how to use this understanding to improve LLMs’ performance and uncertainty qualification.
 
 === Selected Publications
 - [http://arxiv.org/abs/2502.04043 Probe-Free Low-Rank Intervention] \n 
@@ -42,10 +41,5 @@ from Tongji University where I worked with Prof. [https://sem.tongji.edu.cn/seme
   Submitted to Games and Economic Behavior (GEB) \n
   Preliminary version published in Proceedings of the 20th Conference on Web and Internet Economics (WINE 2024) \n
   [slides/Slides_WINE2024.pdf Slides] [https://github.com/Chonghe-Jiang/Chores_DCA_SGR Code] \n
-  
-=== Selected Working Papers
-- [https://arxiv.org/pdf/2312.03438 On the Estimation Performance of Generalized Power Method for Heteroscedastic Probabilistic PCA] \n
-  Jinxin Wang, *Chonghe Jiang*, Huikang Liu, Anthony Man-Cho So\n
 
-- Tractable Approximations of Joint Chance Constrained Programs: An Improvement \n
-  *Chonghe Jiang*, Zhaolin Hu (In progress) \n
+

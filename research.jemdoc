@@ -1,22 +1,20 @@
 # jemdoc: menu{MENU}{research.html}, nofooter
 
 == Research
- I study *optimization* theory and its applications in economics and machine learning. Recently I am also interested in *(large) language model*. \n
+ I study *optimization* theory and its applications in economics and machine learning. Recently I am also interested in *(large) langauge model*. \n
 
-- *Optimization for ML Algorithm Design/Analysis*
+- *Optimization*
 -- [http://arxiv.org/abs/2502.04043 Probe-Free Low-Rank Intervention] \n 
   *Chonghe Jiang*, Bao Nguyen, Anthony Man-Cho So, Viet Anh Nguyen \n
   Accepted by 2025 Annual Conference of the Nations of the Americas Chapter of the Association for Computational Linguistics (NAACL 2025) \n
   [slides/Slides_POMSHK2025.pdf Slides] [https://github.com/nguyenngocbaocmt02/EFI Code] \n
-
-- *Optimization for Computing Equilibriums in the Market*
 -- [https://arxiv.org/abs/2410.04036 Computing Competitive Equilibrium for Chores: Linear Convergence and Lightweight Iteration] \n
   He Chen, *Chonghe Jiang*, Anthony Man-Cho So \n
   Submitted to Games and Economic Behavior (GEB) \n
   Preliminary version published in Proceedings of the 20th Conference on Web and Internet Economics (WINE 2024) \n
   [slides/Slides_WINE2024.pdf Slides] [https://github.com/Chonghe-Jiang/Chores_DCA_SGR Code] \n
 
-- *Uncertainty Qualification in ML*
+- *Uncertainty Qualification in ML/LLM*
 -- [https://arxiv.org/abs/2410.09570 GETS: Ensemble Temperature Scaling for Calibration in Graph Neural Networks] \n 
   Dingyi Zhuang\*, Chonghe Jiang\*, Yunhan Zheng, Shenhao Wang, Jinhua Zhao
   Accepted by The Thirteenth International Conference on Learning Representations (ICLR 2025), Spotlight \n

@@ -1,0 +1,28 @@
+---
+layout: default
+---
+<div class="research-post">
+  <header class="essay-header">
+    <a class="essay-back" href="{{ '/blog/' | relative_url }}">← All writing</a>
+    <p class="essay-eyebrow">Research notes <span aria-hidden="true">/</span> {{ page.date | date: '%B %d, %Y' }}</p>
+    <h1>{{ page.title | replace: 'Post-Training', '<span class="title-nowrap">Post-Training</span>' }}</h1>
+    <p class="essay-deck">{{ page.description }}</p>
+    <div class="essay-byline">
+      <span>Chonghe Jiang</span><span>{{ content | number_of_words | divided_by: 220 | plus: 1 }} min read</span><span>Preliminary experiments</span>
+    </div>
+  </header>
+  <div class="essay-grid">
+    <aside class="essay-sidebar">
+      <nav aria-label="Article contents" class="essay-toc">
+        <span class="toc-label">On this page</span>
+        {% for section in page.sections %}
+          <a href="#{{ section.id }}">{{ section.title }}</a>
+        {% endfor %}
+      </nav>
+    </aside>
+    <article class="essay-body" id="article-body">{{ content }}</article>
+  </div>
+  <footer class="essay-end">
+    <a href="{{ '/blog/' | relative_url }}">← Back to writing</a><span>Questions or comments? <a href="mailto:chonghej@mit.edu">Email me</a></span>
+  </footer>
+</div>

@@ -283,7 +283,7 @@ enable_google_verification: false
 enable_bing_verification: false
 enable_cookie_consent: false
 enable_masonry: false
-enable_math: false
+enable_math: true
 enable_tooltips: false
 enable_darkmode: true
 enable_navbar_social: false

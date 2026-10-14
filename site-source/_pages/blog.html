@@ -1,0 +1,31 @@
+---
+layout: default
+title: Blog
+description: Notes on reinforcement learning, test-time training, and how language models improve through experimentation.
+permalink: /blog/
+nav: true
+nav_order: 3
+research_blog: true
+---
+
+<section class="writing-index" aria-labelledby="writing-title">
+  <header class="writing-header">
+    <p class="essay-eyebrow">Notes from research</p>
+    <h1 id="writing-title">Writing</h1>
+    <p>Ideas, experiments, and open questions about how language models learn.</p>
+  </header>
+  {% for post in site.posts %}
+  <article class="writing-card">
+    <div class="writing-meta">
+      <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: '%b %d, %Y' }}</time
+      ><span>Research note {{ forloop.rindex | prepend: '0' }}</span>
+    </div>
+    <div class="writing-card-copy">
+      <p class="essay-eyebrow">{{ post.topic }}</p>
+      <h2><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h2>
+      <p>{{ post.description }}</p>
+      <a class="essay-read" href="{{ post.url | relative_url }}">Read the essay <span aria-hidden="true">↗</span></a>
+    </div>
+  </article>
+  {% endfor %}
+</section>

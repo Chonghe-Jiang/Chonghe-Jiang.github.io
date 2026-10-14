@@ -51,13 +51,38 @@ Recent work on PPO offers several ways to rethink that loop: how we sample, what
 
 PPO gives the actor and critic different jobs. The actor learns which actions to make more likely. The critic estimates the return expected from the current prompt and generated prefix, providing a baseline for the actor’s update.
 
-With a complete rollout, a terminal reward, and γ = λ = 1, the advantage simplifies to:
+<aside class="ppo-math-block" aria-labelledby="ppo-components-title" markdown="1">
+
+<h3 id="ppo-components-title">Two updates, different interventions</h3>
+
+For actor $\pi_\theta$ and critic $V_\phi$, write $\psi_\theta=\nabla_\theta\log\pi_\theta(a\mid s)$. Their updates expose the main components:
 
 $$
-A_t = R - V_{\mathrm{old}}(s_t).
+\begin{aligned}
+g_{\mathrm{actor}}&=\mathbb E_{\mathcal D}\!\left[m\,\hat A\,(w\psi_\theta-c(s))\right],\\[4pt]
+L_V&=\mathbb E_{\mathcal D}\!\left[m^V\omega_x\,\ell(V_\phi(s),Y)\right].
+\end{aligned}
 $$
 
-The execution supplies the outcome; the critic helps decide whether it was better or worse than expected. A useful baseline can reduce gradient variance without perfectly ranking finished answers. [PPO](https://arxiv.org/abs/1707.06347) and [GAE](https://arxiv.org/abs/1506.02438) provide the foundations; recent LLM work changes how these pieces fit together.
+$\mathcal D$: sampled trajectories · $m,m^V$: masks and aggregation · $\hat A$: advantage · $w$: probability correction · $c$: score correction · $\omega_x,Y$: critic weight and target. This is a component map: clipping enters through effective weights/masks; KL terms are omitted.
+
+<div class="table-scroll" role="region" aria-label="Papers mapped to mathematical components" tabindex="0" markdown="1">
+
+| Work                                                                                                  | Main intervention                                                                                                              |
+| :---------------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------- |
+| [SAO](https://arxiv.org/html/2607.07508v1)                                                            | $\mathcal D$: one rollout per prompt; $\hat A$: skip-observation GAE; $w$: strict token masking; more frequent critic updates. |
+| [FlashREINFORCE](https://yifanzhang-pro.github.io/FlashREINFORCE/)                                    | $\hat A_i=R_i-\bar R_{\mathrm{batch}}$; single rollouts, sequence admission, per-trajectory averaging; no $L_V$.               |
+| [AC2](https://arxiv.org/html/2609.39247v2)                                                            | $\hat A_i=v_i-\bar v$, $Y=\bar v$; critic-ready problems use $v_i=V(s\cdot c_i)$ for unfinished chunks.                        |
+| [TEMPO](https://arxiv.org/html/2604.19295v1)                                                          | $\hat A_t=V(y_{\mathrm{complete}})-V(s_t)$; periodically recalibrate $V$ on labeled data.                                      |
+| [Score Centering](https://arxiv.org/html/2609.20807v1)                                                | $c(s)=\mathbb E_{a\sim\mu(\cdot\mid s)}[w\psi_\theta]$: center the weighted score under the sampler $\mu$.                     |
+| [Decoupled PPO](https://github.com/areal-project/AReaL/blob/main/docs/en/best_practices/algo_perf.md) | Separate $\nu/\mu$ for behavior correction from $\pi_\theta/\nu$ for PPO clipping; $\nu$ is a recent policy.                   |
+| [EasyPPO](https://arxiv.org/html/2609.36802v1)                                                        | $\omega_x\propto1/\max(\hat\sigma_x,\varepsilon)$; $m^V$ retains truncated samples; smaller critic minibatches.                |
+
+</div>
+
+For complete terminal-return PPO with $\gamma=\lambda=1$, $\hat A_t=R-V_{\mathrm{old}}(s_t)$. Reward centering changes $\hat A$; score centering changes the gradient term $c(s)$.
+
+</aside>
 
 These papers use the critic in different ways. A baseline reduces variance after we observe an outcome. A learned evaluator supplies feedback when a real outcome is unavailable or expensive. The second role asks much more of the model.
 

@@ -982,3 +982,43 @@ html[data-theme="dark"] .ppo-map {
     break-inside: avoid;
   }
 }
+
+.ppo-math-block {
+  margin: 1.5rem 0;
+  padding: 1.2rem 1.3rem 0.2rem;
+  border: 1px solid var(--essay-line);
+  border-left: 3px solid var(--essay-accent);
+  border-radius: 0 7px 7px 0;
+  background: var(--essay-surface);
+  font-size: 0.8rem;
+  line-height: 1.75;
+}
+.ppo-math-block h3 {
+  margin: 0 0 0.7rem;
+  font-size: 1.1rem;
+}
+.ppo-math-block p {
+  margin-bottom: 0.8rem;
+}
+.essay-body .ppo-math-block mjx-container[display="true"] {
+  font-size: 115% !important;
+}
+.ppo-math-block .table-scroll {
+  margin: 1rem 0;
+}
+.ppo-math-block table {
+  font-size: 0.75rem;
+}
+.ppo-math-block th,
+.ppo-math-block td {
+  padding: 0.6rem;
+}
+.ppo-math-block th:first-child,
+.ppo-math-block td:first-child {
+  width: 130px;
+}
+@media (max-width: 650px) {
+  .ppo-math-block {
+    padding: 1rem 0.8rem 0.2rem;
+  }
+}

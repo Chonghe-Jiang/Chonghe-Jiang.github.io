@@ -77,6 +77,8 @@ for script in scripts:
  code=re.sub(r'//# sourceMappingURL=.*','',code)
  script.attrs={k:v for k,v in script.attrs.items() if k in ['id','type']}
  script.string=code.replace('</script','<\\/script')
+for link in soup.select('link[rel~="icon"], link[rel="apple-touch-icon"]'):
+ link['href']=data_url(link['href'])
 for img in soup.select('img[src]'):
  img['src']=data_url(img['src'])
  if 'srcset' in img.attrs:del img['srcset']

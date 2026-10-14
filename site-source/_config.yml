@@ -8,7 +8,7 @@ footer_text: Powered by <a href="https://jekyllrb.com/">Jekyll</a> and the origi
   template.
 keywords: Chonghe Jiang, MIT, optimization, reinforcement learning, LLM post-training
 lang: en
-icon: CJ
+icon: mit-logo.svg
 apple_touch_icon: null
 url: https://chonghe-jiang.github.io
 baseurl: ""

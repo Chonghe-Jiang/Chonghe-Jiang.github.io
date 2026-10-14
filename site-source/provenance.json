@@ -53,5 +53,10 @@
     "adaptation": "Original implementation of research-direction filters and a complete illustrated publication list on the homepage."
   },
   "bio_layout_references": ["https://wenhaochai.com/", "https://joyemang33.github.io/"],
-  "figure_presentation": "Aligned landscape previews with original aspect ratios preserved; original market diagrams use paired layouts."
+  "figure_presentation": "Aligned landscape previews with original aspect ratios preserved; original market diagrams use paired layouts.",
+  "site_icon": {
+    "source": "https://groups.csail.mit.edu/gdpgroup/assets/mitlogo/MIT-logo-red-gray-54x28.svg",
+    "file": "/assets/img/mit-logo.svg",
+    "use": "Browser tab and bookmark icon"
+  }
 }

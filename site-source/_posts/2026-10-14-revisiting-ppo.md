@@ -22,6 +22,31 @@ In post-training, we usually want a model to perform well across many questions.
 
 Recent work on PPO offers several ways to rethink that loop: how we sample, what the critic learns, and how much we trust an update. We have started testing these ideas by training a small model to guide a larger one through a programming search.
 
+<figure class="ppo-map" id="ppo-paper-map" aria-labelledby="ppo-map-title">
+<div class="ppo-map-heading"><span class="note-label">From rollout to update</span><h3 id="ppo-map-title">Where recent papers change PPO</h3></div>
+<ol class="ppo-stages">
+<li class="ppo-stage" data-stage="1"><div class="ppo-stage-top"><span class="ppo-stage-number">01</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h7m-7 6h7m-7 6h7m4-12 5 6-5 6M12 12h8"/></svg></div><strong>Rollouts</strong><p>Generate trajectories</p><div class="ppo-stage-papers"><a href="https://arxiv.org/abs/2607.07508" data-paper="sao">SAO</a><a href="https://yifanzhang-pro.github.io/FlashREINFORCE/" data-paper="flash">FlashREINFORCE</a></div></li>
+<li class="ppo-stage" data-stage="2"><div class="ppo-stage-top"><span class="ppo-stage-number">02</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V5m0 14h16M8 15l4-5 4 2 4-7"/><circle cx="12" cy="10" r="1"/></svg></div><strong>Reward & value</strong><p>Evaluate outcomes and prefixes</p><div class="ppo-stage-papers"><a href="https://arxiv.org/abs/2604.19295" data-paper="tempo">TEMPO</a><a href="https://arxiv.org/abs/2609.39247" data-paper="ac2">AC2</a></div></li>
+<li class="ppo-stage" data-stage="3"><div class="ppo-stage-top"><span class="ppo-stage-number">03</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16M12 4v16m-5-5 5 5 5-5M7 9l5-5 5 5"/></svg></div><strong>Advantages</strong><p>Assign credit relative to a baseline</p><div class="ppo-stage-papers"><a href="https://arxiv.org/abs/2607.07508" data-paper="sao">SAO</a><a href="https://arxiv.org/abs/2609.39247" data-paper="ac2">AC2</a><a href="https://yifanzhang-pro.github.io/FlashREINFORCE/" data-paper="flash">FlashREINFORCE</a></div></li>
+<li class="ppo-stage" data-stage="4"><div class="ppo-stage-top"><span class="ppo-stage-number">04</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h13l-3-3m3 3-3 3M20 17H7l3-3m-3 3 3 3"/></svg></div><strong>Policy correction</strong><p>Account for distribution mismatch</p><div class="ppo-stage-papers"><a href="https://arxiv.org/abs/2609.20807" data-paper="centering">Score Centering</a><a href="https://github.com/areal-project/AReaL/blob/main/docs/en/best_practices/algo_perf.md" data-paper="decoupled">Decoupled PPO</a></div></li>
+<li class="ppo-stage" data-stage="5"><div class="ppo-stage-top"><span class="ppo-stage-number">05</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18h4v-5H4zm6 0h4V9h-4zm6 0h4V5h-4z"/></svg></div><strong>Updates</strong><p>Optimize actor and critic</p><div class="ppo-stage-papers"><a href="https://arxiv.org/abs/2609.36802" data-paper="easy">EasyPPO</a><a href="https://arxiv.org/abs/2607.07508" data-paper="sao">SAO</a><a href="https://arxiv.org/abs/2604.19295" data-paper="tempo">TEMPO</a><a href="https://github.com/areal-project/AReaL/blob/main/docs/en/best_practices/algo_perf.md" data-paper="decoupled">Decoupled PPO</a></div></li>
+</ol>
+<div class="ppo-loop"><span aria-hidden="true">↶</span> Updated policy and value model feed the next round</div>
+<div class="ppo-map-interaction" hidden>
+<div class="ppo-paper-select" role="group" aria-label="Highlight a paper's contributions"><button type="button" data-paper="all" aria-pressed="true">All papers</button>
+<button type="button" data-paper="sao" data-stages="1 3 5" data-detail="Single-rollout asynchronous sampling, a learned value baseline, and strict double-sided token clipping." data-url="https://arxiv.org/abs/2607.07508" aria-pressed="false">SAO</button>
+<button type="button" data-paper="easy" data-stages="5" data-detail="Stabilize critic training with actor-only overlong filtering, noise-normalized regression, and smaller critic minibatches." data-url="https://arxiv.org/abs/2609.36802" aria-pressed="false">EasyPPO</button>
+<button type="button" data-paper="tempo" data-stages="2 5" data-detail="Use critic feedback for policy refinement on unlabeled questions, then recalibrate the critic on labeled data." data-url="https://arxiv.org/abs/2604.19295" aria-pressed="false">TEMPO</button>
+<button type="button" data-paper="ac2" data-stages="2 3" data-detail="Use generative critic estimates for action-chunk advantages and updates, gated by local readiness." data-url="https://arxiv.org/abs/2609.39247" aria-pressed="false">AC2</button>
+<button type="button" data-paper="flash" data-stages="1 3" data-detail="Single-rollout asynchronous learning with batch centering replaces the learned value baseline. This is a critic-free alternative to PPO." data-url="https://yifanzhang-pro.github.io/FlashREINFORCE/" aria-pressed="false">FlashREINFORCE</button>
+<button type="button" data-paper="centering" data-stages="4" data-detail="Apply an additive correction for gradient drift from training–inference mismatch. Score here means the log-probability gradient." data-url="https://arxiv.org/abs/2609.20807" aria-pressed="false">Score Centering</button>
+<button type="button" data-paper="decoupled" data-stages="4 5" data-detail="Separate behavior-policy importance correction from clipping around a recent proximal policy." data-url="https://github.com/areal-project/AReaL/blob/main/docs/en/best_practices/algo_perf.md" aria-pressed="false">Decoupled PPO</button>
+</div>
+<div class="ppo-paper-detail" aria-live="polite" aria-atomic="true"><span class="ppo-detail-name">Explore the loop</span><p>Select a paper to highlight the stages it changes.</p><a hidden>Read the paper ↗</a></div>
+</div>
+<figcaption>Selected contributions across PPO and related methods. A paper can span several stages; FlashREINFORCE removes the critic.</figcaption>
+</figure>
+
 ## Revisiting PPO {#recent-work}
 
 PPO gives the actor and critic different jobs. The actor learns which actions to make more likely. The critic estimates the return expected from the current prompt and generated prefix, providing a baseline for the actor’s update.
@@ -33,20 +58,6 @@ A_t = R - V_{\mathrm{old}}(s_t).
 $$
 
 The execution supplies the outcome; the critic helps decide whether it was better or worse than expected. A useful baseline can reduce gradient variance without perfectly ranking finished answers. [PPO](https://arxiv.org/abs/1707.06347) and [GAE](https://arxiv.org/abs/1506.02438) provide the foundations; recent LLM work changes how these pieces fit together.
-
-<div class="table-scroll" role="region" aria-label="Recent PPO and related methods" tabindex="0" markdown="1">
-
-| Work                                                                                                  | Main idea                                                                                          | Why it matters                                                                 |
-| :---------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------- |
-| [SAO](https://arxiv.org/abs/2607.07508)                                                               | Single-rollout asynchronous training with a value model and strict double-sided token clipping.    | Learn without waiting for a group of sibling executions.                       |
-| [EasyPPO](https://arxiv.org/abs/2609.36802)                                                           | Actor-only overlong filtering, noise-normalized critic regression, and smaller critic minibatches. | How we train the critic can matter as much as having one.                      |
-| [TEMPO](https://arxiv.org/abs/2604.19295)                                                             | Alternate policy refinement on unlabeled questions with critic recalibration on labeled data.      | Learned feedback needs to keep up with the policy.                             |
-| [AC2](https://arxiv.org/abs/2609.39247)                                                               | Use a generative critic for action-chunk updates, gated by local readiness.                        | A sufficiently reliable critic can support updates before a full rollout ends. |
-| [FlashREINFORCE](https://yifanzhang-pro.github.io/FlashREINFORCE/)                                    | Single-rollout asynchronous learning with batch centering and no critic.                           | Single-rollout learning does not require a value model.                        |
-| [Score Centering](https://arxiv.org/abs/2609.20807)                                                   | Correct gradient drift caused by training–inference mismatch.                                      | Biased updates can arise even with a good advantage estimator.                 |
-| [Decoupled PPO](https://github.com/areal-project/AReaL/blob/main/docs/en/best_practices/algo_perf.md) | Separate behavior-policy correction from clipping around a recent policy.                          | Correcting stale data and limiting update size are different jobs.             |
-
-</div>
 
 These papers use the critic in different ways. A baseline reduces variance after we observe an outcome. A learned evaluator supplies feedback when a real outcome is unavailable or expensive. The second role asks much more of the model.
 

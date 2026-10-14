@@ -723,3 +723,262 @@ html[data-theme="dark"] .writing-index {
     break-inside: avoid;
   }
 }
+
+/* Interactive map of selected contributions to the PPO loop. */
+.ppo-map {
+  --stage-1: #4169a2;
+  --stage-2: #217b72;
+  --stage-3: #9a6a22;
+  --stage-4: #7960a7;
+  --stage-5: #914855;
+  margin: 2.2rem 0 2.8rem;
+  padding: 1.4rem;
+  border: 1px solid var(--essay-line);
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--essay-surface), var(--global-bg-color, white) 60%);
+}
+.ppo-map-heading h3 {
+  margin: 0.35rem 0 1.4rem;
+  font-size: 1.4rem;
+  letter-spacing: -0.025em;
+}
+.ppo-stages {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.6rem;
+  margin: 0;
+  padding: 0;
+}
+.ppo-stage[data-stage="1"] {
+  --stage: var(--stage-1);
+}
+.ppo-stage[data-stage="2"] {
+  --stage: var(--stage-2);
+}
+.ppo-stage[data-stage="3"] {
+  --stage: var(--stage-3);
+}
+.ppo-stage[data-stage="4"] {
+  --stage: var(--stage-4);
+}
+.ppo-stage[data-stage="5"] {
+  --stage: var(--stage-5);
+}
+.ppo-stage {
+  min-width: 0;
+  position: relative;
+  padding: 0.75rem 0.6rem;
+  border: 1px solid var(--essay-line);
+  border-top: 3px solid var(--stage);
+  border-radius: 6px;
+  background: var(--global-bg-color, white);
+  transition:
+    border-color 150ms,
+    box-shadow 150ms;
+}
+.ppo-stage:not(:last-child)::after {
+  content: "→";
+  position: absolute;
+  right: -0.68rem;
+  top: 1.05rem;
+  width: 0.75rem;
+  z-index: 1;
+  font-size: 0.85rem;
+  line-height: 1;
+  text-align: center;
+  color: var(--essay-muted);
+  background: var(--global-bg-color, white);
+}
+.ppo-stage-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--stage);
+  margin-bottom: 0.65rem;
+}
+.ppo-stage-number {
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+.ppo-stage svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.ppo-stage > strong {
+  display: block;
+  min-height: 2.7em;
+  font-size: 0.84rem;
+  line-height: 1.35;
+  font-weight: 600;
+}
+.ppo-stage > p {
+  font-size: 0.67rem;
+  line-height: 1.6;
+  color: var(--essay-muted);
+  margin: 0.4rem 0 0.9rem;
+  min-height: 4.8em;
+}
+.ppo-stage-papers {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
+}
+.ppo-stage-papers a {
+  display: inline-block;
+  font-size: 0.62rem;
+  line-height: 1.45;
+  text-decoration: none;
+  color: var(--stage);
+  border-radius: 3px;
+  padding: 0.15rem 0.25rem;
+  background: color-mix(in srgb, var(--stage) 8%, transparent);
+}
+.ppo-stage-papers a:hover {
+  text-decoration: underline;
+}
+.ppo-stage.is-selected {
+  border-color: var(--stage);
+  box-shadow: 0 0 0 1px var(--stage);
+}
+.ppo-stage.is-muted {
+  --stage: var(--essay-muted);
+  border-top-color: var(--essay-line);
+}
+.ppo-stage-papers a.is-selected {
+  color: var(--global-bg-color, white);
+  background: var(--stage);
+}
+.ppo-loop {
+  border-bottom: 1px dashed var(--essay-line);
+  border-left: 1px dashed var(--essay-line);
+  border-right: 1px dashed var(--essay-line);
+  border-radius: 0 0 10px 10px;
+  padding: 0.45rem 0.5rem;
+  margin: 0 0.4rem 1.2rem;
+  font-size: 0.65rem;
+  color: var(--essay-muted);
+  text-align: center;
+}
+.ppo-loop span {
+  margin-right: 0.3rem;
+}
+.ppo-paper-select {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.ppo-paper-select button {
+  font-family: inherit;
+  font-size: 0.66rem;
+  line-height: 1.6;
+  color: var(--essay-muted);
+  background: transparent;
+  border: 1px solid var(--essay-line);
+  border-radius: 20px;
+  padding: 0.3rem 0.65rem;
+  cursor: pointer;
+}
+.ppo-paper-select button[aria-pressed="true"] {
+  color: var(--global-bg-color, white);
+  background: var(--essay-accent);
+  border-color: var(--essay-accent);
+}
+.ppo-paper-detail {
+  margin-top: 0.9rem;
+  padding-left: 0.8rem;
+  border-left: 2px solid var(--essay-accent);
+  min-height: 100px;
+}
+.ppo-detail-name {
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+.ppo-paper-detail p {
+  margin: 0.2rem 0;
+  font-size: 0.75rem;
+  line-height: 1.7;
+  color: var(--essay-muted);
+}
+.ppo-paper-detail a {
+  font-size: 0.7rem;
+}
+.ppo-map figcaption {
+  margin-top: 1rem;
+  font-size: 0.65rem;
+}
+html[data-theme="dark"] .ppo-map {
+  --stage-1: #90b3ec;
+  --stage-2: #73c6b8;
+  --stage-3: #dbb574;
+  --stage-4: #b9a2e3;
+  --stage-5: #df9aa8;
+}
+@media (max-width: 650px) {
+  .ppo-map {
+    padding: 1rem;
+  }
+  .ppo-map-heading h3 {
+    font-size: 1.2rem;
+  }
+  .ppo-stages {
+    grid-template-columns: 1fr;
+    gap: 0.65rem;
+  }
+  .ppo-stage {
+    display: grid;
+    grid-template-columns: 25px minmax(0, 1fr);
+    gap: 0 0.6rem;
+    padding: 0.65rem;
+    border-top-width: 1px;
+    border-left: 3px solid var(--stage);
+  }
+  .ppo-stage-top {
+    grid-row: 1 / 4;
+    flex-direction: column;
+    justify-content: start;
+    gap: 0.5rem;
+    margin: 0;
+  }
+  .ppo-stage > strong {
+    min-height: 0;
+  }
+  .ppo-stage > p {
+    min-height: 0;
+    margin: 0.2rem 0 0.4rem;
+  }
+  .ppo-stage-papers {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  .ppo-stage:not(:last-child)::after {
+    content: "↓";
+    top: auto;
+    bottom: -0.7rem;
+    left: 1rem;
+  }
+  .ppo-loop {
+    text-align: left;
+    line-height: 1.6;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ppo-stage {
+    transition: none;
+  }
+}
+@media print {
+  .ppo-map-interaction {
+    display: none;
+  }
+  .ppo-stage {
+    break-inside: avoid;
+  }
+}

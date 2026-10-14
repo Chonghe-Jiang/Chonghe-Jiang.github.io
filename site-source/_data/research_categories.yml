@@ -19,3 +19,8 @@
       title: For Markets
     - id: structured_data
       title: For Structured Data
+- id: working_papers
+  title: Working Papers
+  subtitle: Ongoing research
+  groups:
+    - id: working_papers

@@ -217,3 +217,44 @@
   figure_alt: "Conceptual illustration of time series imputation: incomplete observations are lifted into a Hankel matrix and reconstructed
     with robust regularization. The series is illustrative."
   description: Combines Hankel lifting and robust regularization for interpretable reconstruction of incomplete time series.
+- key: quantization
+  category: working_papers
+  title: Reshaping Activation Geometry for Low-Bit LLM Quantization
+  collaborators:
+    - Ryan Lucas
+    - Jinhua Zhao
+    - Rahul Mazumder
+  venue: Working paper · Submitted
+  working: true
+  group: working_papers
+- key: bus
+  category: working_papers
+  title: "Joint Bus Trip Scheduling and Vehicle Assignment: A Scalable Iterative Framework for Time-Dependent Travel Times"
+  collaborators:
+    - Yuhan Tang
+    - Charlie Liu
+    - Alexandre Jacquillat
+    - Haris Koutsopoulos
+    - Jinhua Zhao
+  venue: Working paper · To be submitted
+  working: true
+  group: working_papers
+- key: qcqp
+  category: working_papers
+  title: "Bridging Convex and Nonconvex Approaches: Geodesic Strong Convexity of QCQPs from Tightness and Strict Complementarity of SDR"
+  collaborators:
+    - Huikang Liu
+    - Jinxin Wang
+    - Anthony Man-Cho So
+  venue: Working paper · To be submitted
+  working: true
+  group: working_papers
+- key: portfolio
+  category: working_papers
+  title: Portfolio Marginal Risk Control
+  collaborators:
+    - Wenchu Zhang
+    - Zhaolin Hu
+  venue: Working paper · To be submitted
+  working: true
+  group: working_papers

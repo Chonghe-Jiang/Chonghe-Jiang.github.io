@@ -1,0 +1,9 @@
+.bundle/
+.jekyll-cache/
+.jekyll-metadata
+.sass-cache/
+dist/
+node_modules/
+vendor/
+__pycache__/
+.DS_Store

@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd "$(dirname "$0")/.."
+export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
+export JEKYLL_ENV=production
+bundle exec jekyll build --destination dist
+rsync -a dist/ ../
+touch ../.nojekyll

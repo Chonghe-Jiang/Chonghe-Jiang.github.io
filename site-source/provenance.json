@@ -1,0 +1,28 @@
+{
+  "template": {
+    "repository": "https://github.com/alshedivat/al-folio",
+    "commit": "ba1c8104a2f39c76ebc2fa9da1b02c66b75ea855",
+    "license": "MIT",
+    "method": "Original upstream source archive; no reference-site source or assets copied"
+  },
+  "content_sources": ["https://sites.mit.edu/chonghej/", "https://sites.mit.edu/chonghej/publications/", "https://sites.mit.edu/chonghej/courses/"],
+  "layout_reference": "https://joyemang33.github.io/",
+  "retrieved": "2026-10-13",
+  "adaptation": {
+    "reference": "https://joyemang33.github.io/",
+    "changes": [
+      "Merriweather body and Open Sans headings",
+      "Introduction and portrait in a responsive grid",
+      "Contact links under the portrait",
+      "Illustrated publication rows with one-sentence summaries"
+    ],
+    "implementation": "Custom local layouts and CSS on original al-folio; no reference-site code or assets copied."
+  },
+  "paper_figures": {
+    "thoughtspace": "https://arxiv.org/pdf/2610.06269 (Figure 3, page 4)",
+    "frontieror": "https://arxiv.org/html/2605.25246v3/figures/FrontierOR.png",
+    "alphaopt": "https://arxiv.org/html/2510.18428v4/figures/framework.png",
+    "probelowrank": "https://arxiv.org/html/2502.04043v1/elips_update.png",
+    "gets": "https://arxiv.org/html/2410.09570v2/model.png"
+  }
+}

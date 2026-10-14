@@ -1,0 +1,119 @@
+- key: thoughtspace
+  category: self_improving
+  short_title: Guidance-TTT
+  title: "Evolving in Thought Space: Training a Small Model at Test Time Unlocks Better Discoveries"
+  authors:
+    - Chonghe Jiang*
+    - Ao Qu*
+    - Siyuan Liu
+    - Ruoyun Ma
+    - Zijian Zhou
+    - Dingyi Zhuang
+    - Bo Liu
+    - Han Zheng
+    - Hanfei Yu
+    - Baichuan Mo
+    - Jinhua Zhao
+    - Paul Pu Liang
+  venue: NeurIPS 2026 TTCL Workshop · Short version
+  description: A small guidance model learns strategic changes at test time, while a frozen, larger model turns them into executable
+    solutions.
+  url: https://arxiv.org/abs/2610.06269
+  figure: /assets/img/papers/thoughtspace.png
+  figure_alt: "Guidance-TTT workflow: archive search, trainable guidance, frozen execution, and verifier feedback."
+  code: https://github.com/Human-Agent-Society/reef/tree/guidance-ttt-support
+- key: frontieror
+  category: llm_optimization
+  short_title: FrontierOR
+  title: "FrontierOR: Benchmarking LLMs’ Capacity for Efficient Algorithm Design in Large-Scale Optimization"
+  authors:
+    - Minwei Kong*
+    - Chonghe Jiang*
+    - Ao Qu
+    - Wenbin Ouyang
+    - Zhaoming Zeng
+    - Xiaotong Guo
+    - Zhekai Li
+    - Junyi Li
+    - Yi Fan
+    - Xinshou Zheng
+    - Xi Jing
+    - Yikai Zhang
+    - Zhiwei Liang
+    - Seonghoo Kim
+    - Runqing Yang
+    - Sirui Li
+    - Han Zheng
+    - Wangyang Ying
+    - Ou Zheng
+    - Chonghuan Wang
+    - Jinglong Zhao
+    - Paul Pu Liang
+    - Jinhua Zhao
+    - Hai Wang
+  venue: NeurIPS 2026
+  description: A benchmark of 180 tasks testing whether LLMs can design efficient algorithms for realistic, large-scale optimization
+    problems.
+  url: https://arxiv.org/abs/2605.25246
+  figure: /assets/img/papers/frontieror.png
+  figure_alt: "FrontierOR benchmark: optimization problem classes, scales, and expert-reviewed task construction."
+  code: https://github.com/Minw913/FrontierOR
+- key: alphaopt
+  category: llm_optimization
+  short_title: AlphaOPT
+  title: "AlphaOPT: Formulating Optimization Programs with Self-Improving LLM Experience Library"
+  authors:
+    - Minwei Kong
+    - Ao Qu
+    - Xiaotong Guo
+    - Wenbin Ouyang
+    - Chonghe Jiang
+    - Han Zheng
+    - Yining Ma
+    - Dingyi Zhuang
+    - Yuhan Tang
+    - Junyi Li
+    - Shenhao Wang
+    - Haris Koutsopoulos
+    - Hai Wang
+    - Cathy Wu
+    - Jinhua Zhao
+  venue: KDD 2026 · Oral
+  description: An experience library that learns and refines reusable optimization modeling knowledge from solver feedback, without
+    updating model parameters.
+  url: https://arxiv.org/abs/2510.18428
+  figure: /assets/img/papers/alphaopt.png
+  figure_alt: "AlphaOPT framework: learning an experience library and refining the conditions under which each insight applies."
+  code: https://github.com/Minw913/AlphaOPT
+  award: INFORMS Data Mining Society 2025 · Best Paper Finalist
+- key: probelowrank
+  category: llm_optimization
+  short_title: FLORAIN
+  title: Probe-Free Low-Rank Activation Intervention
+  authors:
+    - Chonghe Jiang*
+    - Bao Nguyen*
+    - Anthony Man-Cho So
+    - Viet Anh Nguyen
+  venue: NAACL 2025
+  description: A probe-free, low-rank intervention in hidden activations that steers language models toward more truthful generations.
+  url: https://arxiv.org/abs/2502.04043
+  figure: /assets/img/papers/probelowrank.png
+  figure_alt: "FLORAIN geometry: constructing desirable activation targets using global and question-specific directions."
+- key: gets
+  category: optimization
+  short_title: GETS
+  title: "GETS: Ensemble Temperature Scaling for Calibration in Graph Neural Networks"
+  authors:
+    - Dingyi Zhuang*
+    - Chonghe Jiang*
+    - Yunhan Zheng
+    - Shenhao Wang
+    - Jinhua Zhao
+  venue: ICLR 2025 · Spotlight
+  description: An ensemble temperature-scaling method that combines multiple inputs and calibration experts to improve uncertainty calibration
+    in graph neural networks.
+  url: https://arxiv.org/abs/2410.09570
+  figure: /assets/img/papers/gets.png
+  figure_alt: GETS architecture combining input ensembles, calibration experts, and a gating mechanism.
+  code: https://github.com/ZhuangDingyi/GETS/

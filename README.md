@@ -10,10 +10,9 @@ The template retains its MIT license. Photographs and paper figures retain their
 
 The editable Jekyll source is in `site-source/`:
 
-- `_pages/about.md`: introduction.
-- `_pages/research.md`: research description, category sections, and working papers.
-- `_bibliography/papers.bib`: complete bibliography. The `category` field assigns each paper to a section.
-- `_data/featured_papers.yml`: selected papers, summaries, figures, and categories.
+- `_pages/about.md`: introduction and research background.
+- `_bibliography/papers.bib`: BibTeX records.
+- `_data/publications.yml`: all papers, working papers, summaries, figures, and categories.
 - `_data/research_categories.yml`: category names and order on the homepage.
 - `_pages/bio.md`: education, service, awards, and other activities.
 - `assets/css/homepage.css`: custom styles.
@@ -32,6 +31,8 @@ Preview the result with `python3 -m http.server 8080` from the repository root.
 After review, commit the changed source and generated files, then push to `master`.
 GitHub Pages publishes the root of `master`. The `.nojekyll` file disables a second Jekyll build.
 
+The old `/publications/` URL redirects to the research section on the homepage.
+
 ## Local HTML
 
 After a build, run these commands from `site-source/`:
@@ -41,7 +42,7 @@ python3 -m pip install -r requirements-local.txt
 python3 bin/export-local.py
 ```
 
-The exporter writes `homepage.html` in the repository root. This file includes the three pages and their assets for offline use.
+The exporter writes `homepage.html` in the repository root. This file includes the homepage and Bio page and their assets for offline use.
 
 ## Previous site
 

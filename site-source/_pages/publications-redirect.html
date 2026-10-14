@@ -1,0 +1,23 @@
+---
+layout: null
+permalink: /publications/
+sitemap: false
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Research | Chonghe Jiang</title>
+    <link rel="canonical" href="{{ site.url }}/#research" />
+    <meta http-equiv="refresh" content="0; url=/#research" />
+    <script>
+      const oldKey = location.hash.slice(1);
+      const paperKeys = {{ site.data.publications | map: 'key' | jsonify }};
+      location.replace('/#' + (paperKeys.includes(oldKey) ? 'featured-' + oldKey : 'research'));
+    </script>
+  </head>
+  <body>
+    <p><a href="/#research">Research and publications are now on the homepage.</a></p>
+  </body>
+</html>

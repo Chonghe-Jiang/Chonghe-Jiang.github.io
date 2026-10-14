@@ -443,3 +443,115 @@ summary:focus-visible {
   margin-top: 1.8rem;
   margin-bottom: 1rem;
 }
+.research-story {
+  margin-top: 1.1rem;
+}
+.research-story > :last-child {
+  margin-bottom: 0;
+}
+#research,
+.paper-row[id] {
+  scroll-margin-top: 5rem;
+}
+.research-controls {
+  margin: 1.7rem 0 2.2rem;
+  font-family: "Open Sans", Arial, sans-serif;
+}
+.research-controls[hidden],
+.paper-category[hidden] {
+  display: none !important;
+}
+.research-filter-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: baseline;
+  font-size: 0.8rem;
+  color: var(--global-text-color-light);
+  margin-bottom: 0.8rem;
+}
+.research-all {
+  border: 0;
+  background: none;
+  color: var(--global-theme-color);
+  font: inherit;
+  cursor: pointer;
+  padding: 0.25rem 0;
+}
+.research-all[aria-pressed="true"] {
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 0.3em;
+}
+.research-directions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.8rem;
+}
+.research-direction {
+  text-align: left;
+  border: 1px solid var(--global-divider-color);
+  border-radius: 5px;
+  background: var(--global-bg-color);
+  color: var(--global-text-color);
+  padding: 1rem;
+  font: inherit;
+  cursor: pointer;
+}
+.research-direction:hover,
+.research-direction[aria-pressed="true"] {
+  border-color: var(--global-theme-color);
+  background: color-mix(in srgb, var(--global-theme-color) 7%, var(--global-bg-color));
+}
+.direction-title,
+.direction-subtitle,
+.direction-count {
+  display: block;
+}
+.direction-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+.direction-subtitle {
+  font-size: 0.72rem;
+  color: var(--global-text-color-light);
+  margin-top: 0.35rem;
+}
+.direction-count {
+  color: var(--global-theme-color);
+  font-size: 0.7rem;
+  margin-top: 0.7rem;
+}
+.research-controls .research-count {
+  font-size: 0.72rem;
+  color: var(--global-text-color-light);
+  margin: 0.65rem 0 0;
+}
+.category-subtitle {
+  font-size: 0.9em;
+  font-weight: 400;
+}
+.paper-row-text {
+  grid-template-columns: 1fr;
+  border-left: 2px solid var(--global-divider-color);
+  padding-left: 1.2rem;
+}
+@media (max-width: 640px) {
+  .research-directions {
+    grid-template-columns: 1fr;
+    gap: 0.55rem;
+  }
+  .research-direction {
+    position: relative;
+    padding: 0.8rem 4.3rem 0.8rem 0.85rem;
+  }
+  .direction-count {
+    position: absolute;
+    right: 0.8rem;
+    top: 0.85rem;
+    margin: 0;
+  }
+  .research-story {
+    margin-top: 1.7rem;
+  }
+}

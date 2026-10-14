@@ -125,6 +125,34 @@
   url: https://arxiv.org/abs/2502.04043
   figure: /assets/img/papers/probelowrank.png
   figure_alt: "FLORAIN geometry: constructing desirable activation targets using global and question-specific directions."
+- key: quantization
+  category: llm_optimization
+  title: Reshaping Activation Geometry for Low-Bit LLM Quantization
+  collaborators:
+    - Ryan Lucas
+    - Jinhua Zhao
+    - Rahul Mazumder
+  venue: Working paper · Submitted
+  working: true
+- key: riskbudget
+  category: optimization
+  title: Optimized Risk-Budget Allocation for Safe Approximations of Joint Chance Constraints
+  authors:
+    - Chonghe Jiang*
+    - Zhekai Li*
+    - Elenna Dugundji
+    - Jinhua Zhao
+  venue: Working paper · 2026
+  url: https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7371978
+  working: true
+- key: hankel
+  category: optimization
+  title: Interpretable Time Series Imputation via Hankel Lifting and Robust Regularization
+  authors:
+    - Chonghe Jiang
+    - Xinyu Chen
+    - Jinhua Zhao
+  venue: TSL 2026 · Short version
 - key: gets
   category: optimization
   short_title: GETS
@@ -172,3 +200,31 @@
   figure: /assets/img/papers/chores.svg
   figure_alt: "Chores equilibrium concept diagram: a difference-of-convex formulation leads to linear convergence to exact equilibrium and
     a smooth method for approximate equilibrium."
+- key: bus
+  category: optimization
+  title: "Joint Bus Trip Scheduling and Vehicle Assignment: A Scalable Iterative Framework for Time-Dependent Travel Times"
+  collaborators:
+    - Yuhan Tang
+    - Charlie Liu
+    - Alexandre Jacquillat
+    - Haris Koutsopoulos
+    - Jinhua Zhao
+  venue: Working paper · To be submitted
+  working: true
+- key: qcqp
+  category: optimization
+  title: "Bridging Convex and Nonconvex Approaches: Geodesic Strong Convexity of QCQPs from Tightness and Strict Complementarity of SDR"
+  collaborators:
+    - Huikang Liu
+    - Jinxin Wang
+    - Anthony Man-Cho So
+  venue: Working paper · To be submitted
+  working: true
+- key: portfolio
+  category: optimization
+  title: Portfolio Marginal Risk Control
+  collaborators:
+    - Wenchu Zhang
+    - Zhaolin Hu
+  venue: Working paper · To be submitted
+  working: true

@@ -41,5 +41,9 @@
       "method": "Original SVG concept diagram drawn for this homepage; not an empirical result plot.",
       "source": "https://arxiv.org/abs/2410.04036"
     }
+  },
+  "research_organization_reference": {
+    "url": "https://zhuangdingyi.github.io/",
+    "adaptation": "Original implementation of research-direction filters and a complete illustrated publication list on the homepage."
   }
 }

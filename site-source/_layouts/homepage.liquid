@@ -18,33 +18,72 @@ layout: default
       <div class="profile-social">{% social_links %}</div>
     </aside>
   </div>
-  <section class="selected-work" aria-labelledby="selected-heading">
+  <section class="selected-work" id="research" aria-labelledby="research-heading">
     <div class="section-heading">
-      <h2 id="selected-heading">Selected Publications</h2>
-      <a href="{{ '/publications/' | relative_url }}">All publications <span aria-hidden="true">→</span></a>
+      <h2 id="research-heading">Research &amp; Publications</h2>
+      <a href="https://scholar.google.com/citations?user=KfuBD5kAAAAJ" target="_blank" rel="noopener"
+        >Google Scholar <span aria-hidden="true">↗</span></a
+      >
     </div>
-    <p class="publication-note">* Equal contribution</p>
+    <p class="publication-note">Publications and working papers. * Equal contribution.</p>
+    <div class="research-controls" hidden>
+      <div class="research-filter-heading">
+        <span>Explore by research direction</span>
+        <button type="button" class="research-all" data-research-filter="all" aria-pressed="true">Show all</button>
+      </div>
+      <div class="research-directions" role="group" aria-label="Filter publications by research direction">
+        {% for category in site.data.research_categories %}
+          {% assign count = site.data.publications | where: 'category', category.id | size %}
+          <button type="button" class="research-direction" data-research-filter="{{ category.id }}" aria-pressed="false">
+            <span class="direction-title">{{ category.title }}</span>
+            <span class="direction-subtitle">{{ category.subtitle }}</span>
+            <span class="direction-count">{{ count }} works</span>
+          </button>
+        {% endfor %}
+      </div>
+      <p class="research-count" role="status" aria-live="polite">Showing all {{ site.data.publications.size }} works</p>
+    </div>
     {% for category in site.data.research_categories %}
-      <section class="paper-category" aria-labelledby="selected-{{ category.id }}">
-        <h3 class="paper-category-title" id="selected-{{ category.id }}">{{ category.title }}</h3>
+      <section class="paper-category" data-research-category="{{ category.id }}" aria-labelledby="selected-{{ category.id }}">
+        <h3 class="paper-category-title" id="selected-{{ category.id }}">
+          {{ category.title -}}
+          {%- if category.id == 'self_improving' %}
+            <span class="category-subtitle">(Self-Improving Agents)</span>
+          {%- endif %}
+        </h3>
         <div class="paper-list">
-          {% assign category_papers = site.data.featured_papers | where: 'category', category.id %}
+          {% assign category_papers = site.data.publications | where: 'category', category.id %}
           {% for paper in category_papers %}
-            <article class="paper-row" id="featured-{{ paper.key }}">
-              <button
-                class="paper-figure"
-                type="button"
-                data-figure-title="{{ paper.figure_alt | escape }}"
-                aria-label="Enlarge figure for {{ paper.short_title | escape }}"
-              >
-                <img src="{{ paper.figure | relative_url }}" alt="{{ paper.figure_alt | escape }}" loading="lazy">
-                <span class="figure-hint" aria-hidden="true">View figure ↗</span>
-              </button>
+            <article
+              class="paper-row{% unless paper.figure %} paper-row-text{% endunless %}"
+              id="featured-{{ paper.key }}"
+              {% if paper.working %}
+                data-working-paper
+              {% endif %}
+            >
+              {% if paper.figure %}
+                <button
+                  class="paper-figure"
+                  type="button"
+                  data-figure-title="{{ paper.figure_alt | escape }}"
+                  aria-label="Enlarge figure for {{ paper.short_title | escape }}"
+                >
+                  <img src="{{ paper.figure | relative_url }}" alt="{{ paper.figure_alt | escape }}" loading="lazy">
+                  <span class="figure-hint" aria-hidden="true">View figure ↗</span>
+                </button>
+              {% endif %}
               <div class="paper-text">
                 <h4>
-                  <a href="{{ paper.url }}" target="_blank" rel="noopener">{{ paper.title }}</a>
+                  {% if paper.url -%}
+                    <a href="{{ paper.url }}" target="_blank" rel="noopener">{{ paper.title }}</a>
+                  {%- else -%}
+                    {{- paper.title -}}
+                  {%- endif %}
                 </h4>
                 <div class="paper-authors">
+                  {% if paper.collaborators %}
+                    With {{ paper.collaborators | join: ', ' }}.
+                  {% endif %}
                   {% for author in paper.authors limit: 6 %}
                     {% if author contains 'Chonghe Jiang' -%}
                       <strong>{{ author }}</strong>
@@ -58,7 +97,11 @@ layout: default
                       <summary>and {{ paper.authors.size | minus: 6 }} more authors</summary>
                       <span>
                         {%- for author in paper.authors offset: 6 -%}
-                          {{- author -}}
+                          {% if author contains 'Chonghe Jiang' -%}
+                            <strong>{{ author }}</strong>
+                          {%- else %}
+                            {{- author -}}
+                          {% endif %}
                           {%- unless forloop.last %}, {% endunless -%}
                         {%- endfor -%}
                       </span>
@@ -69,13 +112,19 @@ layout: default
                 {% if paper.award %}
                   <p class="paper-award">{{ paper.award }}</p>
                 {% endif %}
-                <p class="paper-description">{{ paper.description }}</p>
-                <div class="paper-links">
-                  <a href="{{ paper.url }}" target="_blank" rel="noopener">paper</a>
-                  {% if paper.code -%}
-                    <a href="{{ paper.code }}" target="_blank" rel="noopener">code</a>
-                  {%- endif %}
-                </div>
+                {% if paper.description %}
+                  <p class="paper-description">{{ paper.description }}</p>
+                {% endif %}
+                {% if paper.url or paper.code %}
+                  <div class="paper-links">
+                    {% if paper.url -%}
+                      <a href="{{ paper.url }}" target="_blank" rel="noopener">paper</a>
+                    {%- endif %}
+                    {% if paper.code -%}
+                      <a href="{{ paper.code }}" target="_blank" rel="noopener">code</a>
+                    {%- endif %}
+                  </div>
+                {% endif %}
               </div>
             </article>
           {% endfor %}

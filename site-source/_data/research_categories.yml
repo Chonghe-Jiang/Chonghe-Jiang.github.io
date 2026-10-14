@@ -1,6 +1,9 @@
 - id: self_improving
-  title: LLM Self-Improving
+  title: LLM as Optimizer
+  subtitle: Self-Improving Agents
 - id: llm_optimization
   title: LLM × Optimization
+  subtitle: Modeling, algorithms, and LLM methods
 - id: optimization
   title: Optimization & Probability
+  subtitle: Theory, uncertainty, and decision-making

@@ -15,7 +15,7 @@ main.name='main';main['id']='local-content'
 home=soup.new_tag('section',id='home');home['data-local-page']=''
 for child in list(main.contents):home.append(child.extract())
 main.append(home)
-for route,source in [('research','publications/index.html'),('bio','bio/index.html')]:
+for route,source in [('bio','bio/index.html')]:
  doc=BeautifulSoup((dist/source).read_text(),'html.parser')
  section=soup.new_tag('section',id=route);section['data-local-page']='';section['hidden']=''
  for child in list(doc.body.find('div',recursive=False).contents): section.append(child.extract())
@@ -26,8 +26,11 @@ for section in main.select('[data-local-page]'):
  for t in section.select('[id]'):t['id']=idmap[t['id']]
  for a in section.select('a[href^="#"]'):
   if a['href'][1:] in idmap:a['href']='#'+idmap[a['href'][1:]]
+ for t in section.select('[aria-labelledby], [aria-controls]'):
+  for attr in ['aria-labelledby','aria-controls']:
+   if attr in t.attrs:t[attr]=' '.join(idmap.get(v,v) for v in t[attr].split())
  for h in section.select('h1'):h['tabindex']='-1'
-route_map={'/':'#home','/publications/':'#research','/bio/':'#bio'}
+route_map={'/':'#home','/publications/':'#home-research','/bio/':'#bio'}
 for a in soup.select('a[href]'):
  if a['href'] in route_map:
   a['href']=route_map[a['href']];a['data-local-nav']=''
@@ -83,9 +86,10 @@ soup.head.append(style)
 router=soup.new_tag('script');router.string='''
 (() => {
   const pages = [...document.querySelectorAll('[data-local-page]')];
-  const names = {home: 'Chonghe Jiang', research: 'Research | Chonghe Jiang', bio: 'Bio | Chonghe Jiang'};
+  const names = {home: 'Chonghe Jiang', bio: 'Bio | Chonghe Jiang'};
   function showPage(focus) {
-    const hash = decodeURIComponent(location.hash.slice(1)) || 'home';
+    const requestedHash = decodeURIComponent(location.hash.slice(1)) || 'home';
+    const hash = requestedHash === 'research' ? 'home-research' : requestedHash;
     const target = document.getElementById(hash);
     const section = pages.find(p => p.id === hash) || target?.closest('[data-local-page]') || pages[0];
     pages.forEach(p => p.hidden = p !== section);

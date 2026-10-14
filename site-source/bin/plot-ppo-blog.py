@@ -36,7 +36,7 @@ for ax, (metric, end, title, ylabel, ylim) in zip(axes, panels):
     ax.grid(axis='y', color='#e9ecf0', linewidth=0.7)
     ax.set_axisbelow(True)
 handles, labels = axes[0].get_legend_handles_labels()
-fig.legend(handles, labels, loc='lower center', ncol=3, frameon=False,
+fig.legend(handles, labels, loc='lower center', ncol=2, frameon=False,
            bbox_to_anchor=(0.5, 0.045))
 fig.text(0.5, 0.014,
          'One trajectory per configuration · 128 candidates per round · Online 70-case evaluator',
@@ -45,5 +45,5 @@ fig.tight_layout(rect=(0, 0.14, 1, 1))
 output = root / 'assets/img/blog/ppo-trajectories'
 fig.savefig(output.with_suffix('.png'), dpi=170, facecolor='white')
 fig.savefig(output.with_suffix('.pdf'), facecolor='white',
-            metadata={'Title': 'PPO, frozen inference, and Guidance-TTT trajectories'})
+            metadata={'Title': 'PPO and Guidance-TTT trajectories'})
 print(f'Wrote {output}.png and .pdf')

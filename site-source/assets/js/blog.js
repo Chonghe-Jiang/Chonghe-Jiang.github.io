@@ -75,7 +75,7 @@
           make(
             "desc",
             { id: "trajectory-desc" },
-            `Three observed runs, 128 candidates per round. Vertical axis ${limits[0]} to ${limits[1]}. Series stop when the run ends. Use the round slider for exact values.`
+            `${data.series.length} runs, 128 candidates per round. Vertical axis ${limits[0]} to ${limits[1]}. Series stop when the run ends. Use the round slider for exact values.`
           )
         );
         const defs = make("defs");

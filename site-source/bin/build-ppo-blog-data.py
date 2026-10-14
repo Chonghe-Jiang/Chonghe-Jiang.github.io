@@ -1,4 +1,4 @@
-"""Export aggregate public chart data for the three compared methods."""
+"""Export aggregate public chart data for PPO and Guidance-TTT."""
 
 import argparse
 import csv
@@ -14,7 +14,6 @@ args.output.mkdir(parents=True, exist_ok=True)
 series = []
 flat = []
 for key, label, color, dash in [
-    ('inference', 'Frozen inference', '#718096', '5 3'),
     ('grpo', 'Guidance-TTT', '#16836b', ''),
     ('ppo', 'PPO', '#4169b1', ''),
 ]:

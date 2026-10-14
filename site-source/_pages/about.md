@@ -11,8 +11,6 @@ Before relocating to Cambridge, I spent two years in Hong Kong and received my M
 
 I now study how **LLMs acquire and internalize knowledge as they improve themselves**.
 
-<div class="research-story" markdown="1">
+<!-- research-background -->
 
 I started my research career in 2022, studying optimization theory and game theory for complex decision-making systems. Starting in 2024, motivated by the development of GenAI, I have explored the two-way interaction between optimization and LLMs: applying optimization methods to improve LLM training and inference, and developing LLMs that can better perform optimization modeling and algorithm design. After joining MIT in 2025, I have become increasingly interested in the broader methodologies for improving LLMs themselves. My current research focuses on enhancing their self-evolution capabilities.
-
-</div>

@@ -51,5 +51,6 @@
   "research_organization_reference": {
     "url": "https://zhuangdingyi.github.io/",
     "adaptation": "Original implementation of research-direction filters and a complete illustrated publication list on the homepage."
-  }
+  },
+  "bio_layout_references": ["https://wenhaochai.com/", "https://joyemang33.github.io/"]
 }

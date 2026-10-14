@@ -2,15 +2,17 @@
 layout: default
 ---
 <div class="post academic-home">
-  <header class="post-header">
-    <h1 class="post-title">
-      {{ site.first_name }}
-      {{ site.last_name }}
-    </h1>
-    <p class="desc">{{ page.subtitle }}</p>
-  </header>
   <div class="intro-grid">
-    <article class="intro-copy">{{ content }}</article>
+    <header class="post-header">
+      <h1 class="post-title">
+        {{ site.first_name }}
+        {{ site.last_name }}
+      </h1>
+      <p class="desc">{{ page.subtitle }}</p>
+    </header>
+    <article class="intro-copy">
+      {{ content | split: '<!-- research-background -->' | first }}
+    </article>
     <aside class="portrait-column" aria-label="Photo and contact information">
       <img class="portrait" src="{{ '/assets/img/chonghe-jiang.jpg' | relative_url }}" alt="Chonghe Jiang" width="768" height="1024">
       <p class="portrait-credit">Photo: Hannah Y</p>
@@ -18,6 +20,10 @@ layout: default
       <div class="profile-social">{% social_links %}</div>
     </aside>
   </div>
+  <aside class="research-story" aria-labelledby="research-background-heading">
+    <h2 id="research-background-heading">Research background</h2>
+    {{ content | split: '<!-- research-background -->' | last }}
+  </aside>
   <section class="selected-work" id="research" aria-labelledby="research-heading">
     <div class="section-heading">
       <h2 id="research-heading">Research &amp; Publications</h2>

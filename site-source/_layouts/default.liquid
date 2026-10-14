@@ -30,7 +30,7 @@
       <meta http-equiv="refresh" content="3; url={{ redirect }}">
     {% endif %}
     {% include head.liquid %}
-    <link rel="stylesheet" href="{{ "/assets/css/homepage.css" | relative_url }}">
+    <link rel="stylesheet" href="{{ "/assets/css/homepage.css" | relative_url | bust_file_cache }}">
   </head>
 
   <!-- Body -->
@@ -84,6 +84,6 @@
 
     <!-- JavaScripts -->
     {% include scripts.liquid %}
-    <script defer src="{{ "/assets/js/homepage.js" | relative_url }}"></script>
+    <script defer src="{{ "/assets/js/homepage.js" | relative_url | bust_file_cache }}"></script>
   </body>
 </html>

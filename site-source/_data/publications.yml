@@ -47,8 +47,8 @@
   venue: COLM 2026
   description: Autonomous agents explore, reflect, and collaborate through shared persistent memory to advance open-ended discovery.
   url: https://arxiv.org/abs/2604.01658
-  figure: /assets/img/papers/coral-paper.png
-  figure_alt: "CORAL, Figure 2: autonomous agents, isolated worktrees, shared persistent memory, and heartbeat-driven reflection."
+  figure: /assets/img/papers/coral-paradigms.svg
+  figure_alt: "CORAL, Figure 1: fixed evolutionary search, autonomous single-agent evolution, and autonomous multi-agent evolution shown side by side."
   group: agents
 - key: probelowrank
   category: llm_optimization
@@ -196,7 +196,7 @@
   working: true
   group: structured_data
   short_title: Joint Chance Constraints
-  focus: Joint chance constraints · Risk allocation
+  focus: Network uncertainty allocation
   figure: /assets/img/papers/riskbudget.svg
   figure_alt: "Conceptual illustration of optimized risk allocation: individual constraint budgets share a total risk budget to certify a
     joint chance constraint."

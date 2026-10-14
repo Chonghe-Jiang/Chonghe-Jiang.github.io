@@ -12,7 +12,7 @@
     - id: llm_for_optimization
       title: LLM for Optimization
 - id: optimization
-  title: Optimization & Probability
+  title: Optimization
   subtitle: Markets · Structured data
   groups:
     - id: markets

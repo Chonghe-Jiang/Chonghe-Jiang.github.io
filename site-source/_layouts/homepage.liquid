@@ -82,8 +82,12 @@ layout: default
                       data-figure-title="{{ paper.figure_alt | escape }}"
                       aria-label="Enlarge figure for {{ paper.short_title | escape }}"
                     >
-                      <img src="{{ paper.figure | relative_url }}" alt="{{ paper.figure_alt | escape }}" loading="lazy">
-                      <span class="figure-hint" aria-hidden="true">View figure ↗</span>
+                      <span class="figure-viewport"
+                        ><img src="{{ paper.figure | relative_url | bust_file_cache }}" alt="{{ paper.figure_alt | escape }}" loading="lazy"
+                      ></span>
+                      <span class="figure-footer" aria-hidden="true"
+                        ><span class="figure-name">{{ paper.short_title }}</span><span class="figure-hint">↗</span></span
+                      >
                     </button>
                   {% endif %}
                   <div class="paper-text">

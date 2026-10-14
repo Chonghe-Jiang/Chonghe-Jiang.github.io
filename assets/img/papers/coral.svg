@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="420" viewBox="0 0 720 420" role="img" aria-labelledby="title desc">
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#89939a"/></marker></defs>
+<style>text{font-family:Arial,sans-serif;fill:#293641}.label{font-size:23px;font-weight:600}.small{font-size:19px;fill:#61707b}.heading{font-size:27px;font-weight:700;letter-spacing:.3px}.line{fill:none;stroke:#89939a;stroke-width:2.3;marker-end:url(#arrow)}.fine{fill:none;stroke:#bac5cb;stroke-width:2}.blue{fill:#eef4f8;stroke:#9ab6c8;stroke-width:1.6}.rose{fill:#f8eef0;stroke:#caa0a7;stroke-width:1.6}.green{fill:#edf5f1;stroke:#9cbcaf;stroke-width:1.6}</style>
+<rect width="720" height="420" rx="8" fill="#fff"/>
+<title id="title">CORAL: autonomous multi-agent evolution</title><desc id="desc">Four autonomous agents exchange discoveries through persistent shared memory. A conceptual illustration.</desc>
+<text x="32" y="43" class="heading">CORAL</text><text x="32" y="71" class="small">Autonomous multi-agent evolution</text>
+
+<rect x="35" y="111" width="191" height="88" rx="12" class="blue"/><rect x="494" y="111" width="191" height="88" rx="12" class="rose"/>
+<rect x="35" y="266" width="191" height="88" rx="12" class="green"/><rect x="494" y="266" width="191" height="88" rx="12" class="blue"/>
+<g text-anchor="middle"><text x="130" y="148" class="label">Agent 1</text><text x="130" y="177" class="small">explore · reflect</text><text x="590" y="148" class="label">Agent 2</text><text x="590" y="177" class="small">explore · reflect</text><text x="130" y="303" class="label">Agent 3</text><text x="130" y="332" class="small">explore · reflect</text><text x="590" y="303" class="label">Agent 4</text><text x="590" y="332" class="small">explore · reflect</text></g>
+<rect x="253" y="174" width="214" height="105" rx="15" fill="#f7f4ef" stroke="#c9b99f" stroke-width="1.8"/><g text-anchor="middle"><text x="360" y="207" class="label">Shared memory</text><text x="360" y="234" class="small">discoveries + lessons</text><text x="360" y="259" class="small">persist across sessions</text></g>
+<path d="M135 222 Q360 375 585 222" fill="none" stroke="#d9e2e5" stroke-width="2" stroke-dasharray="5 7"/>
+<text x="360" y="392" text-anchor="middle" class="small">Explore independently. Build on shared knowledge.</text>
+<path d="M230 151 L281 171" class="line" marker-start="url(#arrow)"/><path d="M490 151 L439 171" class="line" marker-start="url(#arrow)"/><path d="M230 307 L281 282" class="line" marker-start="url(#arrow)"/><path d="M490 307 L439 282" class="line" marker-start="url(#arrow)"/></svg>

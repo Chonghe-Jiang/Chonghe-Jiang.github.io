@@ -31,7 +31,7 @@ I started my research career in 2022, studying optimization theory and game theo
 <li><strong>Reshaping Activation Geometry for Low-Bit LLM Quantization</strong>, with Ryan Lucas, Jinhua Zhao, Rahul Mazumder. Submitted.</li>
 </ol>
 
-## Optimization
+## Optimization & Probability
 
 <div class="publications" data-category="optimization">
 {% bibliography --query @*[category=optimization] --group_by none %}

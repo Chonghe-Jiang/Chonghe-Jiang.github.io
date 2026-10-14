@@ -20,16 +20,6 @@ layout: default
       <div class="profile-social">{% social_links %}</div>
     </aside>
   </div>
-  <details class="research-story">
-    <summary>
-      <span class="research-story-title">Research background</span>
-      <span class="research-story-years">2022–present</span>
-      <span class="research-story-toggle" aria-hidden="true"
-        ><span class="story-more">Read more</span><span class="story-less">Read less</span><span class="story-chevron">⌄</span></span
-      >
-    </summary>
-    <div class="research-story-content">{{ content | split: '<!-- research-background -->' | last }}</div>
-  </details>
   <section class="selected-work" id="research" aria-labelledby="research-heading">
     <div class="section-heading">
       <h2 id="research-heading">Research &amp; Publications</h2>
@@ -37,6 +27,9 @@ layout: default
         >Google Scholar <span aria-hidden="true">↗</span></a
       >
     </div>
+    <aside class="research-story" aria-label="Research background">
+      {{ content | split: '<!-- research-background -->' | last }}
+    </aside>
     <p class="publication-note">* Equal contribution.</p>
     <div class="research-controls" hidden>
       <div class="research-filter-heading">

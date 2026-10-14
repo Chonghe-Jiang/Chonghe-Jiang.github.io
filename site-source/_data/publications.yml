@@ -196,7 +196,7 @@
   working: true
   group: structured_data
   short_title: Joint Chance Constraints
-  focus: Network uncertainty allocation
+  focus: Networks · Uncertainty allocation
   figure: /assets/img/papers/riskbudget.svg
   figure_alt: "Conceptual illustration of optimized risk allocation: individual constraint budgets share a total risk budget to certify a
     joint chance constraint."

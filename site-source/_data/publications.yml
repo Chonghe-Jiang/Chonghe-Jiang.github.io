@@ -18,9 +18,10 @@
   venue: NeurIPS 2026 TTCL Workshop · Short version
   description: A small guidance model learns strategic changes at test time, while a frozen, larger model turns them into executable solutions.
   url: https://arxiv.org/abs/2610.06269
-  figure: /assets/img/papers/thoughtspace.png
-  figure_alt: "Guidance-TTT workflow: archive search, trainable guidance, frozen execution, and verifier feedback."
+  figure: /assets/img/papers/thought-space.svg
+  figure_alt: "Guidance-TTT, Figure 1: learning in thought space with a trainable guidance model and a frozen code executor."
   code: https://github.com/Human-Agent-Society/reef/tree/guidance-ttt-support
+  group: agents
 - key: coral
   category: self_improving
   short_title: CORAL
@@ -46,8 +47,53 @@
   venue: COLM 2026
   description: Autonomous agents explore, reflect, and collaborate through shared persistent memory to advance open-ended discovery.
   url: https://arxiv.org/abs/2604.01658
-  figure: /assets/img/papers/coral.svg
-  figure_alt: "CORAL concept diagram: autonomous agents explore, reflect, and collaborate through shared persistent memory."
+  figure: /assets/img/papers/coral-paper.png
+  figure_alt: "CORAL, Figure 2: autonomous agents, isolated worktrees, shared persistent memory, and heartbeat-driven reflection."
+  group: agents
+- key: probelowrank
+  category: llm_optimization
+  short_title: FLORAIN
+  title: Probe-Free Low-Rank Activation Intervention
+  authors:
+    - Chonghe Jiang*
+    - Bao Nguyen*
+    - Anthony Man-Cho So
+    - Viet Anh Nguyen
+  venue: NAACL 2025
+  description: A probe-free, low-rank intervention in hidden activations that steers language models toward more truthful generations.
+  url: https://arxiv.org/abs/2502.04043
+  figure: /assets/img/papers/probelowrank.png
+  figure_alt: "FLORAIN geometry: constructing desirable activation targets using global and question-specific directions."
+  group: optimization_for_llm
+- key: alphaopt
+  category: llm_optimization
+  short_title: AlphaOPT
+  title: "AlphaOPT: Formulating Optimization Programs with Self-Improving LLM Experience Library"
+  authors:
+    - Minwei Kong
+    - Ao Qu
+    - Xiaotong Guo
+    - Wenbin Ouyang
+    - Chonghe Jiang
+    - Han Zheng
+    - Yining Ma
+    - Dingyi Zhuang
+    - Yuhan Tang
+    - Junyi Li
+    - Shenhao Wang
+    - Haris Koutsopoulos
+    - Hai Wang
+    - Cathy Wu
+    - Jinhua Zhao
+  venue: KDD 2026 · Oral
+  description: A self-improving experience library strengthens LLM optimization modeling by learning reusable knowledge from solver feedback.
+  url: https://arxiv.org/abs/2510.18428
+  figure: /assets/img/papers/alphaopt.png
+  figure_alt: "AlphaOPT framework: learning an experience library and refining the conditions under which each insight applies."
+  code: https://github.com/Minw913/AlphaOPT
+  award: INFORMS Data Mining Society 2025 · Best Paper Finalist
+  group: llm_for_optimization
+  focus: Improving optimization modeling
 - key: frontieror
   category: llm_optimization
   short_title: FrontierOR
@@ -78,81 +124,46 @@
     - Jinhua Zhao
     - Hai Wang
   venue: NeurIPS 2026
-  description: A benchmark of 180 tasks testing whether LLMs can design efficient algorithms for realistic, large-scale optimization problems.
+  description: Moving beyond model formulation, FrontierOR evaluates whether LLMs can design efficient algorithms for large-scale optimization
+    across 180 tasks.
   url: https://arxiv.org/abs/2605.25246
   figure: /assets/img/papers/frontieror.png
   figure_alt: "FrontierOR benchmark: optimization problem classes, scales, and expert-reviewed task construction."
   code: https://github.com/Minw913/FrontierOR
-- key: alphaopt
-  category: llm_optimization
-  short_title: AlphaOPT
-  title: "AlphaOPT: Formulating Optimization Programs with Self-Improving LLM Experience Library"
+  group: llm_for_optimization
+  focus: Beyond modeling · Algorithm efficiency
+- key: fisher
+  category: optimization
+  short_title: Fisher Market Equilibrium
+  title: Accelerated Price Adjustment for Fisher Markets with Exact Recovery of Competitive Equilibrium
   authors:
-    - Minwei Kong
-    - Ao Qu
-    - Xiaotong Guo
-    - Wenbin Ouyang
-    - Chonghe Jiang
-    - Han Zheng
-    - Yining Ma
-    - Dingyi Zhuang
-    - Yuhan Tang
-    - Junyi Li
-    - Shenhao Wang
-    - Haris Koutsopoulos
-    - Hai Wang
-    - Cathy Wu
-    - Jinhua Zhao
-  venue: KDD 2026 · Oral
-  description: An experience library that learns and refines reusable optimization modeling knowledge from solver feedback, without updating
-    model parameters.
-  url: https://arxiv.org/abs/2510.18428
-  figure: /assets/img/papers/alphaopt.png
-  figure_alt: "AlphaOPT framework: learning an experience library and refining the conditions under which each insight applies."
-  code: https://github.com/Minw913/AlphaOPT
-  award: INFORMS Data Mining Society 2025 · Best Paper Finalist
-- key: probelowrank
-  category: llm_optimization
-  short_title: FLORAIN
-  title: Probe-Free Low-Rank Activation Intervention
-  authors:
+    - He Chen*
     - Chonghe Jiang*
-    - Bao Nguyen*
+    - Anthony Man-Cho So*
+  venue: WINE 2025 · Short version
+  description: Accelerated price adjustment finds approximate equilibrium prices, and a recovery oracle obtains exact competitive equilibrium
+    in linear and quasi-linear Fisher markets.
+  url: https://arxiv.org/abs/2510.07759
+  figure: /assets/img/papers/fisher.svg
+  figure_alt: "Fisher market concept diagram: accelerated price adjustment followed by an oracle that recovers exact competitive equilibrium
+    prices."
+  group: markets
+- key: chores
+  category: optimization
+  short_title: Chores Equilibrium
+  title: "Computing Competitive Equilibrium for Chores: Linear Convergence and Lightweight Iteration"
+  authors:
+    - He Chen
+    - Chonghe Jiang
     - Anthony Man-Cho So
-    - Viet Anh Nguyen
-  venue: NAACL 2025
-  description: A probe-free, low-rank intervention in hidden activations that steers language models toward more truthful generations.
-  url: https://arxiv.org/abs/2502.04043
-  figure: /assets/img/papers/probelowrank.png
-  figure_alt: "FLORAIN geometry: constructing desirable activation targets using global and question-specific directions."
-- key: quantization
-  category: llm_optimization
-  title: Reshaping Activation Geometry for Low-Bit LLM Quantization
-  collaborators:
-    - Ryan Lucas
-    - Jinhua Zhao
-    - Rahul Mazumder
-  venue: Working paper · Submitted
-  working: true
-- key: riskbudget
-  category: optimization
-  title: Optimized Risk-Budget Allocation for Safe Approximations of Joint Chance Constraints
-  authors:
-    - Chonghe Jiang*
-    - Zhekai Li*
-    - Elenna Dugundji
-    - Jinhua Zhao
-  venue: Working paper · 2026
-  url: https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7371978
-  working: true
-- key: hankel
-  category: optimization
-  title: Interpretable Time Series Imputation via Hankel Lifting and Robust Regularization
-  authors:
-    - Chonghe Jiang
-    - Xinyu Chen
-    - Jinhua Zhao
-  venue: TSL 2026 · Short version
+  venue: WINE 2024 · Short version; Games and Economic Behavior · Major revision
+  description: A difference-of-convex formulation yields linear convergence to exact chores equilibrium and a smoothed, subproblem-free method
+    for approximate equilibrium.
+  url: https://arxiv.org/abs/2410.04036
+  figure: /assets/img/papers/chores.svg
+  figure_alt: "Chores equilibrium concept diagram: a difference-of-convex formulation leads to linear convergence to exact equilibrium and
+    a smooth method for approximate equilibrium."
+  group: markets
 - key: gets
   category: optimization
   short_title: GETS
@@ -170,61 +181,39 @@
   figure: /assets/img/papers/gets.png
   figure_alt: GETS architecture combining input ensembles, calibration experts, and a gating mechanism.
   code: https://github.com/ZhuangDingyi/GETS/
-- key: fisher
+  group: structured_data
+  focus: Networks · Uncertainty calibration
+- key: riskbudget
   category: optimization
-  short_title: Fisher Market Equilibrium
-  title: Accelerated Price Adjustment for Fisher Markets with Exact Recovery of Competitive Equilibrium
+  title: Optimized Risk-Budget Allocation for Safe Approximations of Joint Chance Constraints
   authors:
-    - He Chen*
     - Chonghe Jiang*
-    - Anthony Man-Cho So*
-  venue: WINE 2025 · Short version
-  description: Accelerated price adjustment finds approximate equilibrium prices, and a recovery oracle obtains exact competitive equilibrium
-    in linear and quasi-linear Fisher markets.
-  url: https://arxiv.org/abs/2510.07759
-  figure: /assets/img/papers/fisher.svg
-  figure_alt: "Fisher market concept diagram: accelerated price adjustment followed by an oracle that recovers exact competitive equilibrium
-    prices."
-- key: chores
-  category: optimization
-  short_title: Chores Equilibrium
-  title: "Computing Competitive Equilibrium for Chores: Linear Convergence and Lightweight Iteration"
-  authors:
-    - He Chen
-    - Chonghe Jiang
-    - Anthony Man-Cho So
-  venue: WINE 2024 · Short version; Games and Economic Behavior · Major revision
-  description: A difference-of-convex formulation yields linear convergence to exact chores equilibrium and a smoothed, subproblem-free method
-    for approximate equilibrium.
-  url: https://arxiv.org/abs/2410.04036
-  figure: /assets/img/papers/chores.svg
-  figure_alt: "Chores equilibrium concept diagram: a difference-of-convex formulation leads to linear convergence to exact equilibrium and
-    a smooth method for approximate equilibrium."
-- key: bus
-  category: optimization
-  title: "Joint Bus Trip Scheduling and Vehicle Assignment: A Scalable Iterative Framework for Time-Dependent Travel Times"
-  collaborators:
-    - Yuhan Tang
-    - Charlie Liu
-    - Alexandre Jacquillat
-    - Haris Koutsopoulos
+    - Zhekai Li*
+    - Elenna Dugundji
     - Jinhua Zhao
-  venue: Working paper · To be submitted
+  venue: Working paper · 2026
+  url: https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7371978
   working: true
-- key: qcqp
+  group: structured_data
+  short_title: Joint Chance Constraints
+  focus: Joint chance constraints · Risk allocation
+  figure: /assets/img/papers/riskbudget.svg
+  figure_alt: "Conceptual illustration of optimized risk allocation: individual constraint budgets share a total risk budget to certify a
+    joint chance constraint."
+  description: Jointly optimizes decisions and individual risk budgets to reduce conservatism while preserving the safety guarantees of joint
+    chance-constraint approximations.
+- key: hankel
   category: optimization
-  title: "Bridging Convex and Nonconvex Approaches: Geodesic Strong Convexity of QCQPs from Tightness and Strict Complementarity of SDR"
-  collaborators:
-    - Huikang Liu
-    - Jinxin Wang
-    - Anthony Man-Cho So
-  venue: Working paper · To be submitted
-  working: true
-- key: portfolio
-  category: optimization
-  title: Portfolio Marginal Risk Control
-  collaborators:
-    - Wenchu Zhang
-    - Zhaolin Hu
-  venue: Working paper · To be submitted
-  working: true
+  title: Interpretable Time Series Imputation via Hankel Lifting and Robust Regularization
+  authors:
+    - Chonghe Jiang
+    - Xinyu Chen
+    - Jinhua Zhao
+  venue: TSL 2026 · Short version
+  group: structured_data
+  short_title: Time Series Imputation
+  focus: Time series · Missing data
+  figure: /assets/img/papers/hankel.svg
+  figure_alt: "Conceptual illustration of time series imputation: incomplete observations are lifted into a Hankel matrix and reconstructed
+    with robust regularization. The series is illustrative."
+  description: Combines Hankel lifting and robust regularization for interpretable reconstruction of incomplete time series.

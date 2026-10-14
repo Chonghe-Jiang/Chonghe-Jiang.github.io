@@ -1,9 +1,21 @@
 - id: self_improving
   title: LLM as Optimizer
   subtitle: Self-Improving Agents
+  groups:
+    - id: agents
 - id: llm_optimization
   title: LLM × Optimization
-  subtitle: Modeling, algorithms, and LLM methods
+  subtitle: Optimization for LLM · LLM for Optimization
+  groups:
+    - id: optimization_for_llm
+      title: Optimization for LLM
+    - id: llm_for_optimization
+      title: LLM for Optimization
 - id: optimization
   title: Optimization & Probability
-  subtitle: Theory, uncertainty, and decision-making
+  subtitle: Markets · Structured data
+  groups:
+    - id: markets
+      title: For Markets
+    - id: structured_data
+      title: For Structured Data

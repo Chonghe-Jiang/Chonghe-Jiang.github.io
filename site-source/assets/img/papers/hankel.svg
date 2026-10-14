@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="420" viewBox="0 0 720 420" role="img" aria-labelledby="title desc">
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10Z" fill="#8b959b"/></marker><pattern id="missing" width="6" height="6" patternUnits="userSpaceOnUse"><rect width="6" height="6" fill="#fff"/><path d="M0 6 L6 0" stroke="#c9cdd1" stroke-width="1"/></pattern></defs>
+<style>text{font-family:Arial,sans-serif;fill:#293641}.heading{font-size:26px;font-weight:700}.label{font-size:22px;font-weight:600}.small{font-size:19px;fill:#61707b}.line{fill:none;stroke:#8b959b;stroke-width:2.4;marker-end:url(#arrow)}.blue{fill:#eef4f8;stroke:#9ab6c8;stroke-width:1.7}.rose{fill:#f8eef0;stroke:#caa0a7;stroke-width:1.7}.green{fill:#edf5f1;stroke:#9cbcaf;stroke-width:1.7}</style><rect width="720" height="420" rx="8" fill="white"/>
+<title id="title">Time series imputation with Hankel lifting</title><desc id="desc">Illustrative incomplete time series is lifted to a Hankel matrix, then reconstructed with robust regularization. This is a conceptual diagram, not measured data.</desc>
+<text x="32" y="43" class="heading">Structure from incomplete time series</text><text x="32" y="73" class="small">Hankel lifting + robust regularization</text>
+<text x="143" y="121" text-anchor="middle" class="label">Observations</text>
+<path d="M37 247 L249 247" stroke="#d9dfe3" stroke-width="2"/>
+<path d="M43 222 L72 191 L101 206 M159 162 L188 190 L217 170 L246 188" fill="none" stroke="#527f9e" stroke-width="4"/>
+<path d="M101 206 L130 153 L159 162" fill="none" stroke="#b8bfc4" stroke-width="2" stroke-dasharray="5 6"/>
+<text x="142" y="278" text-anchor="middle" class="small">missing values</text>
+<path d="M269 193 L298 193" class="line"/><text x="381" y="121" text-anchor="middle" class="label">Hankel matrix</text>
+<rect x="314" y="146" width="25" height="25" rx="2" fill="#dce8f0"/>
+<rect x="341" y="146" width="25" height="25" rx="2" fill="#bfd2e0"/>
+<rect x="368" y="146" width="25" height="25" rx="2" fill="#e6cbd0"/>
+<rect x="395" y="146" width="25" height="25" rx="2" fill="url(#missing)"/>
+<rect x="422" y="146" width="25" height="25" rx="2" fill="#d4e4da"/>
+<rect x="314" y="173" width="25" height="25" rx="2" fill="#bfd2e0"/>
+<rect x="341" y="173" width="25" height="25" rx="2" fill="#e6cbd0"/>
+<rect x="368" y="173" width="25" height="25" rx="2" fill="url(#missing)"/>
+<rect x="395" y="173" width="25" height="25" rx="2" fill="#d4e4da"/>
+<rect x="422" y="173" width="25" height="25" rx="2" fill="#a4bfce"/>
+<rect x="314" y="200" width="25" height="25" rx="2" fill="#e6cbd0"/>
+<rect x="341" y="200" width="25" height="25" rx="2" fill="url(#missing)"/>
+<rect x="368" y="200" width="25" height="25" rx="2" fill="#d4e4da"/>
+<rect x="395" y="200" width="25" height="25" rx="2" fill="#a4bfce"/>
+<rect x="422" y="200" width="25" height="25" rx="2" fill="#e8d9c6"/>
+<rect x="314" y="227" width="25" height="25" rx="2" fill="url(#missing)"/>
+<rect x="341" y="227" width="25" height="25" rx="2" fill="#d4e4da"/>
+<rect x="368" y="227" width="25" height="25" rx="2" fill="#a4bfce"/>
+<rect x="395" y="227" width="25" height="25" rx="2" fill="#e8d9c6"/>
+<rect x="422" y="227" width="25" height="25" rx="2" fill="#c3d6e1"/>
+<text x="381" y="278" text-anchor="middle" class="small">shared temporal structure</text>
+<path d="M465 193 L495 193" class="line"/><text x="598" y="121" text-anchor="middle" class="label">Reconstruction</text>
+<path d="M503 247 L696 247" stroke="#d9dfe3" stroke-width="2"/>
+<path d="M509 222 L534 191 L559 206 L584 153 L609 162 L634 190 L659 170 L684 188" fill="none" stroke="#5f927a" stroke-width="4"/>
+<circle cx="584" cy="153" r="6" fill="#fff" stroke="#9b616e" stroke-width="3"/>
+<text x="598" y="278" text-anchor="middle" class="small">completed series</text>
+<rect x="158" y="319" width="404" height="58" rx="12" class="green"/><text x="360" y="355" text-anchor="middle" class="label">Interpretable + robust regularization</text>
+</svg>

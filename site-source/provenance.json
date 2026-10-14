@@ -19,18 +19,14 @@
     "implementation": "Custom local layouts and CSS on original al-folio; no reference-site code or assets copied."
   },
   "paper_figures": {
-    "thoughtspace": "https://arxiv.org/pdf/2610.06269 (Figure 3, page 4)",
+    "thoughtspace": "https://arxiv.org/html/2610.06269v1/guidance_mechanism_onefig.svg (Figure 1)",
     "frontieror": "https://arxiv.org/html/2605.25246v3/figures/FrontierOR.png",
     "alphaopt": "https://arxiv.org/html/2510.18428v4/figures/framework.png",
     "probelowrank": "https://arxiv.org/html/2502.04043v1/elips_update.png",
-    "gets": "https://arxiv.org/html/2410.09570v2/model.png"
+    "gets": "https://arxiv.org/html/2410.09570v2/model.png",
+    "coral": "https://arxiv.org/html/2604.01658v3/coral_overview.png (Figure 2)"
   },
   "original_diagrams": {
-    "coral": {
-      "file": "/assets/img/papers/coral.svg",
-      "method": "Original SVG concept diagram drawn for this homepage; not an empirical result plot.",
-      "source": "https://arxiv.org/abs/2604.01658"
-    },
     "fisher": {
       "file": "/assets/img/papers/fisher.svg",
       "method": "Original SVG concept diagram drawn for this homepage; not an empirical result plot.",
@@ -40,6 +36,16 @@
       "file": "/assets/img/papers/chores.svg",
       "method": "Original SVG concept diagram drawn for this homepage; not an empirical result plot.",
       "source": "https://arxiv.org/abs/2410.04036"
+    },
+    "riskbudget": {
+      "file": "/assets/img/papers/riskbudget.svg",
+      "method": "Original conceptual SVG illustration; not an experimental result.",
+      "source": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7371978"
+    },
+    "hankel": {
+      "file": "/assets/img/papers/hankel.svg",
+      "method": "Original conceptual SVG illustration; not an experimental result.",
+      "source": "https://m3s.mit.edu/our-team/chonghe-jiang-"
     }
   },
   "research_organization_reference": {

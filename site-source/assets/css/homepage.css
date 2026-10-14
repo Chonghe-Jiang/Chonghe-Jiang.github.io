@@ -187,7 +187,7 @@ body > main.container {
 .paper-figure:hover {
   border-color: #aa8b90;
 }
-.paper-text h4 {
+.paper-text h5 {
   font-family: "Open Sans", Arial, sans-serif;
   font-size: 1.05rem;
   font-weight: 700;
@@ -195,11 +195,11 @@ body > main.container {
   margin: 0 0 0.45rem;
   letter-spacing: -0.015rem;
 }
-.paper-text h4 a {
+.paper-text h5 a {
   color: var(--global-text-color);
   text-decoration: none;
 }
-.paper-text h4 a:hover {
+.paper-text h5 a:hover {
   color: var(--global-theme-color);
   text-decoration: underline;
 }
@@ -399,7 +399,7 @@ summary:focus-visible {
     max-width: 400px;
     justify-self: center;
   }
-  .paper-text h4 {
+  .paper-text h5 {
     font-size: 1.02rem;
   }
   .section-heading h2 {
@@ -504,8 +504,7 @@ summary:focus-visible {
   background: color-mix(in srgb, var(--global-theme-color) 7%, var(--global-bg-color));
 }
 .direction-title,
-.direction-subtitle,
-.direction-count {
+.direction-subtitle {
   display: block;
 }
 .direction-title {
@@ -517,16 +516,7 @@ summary:focus-visible {
   color: var(--global-text-color-light);
   margin-top: 0.35rem;
 }
-.direction-count {
-  color: var(--global-theme-color);
-  font-size: 0.7rem;
-  margin-top: 0.7rem;
-}
-.research-controls .research-count {
-  font-size: 0.72rem;
-  color: var(--global-text-color-light);
-  margin: 0.65rem 0 0;
-}
+
 .category-subtitle {
   font-size: 0.9em;
   font-weight: 400;
@@ -543,15 +533,30 @@ summary:focus-visible {
   }
   .research-direction {
     position: relative;
-    padding: 0.8rem 4.3rem 0.8rem 0.85rem;
+    padding: 0.8rem 0.85rem;
   }
-  .direction-count {
-    position: absolute;
-    right: 0.8rem;
-    top: 0.85rem;
-    margin: 0;
-  }
+
   .research-story {
     margin-top: 1.7rem;
   }
+}
+
+.paper-group + .paper-group {
+  margin-top: 2.4rem;
+}
+.paper-group-title {
+  font:
+    600 1rem "Open Sans",
+    Arial,
+    sans-serif;
+  color: var(--global-text-color-light);
+  margin: 0 0 1.6rem;
+}
+.paper-text .paper-focus {
+  font:
+    500 0.73rem "Open Sans",
+    Arial,
+    sans-serif;
+  color: var(--global-theme-color);
+  margin: 0 0 0.5rem;
 }

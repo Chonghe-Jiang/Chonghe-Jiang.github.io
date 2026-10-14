@@ -3,16 +3,11 @@ document.addEventListener("DOMContentLoaded", () => {
   if (controls) {
     const buttons = [...controls.querySelectorAll("[data-research-filter]")];
     const sections = [...document.querySelectorAll("[data-research-category]")];
-    const status = controls.querySelector(".research-count");
     function filter(category) {
-      let count = 0;
       sections.forEach((section) => {
         section.hidden = category !== "all" && section.dataset.researchCategory !== category;
-        if (!section.hidden) count += section.querySelectorAll(".paper-row").length;
       });
       buttons.forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.researchFilter === category)));
-      const label = buttons.find((button) => button.dataset.researchFilter === category)?.querySelector(".direction-title")?.textContent;
-      status.textContent = category === "all" ? `Showing all ${count} works` : `${count} works · ${label}`;
     }
     buttons.forEach((button) => button.addEventListener("click", () => filter(button.dataset.researchFilter)));
     window.addEventListener("hashchange", () => {

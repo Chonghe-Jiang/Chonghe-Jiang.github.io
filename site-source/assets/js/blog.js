@@ -211,46 +211,80 @@
 
 (() => {
   const map = document.getElementById("ar-map");
-  if (map) {
-    const controls = map.querySelector(".ar-map-controls");
-    const buttons = [...controls.querySelectorAll("button")];
-    const detail = map.querySelector(".ar-map-detail");
-    controls.hidden = false;
-    buttons.forEach((button) =>
-      button.addEventListener("click", () => {
-        buttons.forEach((b) => b.setAttribute("aria-pressed", String(b === button)));
-        const components = button.dataset.components.split(" ");
-        map.querySelectorAll("[data-component]").forEach((node) => {
-          node.classList.toggle("is-selected", components.includes(node.dataset.component));
-          node.classList.toggle("is-muted", !components.includes("all") && !components.includes(node.dataset.component));
-        });
-        detail.querySelector("strong").textContent = button.dataset.title;
-        detail.querySelector("p").textContent = button.dataset.description;
-        const link = detail.querySelector("a");
-        link.hidden = !button.dataset.url;
-        if (button.dataset.url) link.href = button.dataset.url;
-        else link.removeAttribute("href");
-      })
-    );
-  }
-  const duo = document.getElementById("ar-duo");
-  if (duo) {
-    const outcomes = {
-      confirmed: ["Gain confirmed", "Accept the verified improvement. Recheck the yardstick with the new evidence."],
-      unconfirmed: ["Proxy-only gain", "The full test did not confirm progress. One mismatch alone need not invalidate the yardstick."],
-      drift: ["Yardstick drifts", "Ranking fidelity fails across paired evaluations. Invalidate the yardstick; rebuild it or change target."],
-    };
-    const controls = duo.querySelector(".ar-scenarios");
-    const buttons = [...controls.querySelectorAll("button")];
-    controls.hidden = false;
-    buttons.forEach((button) =>
-      button.addEventListener("click", () => {
-        buttons.forEach((b) => b.setAttribute("aria-pressed", String(b === button)));
-        duo.dataset.outcome = button.dataset.outcome;
-        const [title, description] = outcomes[button.dataset.outcome];
-        duo.querySelector(".ar-duo-result strong").textContent = title;
-        duo.querySelector(".ar-duo-result p").textContent = description;
-      })
-    );
-  }
+  if (!map) return;
+  const controls = map.querySelector(".ar-map-controls");
+  const buttons = [...controls.querySelectorAll("button")];
+  const detail = map.querySelector(".ar-map-detail");
+  const nodes = [...map.querySelectorAll("[data-component]")];
+  const defaults = new Map(
+    nodes.map((node) => [
+      node.dataset.component,
+      {
+        copy: node.querySelector(".ar-node-copy").textContent,
+        tag: node.querySelector(".ar-node-tag").textContent,
+      },
+    ])
+  );
+  const operations = {
+    DeltaEvolve: {
+      memory: "Record semantic changes and whether they helped.",
+      adapt: "Use accumulated deltas to guide the next edit.",
+    },
+    CCTS: {
+      parent: "Bias parent selection using good/bad concept likelihood ratios.",
+      adapt: "Update concept distributions from evaluated programs.",
+    },
+    "Fork-and-Flush": {
+      propose: "Fork several continuations from the same workspace.",
+      select: "Run each branch for a horizon; continue the best.",
+      memory: "Preserve the workspace; clear each branch’s chat context.",
+    },
+    Forgetting: {
+      parent: "Reseed the whole team from its best candidate.",
+      memory: "Periodically clear sessions and all other candidate history.",
+    },
+    SLA: {
+      parent: "An Advisor assigns experiments from global evidence.",
+      propose: "Workers carry out distinct assignments in isolated contexts.",
+      memory: "Keep harness records; reconstruct context for every invocation.",
+    },
+    DuoDiscover: {
+      parent: "Workers choose targets with cheap, tailored yardsticks.",
+      evaluate: "Screen with proxies; confirm gains and check fidelity with full tests.",
+    },
+    "MIRA-AC": {
+      parent: "The outer policy chooses the next investigation or stops.",
+      adapt: "Train the decision policy and critic from downstream returns.",
+    },
+  };
+  controls.hidden = false;
+  buttons.forEach((button) =>
+    button.addEventListener("click", () => {
+      const changes = operations[button.textContent.trim()] || {};
+      const overview = button.dataset.components === "all";
+      buttons.forEach((b) => b.setAttribute("aria-pressed", String(b === button)));
+      nodes.forEach((node) => {
+        const key = node.dataset.component;
+        const changed = Object.hasOwn(changes, key);
+        node.classList.toggle("is-selected", changed);
+        node.querySelector(".ar-node-copy").textContent = changes[key] || defaults.get(key).copy;
+        node.querySelector(".ar-node-tag").textContent = overview
+          ? defaults.get(key).tag
+          : changed
+            ? "Changed by this method"
+            : "Shared loop operation";
+      });
+      detail.querySelector("strong").textContent = button.dataset.title;
+      detail.querySelector("p").textContent = button.dataset.description;
+      detail.querySelector(".ar-training-label").textContent = overview
+        ? "Search-state updates; policy training is optional"
+        : button.textContent.trim() === "MIRA-AC"
+          ? "Trainable decision policy · fixed executor"
+          : "Frozen LLM · search-state updates";
+      const link = detail.querySelector("a");
+      link.hidden = !button.dataset.url;
+      if (button.dataset.url) link.href = button.dataset.url;
+      else link.removeAttribute("href");
+    })
+  );
 })();

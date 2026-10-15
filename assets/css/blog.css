@@ -1359,3 +1359,152 @@ html[data-theme="dark"] .ar-figure {
     transition: none;
   }
 }
+
+/* The same closed loop stays in place as method-specific operations change. */
+.ar-evo-canvas {
+  position: relative;
+  margin: 1.5rem 0;
+}
+.ar-evo-edges {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  color: var(--essay-accent);
+  pointer-events: none;
+}
+.ar-evo-narrow {
+  display: none;
+}
+.ar-evo-nodes {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: 162px 162px;
+  column-gap: 3.3333%;
+  row-gap: 74px;
+  padding: 0 !important;
+  margin: 0 !important;
+  list-style: none;
+}
+.ar-evo-node {
+  min-width: 0;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--essay-line);
+  border-radius: 8px;
+  background: var(--global-bg-color, #fff);
+  padding: 0.75rem;
+  margin: 0 !important;
+}
+.ar-evo-parent {
+  grid-area: 1 / 1;
+}
+.ar-evo-propose {
+  grid-area: 1 / 2;
+}
+.ar-evo-evaluate {
+  grid-area: 1 / 3;
+}
+.ar-evo-select {
+  grid-area: 2 / 3;
+}
+.ar-evo-memory {
+  grid-area: 2 / 2;
+}
+.ar-evo-adapt {
+  grid-area: 2 / 1;
+}
+.ar-evo-node .ar-number {
+  font-size: 0.65rem;
+  color: var(--essay-accent);
+  letter-spacing: 0.08em;
+}
+.ar-evo-node strong {
+  font-size: 0.88rem;
+  line-height: 1.3;
+  margin-top: 0.3rem;
+}
+.ar-evo-node .ar-node-copy {
+  font-size: 0.73rem;
+  line-height: 1.5;
+  margin: 0.45rem 0;
+}
+.ar-node-tag {
+  margin-top: auto;
+  color: var(--essay-muted);
+  font-size: 0.6rem;
+  line-height: 1.4;
+}
+.ar-evo-node.is-selected {
+  border-color: var(--essay-accent);
+  box-shadow: inset 0 3px 0 var(--essay-accent);
+}
+.ar-evo-node.is-selected .ar-node-tag {
+  color: var(--essay-accent);
+  font-weight: 600;
+}
+.ar-evo-center {
+  position: absolute;
+  top: 162px;
+  left: 20%;
+  right: 20%;
+  height: 74px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 0.72rem;
+  line-height: 1.5;
+  color: var(--essay-muted);
+}
+.ar-training-label {
+  display: block;
+  font-size: 0.66rem;
+  color: var(--essay-accent);
+  margin-bottom: 0.55rem;
+}
+@media (max-width: 600px) {
+  .ar-evolution {
+    padding: 0.9rem;
+  }
+  .ar-evo-wide {
+    display: none;
+  }
+  .ar-evo-narrow {
+    display: block;
+  }
+  .ar-evo-nodes {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: repeat(3, 190px);
+    column-gap: 4.7059%;
+    row-gap: 26px;
+  }
+  .ar-evo-evaluate {
+    grid-area: 2 / 2;
+  }
+  .ar-evo-select {
+    grid-area: 3 / 2;
+  }
+  .ar-evo-memory {
+    grid-area: 3 / 1;
+  }
+  .ar-evo-adapt {
+    grid-area: 2 / 1;
+  }
+  .ar-evo-node {
+    padding: 0.6rem;
+  }
+  .ar-evo-node strong {
+    font-size: 0.8rem;
+  }
+  .ar-evo-node .ar-node-copy {
+    font-size: 0.68rem;
+  }
+  .ar-node-tag {
+    font-size: 0.57rem;
+  }
+  .ar-evo-center {
+    display: none;
+  }
+}

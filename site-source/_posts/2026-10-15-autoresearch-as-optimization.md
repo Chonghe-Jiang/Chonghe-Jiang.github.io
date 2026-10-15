@@ -9,20 +9,15 @@ research_blog: true
 math: true
 sections:
   - { id: search, title: Search over ideas }
-  - { id: memory, title: What should survive? }
+  - { id: memory, title: Memory and restarts }
   - { id: feedback, title: The cost of feedback }
   - { id: learning, title: Learning the next experiment }
-  - { id: questions, title: Where to go next }
 ---
 
-An agent edits a program, runs an experiment, and gets a better score. It repeats the process. Early progress comes quickly; later, the edits become smaller and the score barely moves. The agent is still working. What would make the next hour useful?
-
-This question connects several recent papers on LLMs for scientific discovery. Some redesign the search over candidate solutions. Others change what agents remember, how they divide work, or how they measure progress. I find it useful to read them together: each changes how a research system spends its next unit of effort.
-
-The examples here involve computational discovery, where programs, models, and algorithms can be tested repeatedly. They make a broader question concrete: how can a system accumulate useful evidence without becoming trapped by the path that produced it?
+Autoresearch systems repeatedly propose, test, and revise candidates. Recent work improves this loop through search strategies, selective memory, and cheaper feedback. These choices determine whether more compute produces new discoveries or more variations of the same idea.
 
 <figure class="ar-figure ar-map" id="ar-map" aria-labelledby="ar-map-title">
-<div class="ar-figure-heading"><span class="note-label">A map of the discovery loop</span><h3 id="ar-map-title">What changes the next experiment?</h3><p>Select a paper to locate its main intervention.</p></div>
+<div class="ar-figure-heading"><span class="note-label">A map of the discovery loop</span><h3 id="ar-map-title">What changes the next experiment?</h3></div>
 <ol class="ar-loop">
 <li data-component="propose"><span class="ar-number">01</span><strong>Propose</strong><small>Choose a direction.<br>Write a candidate.</small></li>
 <li data-component="test"><span class="ar-number">02</span><strong>Test</strong><small>Run an experiment.<br>Measure the outcome.</small></li>
@@ -41,14 +36,12 @@ The examples here involve computational discovery, where programs, models, and a
 <button type="button" aria-pressed="false" data-components="propose select" data-title="MIRA-AC" data-description="Learn research decisions from their downstream returns while keeping the executor fixed." data-url="https://arxiv.org/abs/2610.02525">MIRA-AC</button>
 </div>
 <div class="ar-map-detail" aria-live="polite" aria-atomic="true"><strong>The whole loop</strong><p>The model proposes experiments; the surrounding system controls evidence, selection, and budget.</p><a hidden>Read the paper ↗</a></div>
-<figcaption>Conceptual map of selected contributions. Stages overlap; the highlighted components are not an exhaustive description of each system.</figcaption>
+<figcaption>Select a paper to highlight the parts of the loop it changes.</figcaption>
 </figure>
 
 ## Search over ideas {#search}
 
-A [comment by tsuname](https://x.com/tsuname/status/2109876913544298678) compares autoresearch methods with familiar optimization ideas: momentum, cross-entropy search, simulated annealing. It is a useful starting point. Once a model can propose meaningful edits, the remaining choices look like questions an optimizer must answer: where to sample, which results to retain, and when to leave a promising neighborhood.
-
-For a fixed task, I would describe the loop with the following bookkeeping:
+A [comment by tsuname](https://x.com/tsuname/status/2109876913544298678) connects autoresearch with momentum, cross-entropy search, and simulated annealing. The connection starts with a simple objective: find the best verified candidate within a budget.
 
 <aside class="ar-equation" markdown="1">
 
@@ -56,35 +49,25 @@ $$
 C_t=\mathcal M(H_t),\qquad x_{t+1}\sim p_\theta(\cdot\mid C_t),\qquad y_{t+1}=f(x_{t+1}).
 $$
 
-$H_t$ is the research record; $\mathcal M$ chooses what enters the context $C_t$; the model proposes candidate $x$; the evaluator returns $y$. With budget $B$, the search aims for a strong **best verified candidate**:
-
-$$
-\mathbb E\!\left[\max_{t:\,\text{cost}(1{:}t)\leq B} f(x_t)\right].
-$$
+The system selects context $C_t$ from history $H_t$, generates candidate $x$, and evaluates it with $f$. **Changing context changes the search distribution, even with fixed model weights.**
 
 </aside>
 
-This view separates improving a candidate from changing how candidates are proposed. Even with frozen model weights, the system can adapt its search through parent selection, context, and experiment allocation. The equations describe that interface; they do not assume an analytic gradient through a running program.
+**[DeltaEvolve](https://arxiv.org/abs/2602.02919): carry useful changes forward.** It records semantic deltas describing how a program changed and whether the change helped. These deltas guide later edits. The momentum analogy concerns accumulated directions of improvement; the system does not compute numerical gradients through programs.
 
-Consider a packing solver. Changing a tie-breaking rule and replacing the entire placement strategy can both be short code edits. Their distance in lines of code says little about their distance as ideas. That makes the representation of search experience especially important.
+**[Contrastive Concept-Tree Search](https://arxiv.org/abs/2602.03132): learn where to sample.** It represents programs through a concept hierarchy, fits concept distributions to high- and low-performing programs, and guides parent selection with their likelihood ratio. A concept gains weight when it distinguishes strong programs from weak ones. The cross-entropy update changes concept-space sampling statistics, not LLM weights.
 
-Two earlier papers give useful ways to think about it. **[DeltaEvolve](https://arxiv.org/abs/2602.02919)** represents program history through semantic deltas: descriptions of what changed and whether it helped. Future proposals receive these changes as inspiration. Its momentum analogy is about carrying useful directions forward. It does not imply that natural-language edits are numerical gradients. A compact account of an improvement can be more useful than another full snapshot of the program.
+Both methods reuse evidence to guide proposals. A complementary choice is when to reopen exploration: branching and restarting can expose directions that continued local refinement misses.
 
-**[Contrastive Concept-Tree Search](https://arxiv.org/abs/2602.03132)** instead organizes programs through a hierarchy of concepts. It fits distributions to concepts in high- and low-performing programs using cross-entropy updates, then uses their likelihood ratio to guide parent selection. The comparison is informative: a concept common in good programs may also be common everywhere. Contrasting good and bad outcomes helps identify which concepts distinguish them. The learned sampling statistics live in concept space; this is not an LLM weight update.
+## Memory and restarts {#memory}
 
-There is also a distinction between accepting a temporary regression and preserving the best result. An annealing-style search can move through weaker candidates while keeping a separate incumbent. Likewise, a research system can give an unfinished direction time to mature without replacing its best verified artifact. The optimization analogy is most useful when it exposes these choices explicitly.
+Three recent papers differ in what they preserve across attempts:
 
-## What should survive? {#memory}
+**[Fork-and-Flush](https://arxiv.org/abs/2610.07447)** keeps the workspace, forks fresh-context continuations, and continues the best branch. Its ablations show that branching and context resets each help, with a larger gain from combining them.
 
-The search record has two jobs that can conflict. It preserves discoveries, but it also conditions the next proposal. A long account of failed approaches may prevent repetition. It may also convince the agent that a broader direction has been exhausted when only one implementation failed.
+**[Scaling Discovery Requires Forgetting](https://arxiv.org/abs/2610.20563)** clears more: agent sessions and the other candidate history. The team restarts from its best candidate and score. Experiments cover heuristic programming, kernel optimization, and model training.
 
-This is where optimization and agent architecture meet. In the notation above, changing $\mathcal M$ changes the proposal distribution even if $\theta$ stays fixed. Memory policy affects where the search goes.
-
-**[Fork-and-Flush](https://arxiv.org/abs/2610.07447)** studies runs that remain in localized regions of idea space. It periodically copies the accumulated workspace into parallel continuations with fresh chat contexts, gives each time to explore, and continues the best branch. Forking provides alternatives; flushing changes the history conditioning each alternative. Its ablations find gains from each operation and a larger gain from their combination. The paper also visualizes a polyomino trajectory that moves beyond the region occupied by local refinements.
-
-**[Scaling Discovery Requires Forgetting](https://arxiv.org/abs/2610.20563)** makes a stronger reset. At round boundaries, the communicating team retains the best candidate and its score, discards agent sessions and the other candidate history, and starts again. The experiments span heuristic programming, kernel optimization, and model training. The useful distinction is what crosses the boundary: the successful artifact survives, while the path used to find it is removed from the active search state.
-
-**[Stateless Language Agents](https://arxiv.org/abs/2610.07625)** makes context reconstruction routine. The harness retains candidates and measured outcomes; every Advisor and Worker invocation starts fresh. The Advisor receives evidence across directions and assigns experiments. Workers receive their assignment, local candidate, and focused feedback. State persists outside the conversations. The harness also distinguishes an evaluated non-improvement from an inconclusive execution failure, so the Advisor can reason about what was actually tested.
+**[Stateless Language Agents](https://arxiv.org/abs/2610.07625)** retains research state in the harness and rebuilds every invocation’s context. An Advisor sees evidence across directions and assigns experiments; Workers receive focused local context.
 
 <figure class="ar-figure" id="ar-memory" aria-labelledby="ar-memory-title">
 <div class="ar-figure-heading"><span class="note-label">Three ways to start fresh</span><h3 id="ar-memory-title">What crosses the next boundary?</h3></div>
@@ -94,18 +77,18 @@ This is where optimization and agent architecture meet. In the notation above, c
 <section class="ar-memory-card"><span class="ar-card-label">Periodic team reset</span><h4>Forgetting</h4><div class="ar-state ar-keep">Best candidate + score</div><div class="ar-state ar-reset">Sessions + other candidates</div><div class="ar-fan" aria-hidden="true"><span>↙</span><span>↓</span><span>↘</span></div><div class="ar-branches"><span>Fresh</span><span>Fresh</span><span>Fresh</span></div><p>Reseed the communicating team.<br><strong>Reopen search from the best.</strong></p></section>
 <section class="ar-memory-card"><span class="ar-card-label">Every invocation</span><h4>Stateless agents</h4><div class="ar-state ar-keep">Harness research record</div><div class="ar-state ar-curate">Role-specific context</div><div class="ar-role-flow"><span>Advisor</span><span aria-hidden="true">↓</span><span>Workers</span></div><p>Rebuild context from evidence.<br><strong>Assign distinct experiments.</strong></p></section>
 </div>
-<figcaption>Conceptual comparison of <a href="https://arxiv.org/abs/2610.07447">Fork-and-Flush</a>, <a href="https://arxiv.org/abs/2610.20563">Forgetting</a>, and <a href="https://arxiv.org/abs/2610.07625">SLA</a>. Branch symbols illustrate the mechanism, not a shared experimental agent count.</figcaption>
+<figcaption>Schematic: what each method retains and resets.</figcaption>
 </figure>
 
-These designs suggest a practical separation between the artifact, evidence about it, and the conversation that produced it. Each can have a different lifetime. Keeping the artifact preserves progress. Keeping testable evidence can prevent repeated mistakes. Keeping every interpretation may preserve assumptions that deserve another look.
+The distinction is between **stored evidence and visible context**. SLA keeps the record but controls who sees it; Forgetting removes most of the active search history. Neither requires carrying an entire conversation forward.
 
-The hard case is a failed experiment. “This idea does not work” and “this implementation never ran correctly” are different observations. If both become a negative entry in memory, future search may avoid an unexplored direction. If both disappear, the next agent may waste its budget repeating the same error. I would want a memory policy to preserve the reason a conclusion is justified, while allowing the conclusion itself to be reconsidered.
+What survives must also preserve the meaning of a result. SLA distinguishes a measured non-improvement from an execution failure: code that never ran is not evidence that the underlying idea failed.
 
 ## The cost of feedback {#feedback}
 
-More promising candidates help only if we can evaluate enough of them. A search with an hour-long test has a very different budget from one with a one-second test. The cost of feedback determines how many sequential decisions can fit into the run.
+**[DuoDiscover](https://arxiv.org/abs/2610.17184)** jointly discovers an optimization target and a cheap proxy evaluator, or _yardstick_. Workers iterate quickly against the proxy; full evaluations confirm gains and check whether its rankings remain reliable. A drifting yardstick is invalidated and rebuilt, or the worker changes target.
 
-**[DuoDiscover](https://arxiv.org/abs/2610.17184)** co-discovers optimization targets and cheap proxy evaluators, called _yardsticks_. Workers iterate against these proxies, while true evaluations confirm gains and recheck proxy fidelity. An orchestrator coordinates the workers. A yardstick must rank candidates usefully; its score need not match the true score. This saves time only when a faithful proxy exists and its construction cost is worthwhile.
+This increases the number of experiments the budget can support. It helps when a faithful proxy exists and the saved evaluation time outweighs its construction cost.
 
 <figure class="ar-figure ar-duo" id="ar-duo" aria-labelledby="ar-duo-title">
 <div class="ar-figure-heading"><span class="note-label">Two feedback timescales</span><h3 id="ar-duo-title">Explore cheaply. Confirm with the full test.</h3></div>
@@ -116,29 +99,13 @@ More promising candidates help only if we can evaluate enough of them. A search 
 </div>
 <div class="ar-scenarios" hidden role="group" aria-label="Explore outcomes of true evaluation"><button type="button" data-outcome="confirmed" aria-pressed="true">Gain confirmed</button><button type="button" data-outcome="unconfirmed" aria-pressed="false">Proxy-only gain</button><button type="button" data-outcome="drift" aria-pressed="false">Yardstick drifts</button></div>
 <div class="ar-duo-result" aria-live="polite" aria-atomic="true"><strong>Gain confirmed</strong><p>Accept the verified improvement. Recheck the yardstick with the new evidence.</p></div>
-<figcaption>Conceptual illustration of <a href="https://arxiv.org/abs/2610.17184">DuoDiscover</a>; no experimental scores are plotted.</figcaption>
+<figcaption>DuoDiscover’s feedback loop. Select an outcome to follow the decision.</figcaption>
 </figure>
-
-This changes how I would compare research systems. Candidate count alone hides the quality and cost of feedback. Parallel workers may reduce elapsed time, while a cheaper evaluator may also permit more rounds of dependent experimentation. These are different ways of spending compute. A useful comparison needs to show what the budget buys: proposals, verified experiments, or opportunities to act on new evidence.
 
 ## Learning the next experiment {#learning}
 
-The systems above expose decisions that could themselves be learned: which direction to pursue, what evidence to retrieve, and when to stop. The training target matters. An experiment that fails to improve the incumbent can still make a later breakthrough possible.
+**[MIRA-AC](https://arxiv.org/abs/2610.02525)** learns research decisions from their downstream returns. An outer policy selects investigations; a fixed executor carries them out. A shared generative critic estimates remaining return, allowing later gains to provide credit to earlier decisions. In a physics-discovery example, the policy requests a controlled parameter change that lets the executor distinguish two competing interaction laws.
 
-**[MIRA](https://arxiv.org/abs/2610.02525)** separates an outer research decision from the executor carrying it out. MIRA-AC trains a shared generative actor–critic at those decision boundaries. The critic forecasts remaining return; policy learning targets the research decision response, while execution remains fixed. Under its proxy feedback, reward is an increase in best-so-far quality, so later gains can be credited across a sequence of investigations.
+**[IdeaScientist](https://arxiv.org/abs/2610.04074)** trains the proposal process instead: gap finding, innovation, and report writing each receive GRPO training with reference-grounded rewards, under a fixed orchestrator. Its output is a research proposal; MIRA-AC learns from executed investigations.
 
-A concrete example is its physics discovery task. The outer policy asks for an experiment that independently varies a particle parameter, allowing the executor to distinguish competing interaction laws. The decision is useful because it asks a discriminating question. That is a more specific learning target than simply generating another plausible modification.
-
-**[IdeaScientist](https://arxiv.org/abs/2610.04074)** trains a different part of research. It separately trains gap-finding, innovation, and report-writing roles with GRPO, using reference-grounded rewards, and then combines them under a fixed orchestrator. Its main output is a research proposal. It asks how to produce better ideas before execution; MIRA-AC asks how to choose investigations as experimental evidence accumulates. Both are relevant, but proposal quality and experimental progress require different evidence.
-
-For test-time training, I am especially interested in the gap between immediate score and future usefulness. A policy can become good at producing valid candidates and still rarely change the best result. Learning which experiments create opportunities for later progress seems closer to the behavior we want from a research agent.
-
-## Where to go next {#questions}
-
-I would judge a discovery system by what happens after its first plateau. Does it keep producing variants of the same idea? Can it tell whether a direction failed or merely lacked a working implementation? Does a restart recover exploration, or just repeat the opening moves?
-
-A useful next experiment would begin from the same checkpoint and spend the same remaining budget under different memory policies. Compare the best verified result, but also inspect the sequence of decisions: which hypotheses changed, which experiments ruled something out, and which findings survived the reset. Code-edit size alone cannot establish that the agent explored a new idea.
-
-There is a similar experiment to run on feedback. Keep the proposal mechanism fixed and vary how the system purchases evidence: full evaluations, cheap proxies with calibration, or targeted tests that distinguish competing explanations. The most valuable test may be the one that changes the next decision, even when its immediate score is unimpressive.
-
-The question I want to carry forward is simple: **what should a research system learn from an unsuccessful experiment, and what should it be willing to forget?**
+For test-time training, this leaves a concrete choice of target: reward the next candidate’s score, or credit decisions for the progress they enable over several experiments. The second requires preserving the links between decisions and later outcomes, even when agent contexts are reset.

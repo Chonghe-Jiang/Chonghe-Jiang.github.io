@@ -208,3 +208,49 @@
       // Keep the static figure and downloadable data usable if enhancement fails.
     });
 })();
+
+(() => {
+  const map = document.getElementById("ar-map");
+  if (map) {
+    const controls = map.querySelector(".ar-map-controls");
+    const buttons = [...controls.querySelectorAll("button")];
+    const detail = map.querySelector(".ar-map-detail");
+    controls.hidden = false;
+    buttons.forEach((button) =>
+      button.addEventListener("click", () => {
+        buttons.forEach((b) => b.setAttribute("aria-pressed", String(b === button)));
+        const components = button.dataset.components.split(" ");
+        map.querySelectorAll("[data-component]").forEach((node) => {
+          node.classList.toggle("is-selected", components.includes(node.dataset.component));
+          node.classList.toggle("is-muted", !components.includes("all") && !components.includes(node.dataset.component));
+        });
+        detail.querySelector("strong").textContent = button.dataset.title;
+        detail.querySelector("p").textContent = button.dataset.description;
+        const link = detail.querySelector("a");
+        link.hidden = !button.dataset.url;
+        if (button.dataset.url) link.href = button.dataset.url;
+        else link.removeAttribute("href");
+      })
+    );
+  }
+  const duo = document.getElementById("ar-duo");
+  if (duo) {
+    const outcomes = {
+      confirmed: ["Gain confirmed", "Accept the verified improvement. Recheck the yardstick with the new evidence."],
+      unconfirmed: ["Proxy-only gain", "The full test did not confirm progress. One mismatch alone need not invalidate the yardstick."],
+      drift: ["Yardstick drifts", "Ranking fidelity fails across paired evaluations. Invalidate the yardstick; rebuild it or change target."],
+    };
+    const controls = duo.querySelector(".ar-scenarios");
+    const buttons = [...controls.querySelectorAll("button")];
+    controls.hidden = false;
+    buttons.forEach((button) =>
+      button.addEventListener("click", () => {
+        buttons.forEach((b) => b.setAttribute("aria-pressed", String(b === button)));
+        duo.dataset.outcome = button.dataset.outcome;
+        const [title, description] = outcomes[button.dataset.outcome];
+        duo.querySelector(".ar-duo-result strong").textContent = title;
+        duo.querySelector(".ar-duo-result p").textContent = description;
+      })
+    );
+  }
+})();

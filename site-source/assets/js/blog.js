@@ -242,6 +242,11 @@
       parent: "Workers choose targets and build cheap, tailored evaluators.",
       evaluate: "Screen with proxies; confirm gains and recheck proxy rankings with full tests.",
     },
+    IdeaScientist: {
+      parent: "Train gap finding and innovation to develop research directions.",
+      propose: "A trained report writer turns ideas into research proposals.",
+      evaluate: "Assess novelty and proposal quality against the literature.",
+    },
     "MIRA-AC": {
       parent: "Learn which investigation to run next, or when to stop, from downstream returns.",
     },
@@ -265,7 +270,9 @@
         ? "Search-state updates; policy training is optional"
         : button.textContent.trim() === "MIRA-AC"
           ? "Trainable decision policy · fixed executor"
-          : "Frozen LLM · search-state updates";
+          : button.textContent.trim() === "IdeaScientist"
+            ? "Trained ideation roles · fixed orchestrator"
+            : "Frozen LLM · search-state updates";
       const link = detail.querySelector("a");
       link.hidden = !button.dataset.url;
       if (button.dataset.url) link.href = button.dataset.url;

@@ -1115,6 +1115,35 @@ html[data-theme="dark"] .ar-figure {
   gap: 0.45rem;
   margin: 1rem 0;
 }
+.ar-grouped-controls {
+  display: grid;
+  gap: 0.7rem;
+}
+.ar-grouped-controls > button {
+  justify-self: start;
+}
+.ar-method-group {
+  display: grid;
+  grid-template-columns: 8.5rem minmax(0, 1fr);
+  align-items: center;
+  gap: 0.6rem;
+}
+.ar-group-label {
+  color: var(--essay-muted);
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+.ar-group-papers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+@media (max-width: 600px) {
+  .ar-method-group {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.35rem;
+  }
+}
 .ar-figure [hidden] {
   display: none !important;
 }

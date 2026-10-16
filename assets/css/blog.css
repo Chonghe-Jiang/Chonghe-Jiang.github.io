@@ -1360,10 +1360,10 @@ html[data-theme="dark"] .ar-figure {
   }
 }
 
-/* The same closed loop stays in place as method-specific operations change. */
+/* A shared four-stage loop, with method-specific operations. */
 .ar-evo-canvas {
   position: relative;
-  margin: 1.5rem 0;
+  margin: 1.25rem 0;
 }
 .ar-evo-edges {
   position: absolute;
@@ -1378,10 +1378,10 @@ html[data-theme="dark"] .ar-figure {
 }
 .ar-evo-nodes {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  grid-template-rows: 162px 162px;
-  column-gap: 3.3333%;
-  row-gap: 74px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: repeat(2, 144px);
+  column-gap: 6.6667%;
+  row-gap: 34px;
   padding: 0 !important;
   margin: 0 !important;
   list-style: none;
@@ -1394,7 +1394,7 @@ html[data-theme="dark"] .ar-figure {
   border: 1px solid var(--essay-line);
   border-radius: 8px;
   background: var(--global-bg-color, #fff);
-  padding: 0.75rem;
+  padding: 1rem;
   margin: 0 !important;
 }
 .ar-evo-parent {
@@ -1404,15 +1404,9 @@ html[data-theme="dark"] .ar-figure {
   grid-area: 1 / 2;
 }
 .ar-evo-evaluate {
-  grid-area: 1 / 3;
-}
-.ar-evo-select {
-  grid-area: 2 / 3;
-}
-.ar-evo-memory {
   grid-area: 2 / 2;
 }
-.ar-evo-adapt {
+.ar-evo-memory {
   grid-area: 2 / 1;
 }
 .ar-evo-node .ar-number {
@@ -1421,48 +1415,62 @@ html[data-theme="dark"] .ar-figure {
   letter-spacing: 0.08em;
 }
 .ar-evo-node strong {
-  font-size: 0.88rem;
+  font-size: 0.9rem;
   line-height: 1.3;
   margin-top: 0.3rem;
 }
 .ar-evo-node .ar-node-copy {
-  font-size: 0.73rem;
+  font-size: 0.78rem;
   line-height: 1.5;
-  margin: 0.45rem 0;
-}
-.ar-node-tag {
-  margin-top: auto;
-  color: var(--essay-muted);
-  font-size: 0.6rem;
-  line-height: 1.4;
+  margin: 0.45rem 0 0;
 }
 .ar-evo-node.is-selected {
   border-color: var(--essay-accent);
   box-shadow: inset 0 3px 0 var(--essay-accent);
-}
-.ar-evo-node.is-selected .ar-node-tag {
-  color: var(--essay-accent);
-  font-weight: 600;
-}
-.ar-evo-center {
-  position: absolute;
-  top: 162px;
-  left: 20%;
-  right: 20%;
-  height: 74px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  font-size: 0.72rem;
-  line-height: 1.5;
-  color: var(--essay-muted);
 }
 .ar-training-label {
   display: block;
   font-size: 0.66rem;
   color: var(--essay-accent);
   margin-bottom: 0.55rem;
+}
+.ar-study-table-wrap {
+  max-width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--essay-line);
+  border-radius: 8px;
+}
+.ar-study-table-wrap:focus-visible {
+  outline: 2px solid var(--essay-accent);
+  outline-offset: 3px;
+}
+.essay-body .ar-study-table-wrap table {
+  width: 100%;
+  min-width: 660px;
+  table-layout: fixed;
+  margin: 0;
+  font-size: 0.77rem;
+  line-height: 1.6;
+}
+.essay-body .ar-study-table-wrap th,
+.essay-body .ar-study-table-wrap td {
+  padding: 0.9rem 0.85rem;
+  vertical-align: top;
+  overflow-wrap: break-word;
+  border-bottom: 1px solid var(--essay-line);
+}
+.essay-body .ar-study-table-wrap th {
+  background: var(--essay-surface);
+  font-size: 0.72rem;
+}
+.essay-body .ar-study-table-wrap th:first-child {
+  width: 19%;
+}
+.essay-body .ar-study-table-wrap th:nth-child(2) {
+  width: 42%;
+}
+.essay-body .ar-study-table-wrap tbody tr:last-child td {
+  border-bottom: 0;
 }
 @media (max-width: 600px) {
   .ar-evolution {
@@ -1475,22 +1483,9 @@ html[data-theme="dark"] .ar-figure {
     display: block;
   }
   .ar-evo-nodes {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-template-rows: repeat(3, 190px);
+    grid-template-rows: repeat(2, 190px);
     column-gap: 4.7059%;
     row-gap: 26px;
-  }
-  .ar-evo-evaluate {
-    grid-area: 2 / 2;
-  }
-  .ar-evo-select {
-    grid-area: 3 / 2;
-  }
-  .ar-evo-memory {
-    grid-area: 3 / 1;
-  }
-  .ar-evo-adapt {
-    grid-area: 2 / 1;
   }
   .ar-evo-node {
     padding: 0.6rem;
@@ -1499,12 +1494,6 @@ html[data-theme="dark"] .ar-figure {
     font-size: 0.8rem;
   }
   .ar-evo-node .ar-node-copy {
-    font-size: 0.68rem;
-  }
-  .ar-node-tag {
-    font-size: 0.57rem;
-  }
-  .ar-evo-center {
-    display: none;
+    font-size: 0.7rem;
   }
 }

@@ -13,10 +13,6 @@ sections:
   - { id: science, title: Science & ideation }
 ---
 
-Eval time includes candidate execution and scoring, excluding the agent’s writing time. **~** marks estimates with warm environments, serial CPU cases and one GPU where needed. **Light** = seconds; **Heavy** = minutes or longer; **Mixed** spans both.
-
-**Saturation** asks whether meaningful gains have become difficult across recent papers and public results. The judgments below reflect the literature as of **October 16, 2026**; a plateau in one run is not enough.
-
 ## Algorithms & mathematical search {#algorithms}
 
 <div class="ar-study-table-wrap ar-task-table" role="region" aria-label="Algorithmic and mathematical tasks" tabindex="0" markdown="1">

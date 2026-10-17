@@ -1,7 +1,7 @@
 ---
 layout: research-post
-title: "Autoresearch as Optimization"
-description: "One self-evolution loop, different ways to use feedback."
+title: "Inside the Self-Evolution Loop"
+description: "How research agents manage context, choose experiments, and evaluate progress."
 topic: Scientific discovery · Agents · Optimization
 date: 2026-10-15 00:00:00 -0400
 permalink: /blog/2026/autoresearch-as-optimization/
@@ -21,7 +21,6 @@ sections:
 <button type="button" aria-pressed="false" data-components="propose memory" data-title="Fork-and-Flush" data-description="Fork the workspace into fresh-context continuations, then continue the best branch." data-url="https://arxiv.org/abs/2610.07447">Fork-and-Flush</button>
 <button type="button" aria-pressed="false" data-components="parent memory" data-title="Scaling Discovery Requires Forgetting" data-description="Restart the team from the best candidate after clearing sessions and the other candidate history." data-url="https://arxiv.org/abs/2610.20563">Forgetting</button>
 <button type="button" aria-pressed="false" data-components="parent propose memory" data-title="Stateless Language Agents" data-description="The harness retains evidence and rebuilds each context; an Advisor assigns experiments to Workers." data-url="https://arxiv.org/abs/2610.07625">SLA</button>
-<button type="button" aria-pressed="false" data-components="memory parent" data-title="DeltaEvolve" data-description="Carry forward semantic changes and their outcomes to guide future edits." data-url="https://arxiv.org/abs/2602.02919">DeltaEvolve</button>
 </div></div>
 <div class="ar-method-group" role="group" aria-labelledby="ar-group-decisions"><span class="ar-group-label" id="ar-group-decisions">Search decisions</span><div class="ar-group-papers">
 <button type="button" aria-pressed="false" data-components="parent" data-title="Contrastive Concept-Tree Search" data-description="Use concepts associated with strong and weak programs to guide parent selection and edits." data-url="https://arxiv.org/abs/2602.03132">CCTS</button>
@@ -55,7 +54,6 @@ sections:
 | [Fork-and-Flush](https://arxiv.org/html/2610.07447#S5.SS1) | **GPT-5.6-terra** (high) on 11 tasks; **GPT-5.5** (extra-high) on kernel and tinyCIFAR. Four fresh-context branches per fan-out.                                               | 13 tasks: Frontier-CS including polyomino packing and job-shop scheduling, EdgeBench, VLIW kernel optimization and tinyCIFAR training.                                |
 | [Forgetting](https://arxiv.org/pdf/2610.20563#page=5)      | **DeepSeek V4.1 Flash via Pi**. Four communicating agents; periodic team resets from the best candidate.                                                                       | AHC014; Frontier-CS Q171; Anthropic’s VLIW kernel challenge; nanochat training-script optimization.                                                                   |
 | [SLA](https://arxiv.org/html/2610.07625#S4.SS1)            | **GPT-5.5 via Codex**, or **Claude Opus 4.8 via Claude Code**. Stateless Advisor and parallel Workers; same model across roles in the main experiments.                        | Four FrontierSWE tasks; Anthropic’s VLIW kernel task; three SOL-ExecBench GPU kernels; FrontierCS Structured-LWE.                                                     |
-| [DeltaEvolve](https://arxiv.org/html/2602.02919#S5.SS1)    | **GPT-5-mini + o3-mini**, or **Gemini 2.5 Flash-Lite + Flash**, sampled 80/20 within each pair. Program evolution with a semantic-delta archive.                               | Black-box optimization; hexagon packing; symbolic regression; PDE solvers; 2D convolution optimization.                                                               |
 | [CCTS](https://arxiv.org/html/2602.03132v1#S5)             | **Gemini 2.0 Flash**. LLM program generation and concept extraction; a statistical model guides parent sampling.                                                               | Circle packing; arithmetic Kakeya; Heilbronn’s triangle; squares in a square. Also a synthetic discovery environment.                                                 |
 | [MIRA / MIRA-AC](https://arxiv.org/html/2610.02525#S6)     | **Qwen3.6-27B** for MIRA-AC: trainable decision policy and shared critic, fixed curator and executor. Fresh executors run through Codex. Untrained MIRA also uses **GPT-5.5**. | RL: symbolic regression, physics discovery, Bayesian causal discovery and HillClimbBench-CPU. Untrained MIRA: IMOProofBench and neural-architecture research.         |
 | [IdeaScientist](https://arxiv.org/html/2610.04074#S5)      | **Qwen3.6-27B**, with separate GRPO-trained roles for gap finding, innovation and report writing. Base variants also use **Gemma-4-31B** and **GPT-OSS-120B**.                 | Literature-grounded research proposals, assessed for novelty and proposal quality using the Svalbard Idea Vault. Evaluates ideation rather than executed experiments. |

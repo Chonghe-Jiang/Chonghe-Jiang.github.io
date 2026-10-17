@@ -218,10 +218,6 @@
   const nodes = [...map.querySelectorAll("[data-component]")];
   const defaults = new Map(nodes.map((node) => [node.dataset.component, node.querySelector(".ar-node-copy").textContent]));
   const operations = {
-    DeltaEvolve: {
-      parent: "Use accumulated semantic deltas to guide the next edit.",
-      memory: "Store what changed and whether it helped, with details available on demand.",
-    },
     CCTS: {
       parent: "Fit good/bad concept distributions; reweight parents by their likelihood ratio.",
     },

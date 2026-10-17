@@ -1498,20 +1498,26 @@ html[data-theme="dark"] .ar-figure {
 .essay-body .ar-study-table-wrap th:nth-child(2) {
   width: 42%;
 }
-.essay-body .ar-eval-table table {
+.essay-body .ar-model-table th:first-child {
+  width: 20%;
+}
+.essay-body .ar-model-table th:nth-child(2) {
+  width: 40%;
+}
+.essay-body .ar-task-table table {
   min-width: 760px;
 }
-.essay-body .ar-eval-table th:first-child {
-  width: 15%;
+.essay-body .ar-task-table th:first-child {
+  width: 20%;
 }
-.essay-body .ar-eval-table th:nth-child(2) {
+.essay-body .ar-task-table th:nth-child(2) {
+  width: 19%;
+}
+.essay-body .ar-task-table th:nth-child(3) {
+  width: 36%;
+}
+.essay-body .ar-task-table th:nth-child(4) {
   width: 25%;
-}
-.essay-body .ar-eval-table th:nth-child(3) {
-  width: 28%;
-}
-.essay-body .ar-eval-table th:nth-child(4) {
-  width: 32%;
 }
 .ar-eval-notes {
   margin-top: 1rem;

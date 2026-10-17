@@ -10,7 +10,7 @@ nav_order: 2
 <div class="education-entry"><span class="education-degree">PhD</span><div><h3>Massachusetts Institute of Technology</h3>
 <p class="education-program">PhD in Social and Engineering Systems (SES)  &amp; Statistics, Institute for Data, Systems, and Society (IDSS)</p>
 <p class="bio-detail">Grade: 5.0/5.0</p>
-<p class="bio-detail">Selected Courses: Deep Learning, Reinforcement Learning, Network Science, Fundamentals of Statistics.</p>
+<p class="bio-detail">Selected Courses: Deep Learning, Reinforcement Learning, Network Science, Fundamentals of Statistics, Econometric Data Science, Fundamentals of Probability.</p>
 </div></div>
 <div class="education-entry"><span class="education-degree">M.Phil</span><div><h3>The Chinese University of Hong Kong</h3>
 <p class="education-program">M.Phil in Operations Research</p>

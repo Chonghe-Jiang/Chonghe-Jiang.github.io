@@ -600,35 +600,12 @@ summary:focus-visible {
   margin: 0 0 0.5rem;
 }
 
-/* Bio uses open sections and aligned entries, with a compact section index. */
+/* Bio uses open sections and aligned entries. */
 .bio-page .post-header {
   margin-bottom: 2.6rem;
 }
-.bio-layout {
-  display: grid;
-  grid-template-columns: 132px minmax(0, 1fr);
-  gap: 2.5rem;
-  align-items: start;
-}
-.bio-nav {
-  position: sticky;
-  top: 6rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.85rem;
-  border-left: 1px solid var(--global-divider-color);
-  padding-left: 1rem;
-  font-size: 0.82rem;
-}
-.bio-nav a {
-  color: var(--global-text-color-light);
-  text-decoration: none;
-}
-.bio-nav a:hover,
-.bio-nav a:focus-visible {
-  color: var(--global-theme-color);
-}
 .bio-page .bio-content {
+  max-width: 900px;
   font-size: 0.95rem;
   line-height: 1.85;
   min-width: 0;
@@ -749,19 +726,6 @@ summary:focus-visible {
   margin: 0.2rem 0 0;
 }
 @media (max-width: 800px) {
-  .bio-layout {
-    grid-template-columns: 1fr;
-    gap: 2rem;
-  }
-  .bio-nav {
-    position: static;
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 0.7rem 1.2rem;
-    border-left: 0;
-    border-bottom: 1px solid var(--global-divider-color);
-    padding: 0 0 1rem;
-  }
   .bio-page .post-header {
     margin-bottom: 1.5rem;
   }

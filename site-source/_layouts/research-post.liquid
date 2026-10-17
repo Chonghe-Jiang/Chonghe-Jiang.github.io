@@ -3,7 +3,7 @@ layout: default
 ---
 <div class="research-post">
   <header class="essay-header">
-    <a class="essay-back" href="{{ '/blog/' | relative_url }}">← All writing</a>
+    <a class="essay-back" href="{{ page.back_url | default: '/blog/' | relative_url }}">← {{ page.back_label | default: 'All writing' }}</a>
     <p class="essay-eyebrow">{{ page.date | date: '%B %d, %Y' }}</p>
     <h1>{{ page.title | replace: 'Post-Training', '<span class="title-nowrap">Post-Training</span>' }}</h1>
     <p class="essay-deck">{{ page.description }}</p>
@@ -23,6 +23,7 @@ layout: default
     <article class="essay-body" id="article-body">{{ content }}</article>
   </div>
   <footer class="essay-end">
-    <a href="{{ '/blog/' | relative_url }}">← Back to writing</a><span>Questions or comments? <a href="mailto:chonghej@mit.edu">Email me</a></span>
+    <a href="{{ page.back_url | default: '/blog/' | relative_url }}">← {{ page.back_label | default: 'Back to writing' }}</a
+    ><span>Questions or comments? <a href="mailto:chonghej@mit.edu">Email me</a></span>
   </footer>
 </div>

@@ -1498,6 +1498,21 @@ html[data-theme="dark"] .ar-figure {
 .essay-body .ar-study-table-wrap th:nth-child(2) {
   width: 42%;
 }
+.essay-body .ar-eval-table table {
+  min-width: 760px;
+}
+.essay-body .ar-eval-table th:first-child {
+  width: 15%;
+}
+.essay-body .ar-eval-table th:nth-child(2) {
+  width: 25%;
+}
+.essay-body .ar-eval-table th:nth-child(3) {
+  width: 28%;
+}
+.essay-body .ar-eval-table th:nth-child(4) {
+  width: 32%;
+}
 .essay-body .ar-study-table-wrap tbody tr:last-child td {
   border-bottom: 0;
 }

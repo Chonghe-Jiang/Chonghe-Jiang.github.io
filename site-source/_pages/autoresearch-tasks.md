@@ -3,9 +3,9 @@ layout: research-post
 title: "Autoresearch: Tasks & Benchmarks"
 description: "What the agents work on, how long evaluation takes, and where progress is getting harder."
 date: 2026-10-15 00:00:00 -0400
-permalink: /blog/2026/autoresearch-as-optimization/tasks/
+permalink: /blog/2026/revisiting-autoresearch/tasks/
 research_blog: true
-back_url: /blog/2026/autoresearch-as-optimization/
+back_url: /blog/2026/revisiting-autoresearch/
 back_label: Back to the article
 sections:
   - { id: algorithms, title: Algorithms & mathematics }

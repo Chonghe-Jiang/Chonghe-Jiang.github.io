@@ -4,7 +4,7 @@ title: "Revisiting Autoresearch for Scientific Discovery"
 description: "How research agents manage context, choose experiments, and evaluate progress."
 topic: Scientific discovery · Agents · Optimization
 date: 2026-10-15 00:00:00 -0400
-permalink: /blog/2026/autoresearch-as-optimization/
+permalink: /blog/2026/revisiting-autoresearch/
 research_blog: true
 sections:
   - { id: methods, title: Methods }
@@ -64,4 +64,4 @@ sections:
 
 ## Tasks {#tasks}
 
-<a class="essay-read" href="{{ '/blog/2026/autoresearch-as-optimization/tasks/' | relative_url }}">See details on the tasks <span aria-hidden="true">→</span></a>
+<a class="essay-read" href="{{ '/blog/2026/revisiting-autoresearch/tasks/' | relative_url }}">See details on the tasks <span aria-hidden="true">→</span></a>

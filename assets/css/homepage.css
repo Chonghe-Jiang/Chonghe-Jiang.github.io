@@ -1,17 +1,28 @@
 /* Site-specific typography and layout on the original al-folio template. */
-:root {
+:root,
+:root[data-theme="light"] {
   --site-font: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --global-theme-color: #783e48;
-  --global-hover-color: #50242c;
-  --global-text-color: #262629;
-  --global-text-color-light: #66666b;
-  --paper-venue-color: #254968;
+  --global-bg-color: #f9fafb;
+  --global-text-color: #1f2937;
+  --global-text-color-light: #6b7280;
+  --global-theme-color: #8a1538;
+  --global-hover-color: #67102a;
+  --global-divider-color: #e1e5eb;
+  --site-surface: #f3f4f6;
+  --site-card: #ffffff;
+  --site-on-accent: #ffffff;
+  --paper-venue-color: var(--global-theme-color);
 }
-html[data-theme="dark"] {
-  --global-text-color-light: #aaa6aa;
-  --global-theme-color: #e5a3ae;
-  --global-hover-color: #f4c9cf;
-  --paper-venue-color: #9dbfdc;
+:root[data-theme="dark"] {
+  --global-bg-color: #111827;
+  --global-text-color: #e5e7eb;
+  --global-text-color-light: #a3adbd;
+  --global-theme-color: #eda5b8;
+  --global-hover-color: #f7c8d5;
+  --global-divider-color: #334155;
+  --site-surface: #182233;
+  --site-card: #1c283a;
+  --site-on-accent: #24121b;
 }
 body {
   font-family: var(--site-font);
@@ -72,7 +83,7 @@ body > main.container {
 .post > article a:not(.btn) {
   text-decoration: underline;
   text-decoration-thickness: 1px;
-  text-decoration-color: #783e4870;
+  text-decoration-color: color-mix(in srgb, var(--global-theme-color) 35%, transparent);
 }
 .intro-grid {
   display: grid;
@@ -175,10 +186,10 @@ body > main.container {
 .paper-figure {
   position: relative;
   width: 100%;
-  border: 1px solid #e1e5e9;
+  border: 1px solid var(--global-divider-color);
   padding: 0;
   overflow: hidden;
-  background: #fff;
+  background: var(--site-card);
   border-radius: 8px;
   cursor: zoom-in;
   box-shadow: 0 2px 8px #17212b06;
@@ -204,10 +215,10 @@ body > main.container {
   align-items: center;
   justify-content: space-between;
   gap: 0.7rem;
-  border-top: 1px solid #edf0f2;
-  background: #fafbfc;
+  border-top: 1px solid var(--global-divider-color);
+  background: var(--site-surface);
   padding: 0.6rem 0.8rem;
-  color: #627383;
+  color: var(--global-text-color-light);
   font: 500 0.7rem/1.5 var(--site-font);
   text-align: left;
 }
@@ -215,10 +226,10 @@ body > main.container {
   flex: none;
   font-size: 0.95rem;
   line-height: 1;
-  color: #783e48;
+  color: var(--global-theme-color);
 }
 .paper-figure:hover {
-  border-color: #aa8b90;
+  border-color: var(--global-theme-color);
   box-shadow: 0 4px 14px #17212b0d;
 }
 .paper-text h5 {
@@ -351,8 +362,8 @@ footer .container {
   padding: 2.5rem 1.4rem 1rem;
   border: 0;
   border-radius: 6px;
-  background: #fff;
-  color: #262629;
+  background: var(--site-card);
+  color: var(--global-text-color);
   box-shadow: 0 12px 80px #0005;
 }
 .figure-dialog::backdrop {
@@ -370,7 +381,7 @@ footer .container {
   top: 0.25rem;
   background: none;
   border: 0;
-  color: #262629;
+  color: var(--global-text-color);
   font-size: 1.9rem;
   cursor: pointer;
   padding: 0.1rem 0.5rem;

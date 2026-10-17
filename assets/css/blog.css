@@ -1,27 +1,10 @@
-/* Writing pages: cool neutrals and a restrained burgundy accent. */
-:root:has(.research-post, .writing-index),
-:root[data-theme="light"]:has(.research-post, .writing-index) {
-  --global-bg-color: #f9fafb;
-  --global-text-color: #1f2937;
-  --global-text-color-light: #6b7280;
-  --global-theme-color: #8a1538;
-  --global-hover-color: #67102a;
-  --global-divider-color: #e1e5eb;
-  --essay-surface: #f3f4f6;
-  --essay-card: #ffffff;
-  --essay-on-accent: #ffffff;
+/* Writing components inherit the shared site palette. */
+.research-post,
+.writing-index {
+  --essay-surface: var(--site-surface);
+  --essay-card: var(--site-card);
+  --essay-on-accent: var(--site-on-accent);
   --essay-heading-font: Georgia, "Times New Roman", serif;
-}
-:root[data-theme="dark"]:has(.research-post, .writing-index) {
-  --global-bg-color: #111827;
-  --global-text-color: #e5e7eb;
-  --global-text-color-light: #a3adbd;
-  --global-theme-color: #eda5b8;
-  --global-hover-color: #f7c8d5;
-  --global-divider-color: #334155;
-  --essay-surface: #182233;
-  --essay-card: #1c283a;
-  --essay-on-accent: #24121b;
 }
 .title-nowrap {
   white-space: nowrap;

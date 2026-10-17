@@ -9,6 +9,7 @@ research_blog: true
 sections:
   - { id: methods, title: Methods }
   - { id: experiments, title: Models }
+  - { id: evaluation-budget, title: Evaluation budget }
   - { id: tasks, title: Tasks }
 ---
 
@@ -59,6 +60,24 @@ sections:
 | [MIRA / MIRA-AC](https://arxiv.org/html/2610.02525#S6)     | Qwen3.6-27B for MIRA-AC; GPT-5.5 and GPT-6 Astra in untrained MIRA studies. | Trained decision policy and shared critic; fixed curator and fresh Codex executors. |
 | [IdeaScientist](https://arxiv.org/html/2610.04074#S5)      | Qwen3.6-27B; base variants include Gemma-4-31B and GPT-OSS-120B.            | GRPO-trained ideation roles; fixed orchestrator.                                    |
 | [DuoDiscover](https://arxiv.org/html/2610.17184#S3)        | Opus 5 with Sonnet 5 helper; Gemini 3.8 Flash in additional runs.           | Claude Code or Antigravity; four Workers by default.                                |
+
+</div>
+
+## Evaluation sample complexity {#evaluation-budget}
+
+Evaluation counts for solving one problem, excluding offline policy training. Where papers report steps or proposals instead, the unit is kept explicit.
+
+<div class="ar-study-table-wrap ar-eval-table" role="region" aria-label="Evaluation counts by paper" tabindex="0" markdown="1">
+
+| Paper                                                     | Count per problem / run                                                                                                                                                                                                 | What the count covers                                                                                                                                                                                                                                                             |
+| :-------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Fork-and-Flush](https://arxiv.org/html/2610.07447#S2)    | **No per-task total tabulated.** Runs use **6,000–100,000 Copilot credits**, depending on the task.                                                                                                                     | Agents choose how often to submit for grading. Four branches and three fan-outs describe the search schedule, not the number of evaluations. [Trajectory plots](https://arxiv.org/html/2610.07447#A7) mark graded submissions individually.                                       |
+| [Forgetting](https://arxiv.org/pdf/2610.20563#page=6)     | **AHC014 ablation: 30 initial + 30 further proposals per agent.** For four agents, this gives **240 proposal slots** in total (derived), including the shared prefix.                                                   | Each new candidate is scored by the harness. Empty turns produce no candidate, so proposal slots need not equal evaluations. The main four-task comparison uses a dollar budget; its completed evaluation totals are not tabulated.                                               |
+| [SLA](https://arxiv.org/html/2610.07625#A2.SS1)           | **9 candidate trials per full Advisor epoch** (derived: 3 Workers × 3 trials). **Whole-run evaluation totals are not tabulated.**                                                                                       | The harness evaluates Worker candidates. Runs stop at a token budget: e.g. **1B tokens** for VLIW and **700M** for FrontierSWE. These include input and output tokens; they cannot be converted directly into eval counts.                                                        |
+| [CCTS](https://arxiv.org/html/2602.03132v1#S5.SS1)        | **25 child-evaluation steps** per run in the main mathematical comparison; **60 independent runs** per task. A [longer circle-packing example](https://arxiv.org/html/2602.03132v1#A6.SS1) runs for **120 iterations**. | One child is generated and evaluated per search iteration. The counts describe the search loop, excluding seed initialization and concept-extraction calls; 60 is the replicate count, not extra search within one run.                                                           |
+| [MIRA / MIRA-AC](https://arxiv.org/html/2610.02525#A2)    | **At most 20 research decisions** per rollout in the four policy-evaluation environments, followed by **one final gold-evaluation stage**. **Total proxy calls are not reported.**                                      | An executor can run multiple experiments within one decision. Gold feedback is withheld during search. Separate untrained MIRA architecture campaigns use [**24 h** for RMT](https://arxiv.org/html/2610.02525#A5) and [**48 h** for Loop Transformer](https://arxiv.org/html/2610.02525#A6).                                                                     |
+| [IdeaScientist](https://arxiv.org/html/2610.04074#A5.SS1) | **No executed candidate experiments.** The orchestrator has a **100-turn cap**; the number of in-loop reviewer calls is not tabulated.                                                                                  | It produces and reviews research proposals. Literature reads, reviewer verdicts and final proposal grading are distinct from executing an experiment to test the proposed idea.                                                                                                   |
+| [DuoDiscover](https://arxiv.org/html/2610.17184#A6.SS1)   | **54 true evals per SOL-Exec kernel; 59 per SWE-fficiency task**, versus **76 / 72** for Claude Code. On SOL-Exec, **13 true evals** suffice to match Claude Code’s final score.                                        | Reported means for the analyzed benchmark subsets. Cheap yardstick evaluations are additional; these numbers count only full evaluations. [System case studies](https://arxiv.org/html/2610.17184#A4): **7** for vLLM, **6** for FreeToken, **17** for SQLite and **7** for zstd. |
 
 </div>
 

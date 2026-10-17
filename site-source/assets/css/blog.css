@@ -1,19 +1,45 @@
-/* Research writing uses the homepage's typography and burgundy accent. */
+/* Writing pages: cool neutrals and a restrained burgundy accent. */
+:root:has(.research-post, .writing-index),
+:root[data-theme="light"]:has(.research-post, .writing-index) {
+  --global-bg-color: #f9fafb;
+  --global-text-color: #1f2937;
+  --global-text-color-light: #6b7280;
+  --global-theme-color: #8a1538;
+  --global-hover-color: #67102a;
+  --global-divider-color: #e1e5eb;
+  --essay-surface: #f3f4f6;
+  --essay-card: #ffffff;
+  --essay-on-accent: #ffffff;
+  --essay-heading-font: Georgia, "Times New Roman", serif;
+}
+:root[data-theme="dark"]:has(.research-post, .writing-index) {
+  --global-bg-color: #111827;
+  --global-text-color: #e5e7eb;
+  --global-text-color-light: #a3adbd;
+  --global-theme-color: #eda5b8;
+  --global-hover-color: #f7c8d5;
+  --global-divider-color: #334155;
+  --essay-surface: #182233;
+  --essay-card: #1c283a;
+  --essay-on-accent: #24121b;
+}
 .title-nowrap {
   white-space: nowrap;
 }
 .research-post,
 .writing-index {
-  --essay-ink: var(--global-text-color, #262629);
-  --essay-muted: var(--global-text-color-light, #66666b);
-  --essay-line: var(--global-divider-color, #e5e1e1);
-  --essay-accent: var(--global-theme-color, #783e48);
-  --essay-surface: #faf7f6;
+  --essay-ink: var(--global-text-color);
+  --essay-muted: var(--global-text-color-light);
+  --essay-line: var(--global-divider-color);
+  --essay-accent: var(--global-theme-color);
   color: var(--essay-ink);
 }
-html[data-theme="dark"] .research-post,
-html[data-theme="dark"] .writing-index {
-  --essay-surface: #252326;
+.essay-header h1,
+.writing-header h1,
+.writing-card-copy h2,
+.essay-body > h2,
+.essay-body > h3 {
+  font-family: var(--essay-heading-font);
 }
 .essay-header {
   max-width: 900px;
@@ -41,7 +67,7 @@ html[data-theme="dark"] .writing-index {
 }
 .essay-header h1 {
   font-size: clamp(2.2rem, 5vw, 3.45rem);
-  letter-spacing: -0.045em;
+  letter-spacing: -0.025em;
   line-height: 1.12;
   font-weight: 600;
   max-width: 850px;
@@ -105,7 +131,7 @@ html[data-theme="dark"] .writing-index {
 }
 .essay-body a {
   text-decoration: underline;
-  text-decoration-color: #783e4860;
+  text-decoration-color: color-mix(in srgb, var(--essay-accent) 35%, transparent);
   text-underline-offset: 0.2em;
   overflow-wrap: anywhere;
 }
@@ -204,6 +230,13 @@ html[data-theme="dark"] .writing-index {
   background: var(--essay-surface);
   font-weight: 600;
   white-space: normal;
+}
+.essay-body tbody tr:nth-child(odd),
+.essay-body tbody tr:nth-child(even) {
+  background: transparent;
+}
+.essay-body tbody tr:hover {
+  background: color-mix(in srgb, var(--essay-accent) 3%, transparent);
 }
 .essay-body td,
 .essay-body th {
@@ -529,7 +562,7 @@ html[data-theme="dark"] .writing-index {
 .writing-header h1 {
   font-size: clamp(2.5rem, 6vw, 4rem);
   font-weight: 600;
-  letter-spacing: -0.05em;
+  letter-spacing: -0.025em;
   margin: 0.8rem 0 1rem;
 }
 .writing-header > p:last-child {
@@ -558,7 +591,7 @@ html[data-theme="dark"] .writing-index {
 .writing-card-copy h2 {
   font-size: 1.9rem;
   line-height: 1.3;
-  letter-spacing: -0.035em;
+  letter-spacing: -0.02em;
   font-weight: 600;
   margin: 0.8rem 0 1rem;
 }
@@ -735,7 +768,7 @@ html[data-theme="dark"] .writing-index {
   padding: 1.4rem;
   border: 1px solid var(--essay-line);
   border-radius: 12px;
-  background: linear-gradient(135deg, var(--essay-surface), var(--global-bg-color, white) 60%);
+  background: var(--essay-surface);
 }
 .ppo-map-heading h3 {
   margin: 0.35rem 0 1.4rem;
@@ -772,7 +805,7 @@ html[data-theme="dark"] .writing-index {
   border: 1px solid var(--essay-line);
   border-top: 3px solid var(--stage);
   border-radius: 6px;
-  background: var(--global-bg-color, white);
+  background: var(--essay-card);
   transition:
     border-color 150ms,
     box-shadow 150ms;
@@ -788,7 +821,7 @@ html[data-theme="dark"] .writing-index {
   line-height: 1;
   text-align: center;
   color: var(--essay-muted);
-  background: var(--global-bg-color, white);
+  background: var(--essay-card);
 }
 .ppo-stage-top {
   display: flex;
@@ -887,7 +920,7 @@ html[data-theme="dark"] .writing-index {
   cursor: pointer;
 }
 .ppo-paper-select button[aria-pressed="true"] {
-  color: var(--global-bg-color, white);
+  color: var(--essay-on-accent);
   background: var(--essay-accent);
   border-color: var(--essay-accent);
 }
@@ -1064,7 +1097,7 @@ html[data-theme="dark"] .ar-figure {
   border-radius: 6px;
   padding: 0.9rem 0.65rem;
   margin: 0;
-  background: var(--global-bg-color, #fff);
+  background: var(--essay-card);
   transition:
     opacity 150ms,
     box-shadow 150ms;
@@ -1152,16 +1185,16 @@ html[data-theme="dark"] .ar-figure {
   font-size: 0.75rem;
   line-height: 1.5;
   color: var(--essay-ink);
-  background: var(--global-bg-color, #fff);
+  background: var(--essay-card);
   border: 1px solid var(--essay-line);
   border-radius: 6px;
   padding: 0.45rem 0.7rem;
   cursor: pointer;
 }
 .ar-figure button[aria-pressed="true"] {
-  color: #fff;
-  background: #783e48;
-  border-color: #783e48;
+  color: var(--essay-on-accent);
+  background: var(--essay-accent);
+  border-color: var(--essay-accent);
 }
 .ar-figure button:focus-visible {
   outline: 2px solid var(--ar-blue);
@@ -1171,7 +1204,7 @@ html[data-theme="dark"] .ar-figure {
 .ar-duo-result {
   padding: 1rem 1.1rem;
   border-left: 3px solid var(--essay-accent);
-  background: var(--global-bg-color, #fff);
+  background: var(--essay-card);
   border-radius: 0 6px 6px 0;
   font-size: 0.85rem;
 }
@@ -1240,7 +1273,7 @@ html[data-theme="dark"] .ar-figure {
   padding: 1rem 0.7rem;
   border: 1px solid var(--essay-line);
   border-radius: 8px;
-  background: var(--global-bg-color, #fff);
+  background: var(--essay-card);
 }
 .ar-card-label {
   display: block;
@@ -1304,7 +1337,7 @@ html[data-theme="dark"] .ar-figure {
 .ar-slow {
   padding: 1rem;
   border-radius: 8px;
-  background: var(--global-bg-color, #fff);
+  background: var(--essay-card);
   border: 1px solid var(--ar-green);
 }
 .ar-slow {
@@ -1422,7 +1455,7 @@ html[data-theme="dark"] .ar-figure {
   flex-direction: column;
   border: 1px solid var(--essay-line);
   border-radius: 8px;
-  background: var(--global-bg-color, #fff);
+  background: var(--essay-card);
   padding: 1rem;
   margin: 0 !important;
 }

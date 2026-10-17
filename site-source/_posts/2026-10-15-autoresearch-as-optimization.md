@@ -1,6 +1,6 @@
 ---
 layout: research-post
-title: "Inside the Self-Evolution Loop"
+title: "Autoresearch from Different Angles"
 description: "How research agents manage context, choose experiments, and evaluate progress."
 topic: Scientific discovery · Agents · Optimization
 date: 2026-10-15 00:00:00 -0400

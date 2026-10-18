@@ -50,8 +50,15 @@ sections:
 
 ## Takeaways {#takeaways}
 
-<figure class="ar-takeaway" id="ar-context-takeaway" aria-labelledby="ar-context-title">
-<header class="ar-takeaway-heading"><span class="ar-takeaway-kicker">01 / Training-free</span><h3 id="ar-context-title">Keep progress. Refresh context.</h3><p>Carry useful results forward while giving the next attempt a fresh context.</p></header>
+A closer look reveals shared ideas within two strands of recent work: refreshing context in training-free agents, and learning research decisions in trained agents.
+
+<figure class="ar-takeaway" id="ar-takeaways" aria-label="Two perspectives on research agents">
+<div class="ar-takeaway-modes" hidden role="tablist" aria-label="Training approach">
+<button type="button" id="ar-mode-context" role="tab" aria-selected="true" aria-controls="ar-context-takeaway" tabindex="0">Training-free</button>
+<button type="button" id="ar-mode-learning" role="tab" aria-selected="false" aria-controls="ar-learning-takeaway" tabindex="-1">With training</button>
+</div>
+<div class="ar-takeaway-panel" id="ar-context-takeaway">
+<header class="ar-takeaway-heading"><h3 id="ar-context-title">Refresh context</h3><p>Carry useful results forward while giving the next attempt a fresh context.</p></header>
 <div class="ar-takeaway-switch" hidden role="group" aria-label="Compare context management methods">
 <button type="button" data-variant="fork" aria-pressed="true">Fork-and-Flush</button>
 <button type="button" data-variant="forget" aria-pressed="false">Forgetting</button>
@@ -67,11 +74,11 @@ sections:
 </div>
 <div class="ar-takeaway-return"><span data-field="feedback">Continue from the best branch</span></div>
 </div>
-<figcaption><span data-field="note">The workspace survives the reset; the winning branch supplies the next starting point.</span> <a data-source href="https://arxiv.org/abs/2610.07447">Read the paper ↗</a></figcaption>
-</figure>
+<p class="ar-takeaway-caption"><span data-field="note">The workspace survives the reset; the winning branch supplies the next starting point.</span> <a data-source href="https://arxiv.org/abs/2610.07447">Read the paper ↗</a></p>
+</div>
 
-<figure class="ar-takeaway" id="ar-learning-takeaway" aria-labelledby="ar-learning-title">
-<header class="ar-takeaway-heading"><span class="ar-takeaway-kicker">02 / With training</span><h3 id="ar-learning-title">Train the research decisions.</h3><p>Give high-level decisions a dedicated learning role, with feedback on the work they produce.</p></header>
+<div class="ar-takeaway-panel" id="ar-learning-takeaway">
+<header class="ar-takeaway-heading"><h3 id="ar-learning-title">Train the research decisions.</h3><p>Give high-level decisions a dedicated learning role, with feedback on the work they produce.</p></header>
 <div class="ar-takeaway-switch" hidden role="group" aria-label="Compare trainable research roles">
 <button type="button" data-variant="mira" aria-pressed="false">MIRA-AC</button>
 <button type="button" data-variant="idea" aria-pressed="false">IdeaScientist</button>
@@ -87,7 +94,9 @@ sections:
 </div>
 <div class="ar-takeaway-return"><span data-field="feedback">Verifier reward updates guidance θ</span></div>
 </div>
-<figcaption><span data-field="note">Learning happens on the current task. Only the guidance model changes; the executor stays frozen.</span> <a data-source href="https://arxiv.org/abs/2610.06269">Read the paper ↗</a></figcaption>
+<p class="ar-takeaway-caption"><span data-field="note">Learning happens on the current task. Only the guidance model changes; the executor stays frozen.</span> <a data-source href="https://arxiv.org/abs/2610.06269">Read the paper ↗</a></p>
+</div>
+
 </figure>
 
 ## Models {#experiments}

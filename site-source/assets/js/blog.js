@@ -188,7 +188,7 @@
       url: "https://arxiv.org/abs/2610.04074",
     },
   };
-  document.querySelectorAll(".ar-takeaway").forEach((figure) => {
+  document.querySelectorAll(".ar-takeaway-panel").forEach((figure) => {
     const controls = figure.querySelector(".ar-takeaway-switch");
     if (!controls) return;
     controls.hidden = false;
@@ -204,5 +204,36 @@
         figure.querySelector("[data-source]").href = variant.url;
       })
     );
+  });
+  const takeaway = document.getElementById("ar-takeaways");
+  if (!takeaway) return;
+  const modes = takeaway.querySelector(".ar-takeaway-modes");
+  const tabs = [...modes.querySelectorAll('[role="tab"]')];
+  const selectMode = (tab) => {
+    tabs.forEach((other) => {
+      const selected = other === tab;
+      other.setAttribute("aria-selected", String(selected));
+      other.tabIndex = selected ? 0 : -1;
+      const panel = document.getElementById(other.getAttribute("aria-controls"));
+      panel.hidden = !selected;
+      panel.setAttribute("role", "tabpanel");
+      panel.setAttribute("aria-labelledby", other.id);
+    });
+  };
+  modes.hidden = false;
+  selectMode(tabs[0]);
+  tabs.forEach((tab, index) => {
+    tab.addEventListener("click", () => selectMode(tab));
+    tab.addEventListener("keydown", (event) => {
+      let next;
+      if (event.key === "ArrowRight") next = (index + 1) % tabs.length;
+      else if (event.key === "ArrowLeft") next = (index + tabs.length - 1) % tabs.length;
+      else if (event.key === "Home") next = 0;
+      else if (event.key === "End") next = tabs.length - 1;
+      else return;
+      event.preventDefault();
+      selectMode(tabs[next]);
+      tabs[next].focus();
+    });
   });
 })();

@@ -1,7 +1,7 @@
 ---
 layout: research-post
-title: "Revisiting Recent Trends in Autoresearch"
-description: "LLM agents work on one problem, using evaluation feedback to search for the best solution within a fixed compute budget."
+title: "Revisiting Recent Trends in Self-Improving Agents for Autoresearch"
+description: "LLM agents work on one problem, using evaluation feedback to search for the best solution within a fixed evaluation budget."
 topic: Scientific discovery · Agents · Optimization
 date: 2026-10-15 00:00:00 -0400
 permalink: /blog/2026/revisiting-autoresearch/

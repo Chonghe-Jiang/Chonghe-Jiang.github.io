@@ -1,7 +1,7 @@
 ---
 layout: research-post
 title: "Revisiting PPO for LLM Post-Training"
-description: "How recent methods change sampling, credit assignment, and the actor–critic update."
+description: "PPO and related policy-gradient methods for LLM post-training."
 topic: Reinforcement learning · LLM post-training
 date: 2026-10-14 00:00:00 -0400
 permalink: /blog/2026/revisiting-ppo/
@@ -11,9 +11,10 @@ sections:
   - { id: ppo-paper-map, title: The training loop }
   - { id: recent-work, title: Actor & critic updates }
   - { id: literature, title: Literature }
+  - { id: models, title: Models & Tasks }
 ---
 
-Recent PPO work revisits how trajectories are sampled, how the critic estimates returns, and how policy updates handle distribution mismatch. Mapping these changes onto the training loop makes the methods easier to compare.
+This post reviews **PPO and related policy-gradient methods for large language models**, covering reasoning, coding, and tool-using agents. The methods revisit rollout sampling, value estimation, credit assignment, and policy updates. Some retain PPO’s learned critic; others replace it, remove it, or add auxiliary supervision. TEMPO also studies test-time adaptation.
 
 <figure class="ppo-map" id="ppo-paper-map" aria-labelledby="ppo-map-title">
 <div class="ppo-map-heading"><span class="note-label">From rollout to update</span><h3 id="ppo-map-title">Where recent papers change PPO</h3></div>
@@ -197,3 +198,26 @@ L_{\mathrm{AF}}
 $$
 
 Training minimizes $L_{\mathrm{GRPO}}+\eta L_{\mathrm{AF}}$, averaging the forecasting term over successful rollouts within each group. A forecasting instruction distinguishes $p_\theta$ from the acting distribution, even though they share parameters. At inference, the agent still acts one step at a time. The added signal teaches which action sequences followed successful histories, rather than how much scalar value each history had.
+
+## Models & Tasks {#models}
+
+The experiments range from answer-only reasoning to agents that use tools over many turns. The table separates the model being trained from models that supply values or grades.
+
+<div class="ar-study-table-wrap ppo-model-table" role="region" aria-label="LLM models, critics and tasks by method" tabindex="0" markdown="1">
+
+| Method                                                                                                                             | Trained models                                                                         | Critic / judge                                                                                           | Tasks                                                                                                 |
+| :--------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------- |
+| [SAO](https://arxiv.org/html/2607.07508v1#S4.SS1)                                                                                  | Qwen3-30B-A3B-Thinking-2507; TIR-finetuned initialization for math.                    | Separate value model initialized from the policy checkpoint.                                             | [Math with Python](tasks/#math); [SWE-bench Verified](tasks/#coding) with OpenHands.                  |
+| [FlashREINFORCE](https://yifanzhang-pro.github.io/FlashREINFORCE/)                                                                 | DeepSeek-R1-Distill-Qwen-1.5B; Qwen2.5-Math-1.5B; Qwen2.5-7B-Instruct; Qwen3-30B-A3B.  | No critic.                                                                                               | [Math and Python tool use](tasks/#math); [ALFWorld](tasks/#agents).                                   |
+| [EasyPPO](https://arxiv.org/html/2609.36802v1#S5)                                                                                  | Qwen3.5-9B-Base for math/search; Qwen3.5-9B after SFT for coding.                      | Learned token-value critic. DeepSeek-V3.1 supplies coding SFT trajectories.                              | DAPO-Math-17K → AIME24; [FrontierSmith → FrontierCS](tasks/#coding); [Search-R1](tasks/#agents).      |
+| [TEMPO](https://arxiv.org/html/2604.19295v1#S4.SS1)                                                                                | Qwen3-8B/14B-Base; OLMO3-7B-Base, after PPO initialization.                            | Learned critic; GPT-OSS-120B judges general-domain answers.                                              | [Math and general reasoning](tasks/#math), with unlabeled adaptation sets and separate held-out sets. |
+| [AC2](https://arxiv.org/html/2609.39247v2#S4)                                                                                      | Qwen3-4B-Thinking-2507.                                                                | Actor and generative critic share weights; DeepSeek-V4-Flash grades proofs.                              | [FineProofs-RL → IMO-ProofBench](tasks/#proofs).                                                      |
+| [Score Centering](https://arxiv.org/html/2609.20807v1#S5.SS1)                                                                      | Qwen3-0.6B-Instruct; Qwen3-30B-A3B-Base.                                               | No learned critic in the controlled comparison; group-centered REINFORCE.                                | [Countdown and INTELLECT-2 math](tasks/#math), under controlled sampler–trainer mismatch.             |
+| [Decoupled PPO](https://github.com/areal-project/AReaL/blob/bb13e3bdb9a865608eafa017a70a790124c3d3bb/examples/math/gsm8k_ppo.yaml) | Qwen2.5-1.5B-Instruct in the linked AReaL example.                                     | Separate critic initialized from the same checkpoint.                                                    | [GSM8K](tasks/#math). This row describes a released configuration, not a separate paper experiment.   |
+| [BPCO](https://arxiv.org/html/2608.23566v2#S4)                                                                                     | DeepSeek-R1-Distill-Qwen-1.5B; Qwen3-30B-A3B Base/non-Base; Qwen3-4B-Base for rubrics. | Learned critic; optional answer/rubric inputs. Qwen3-4B-Instruct-2507 is the rubric judge.               | [Math](tasks/#math): DeepScaleR or DAPO-Math-17K → AIME25; [OpenRubrics](tasks/#rubrics).             |
+| [LVRL](https://arxiv.org/html/2610.15840v1#S4.SS1)                                                                                 | Qwen3-4B/8B for AppWorld and BabyAI; Qwen3-8B/32B for repository tasks.                | Frozen Claude Opus 4.6 value critic. LVOPD uses Qwen3-235B-A22B-Thinking-2507-FP8 as teacher and critic. | [AppWorld, BabyAI](tasks/#agents); [R2E-Gym → SWE-bench Verified](tasks/#coding).                     |
+| [CoPE](https://arxiv.org/html/2610.20597v2#S6)                                                                                     | Qwen2.5-7B-Instruct; Qwen2.5-14B-Instruct for AppWorld.                                | No value critic; acting and forecasting share one backbone.                                              | [ALFWorld, ScienceWorld, WebShop, τ²-bench and AppWorld](tasks/#agents).                              |
+
+</div>
+
+<a class="essay-read" href="{{ '/blog/2026/revisiting-ppo/tasks/' | relative_url }}">See details on the tasks <span aria-hidden="true">→</span></a>

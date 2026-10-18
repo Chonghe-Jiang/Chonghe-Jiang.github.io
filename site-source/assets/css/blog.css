@@ -1503,6 +1503,21 @@ html[data-theme="dark"] .ar-figure {
 .essay-body .ar-model-table th:nth-child(2) {
   width: 40%;
 }
+.essay-body .ppo-model-table table {
+  min-width: 780px;
+}
+.essay-body .ppo-model-table th:first-child {
+  width: 17%;
+}
+.essay-body .ppo-model-table th:nth-child(2) {
+  width: 29%;
+}
+.essay-body .ppo-model-table th:nth-child(3) {
+  width: 27%;
+}
+.essay-body .ppo-model-table th:nth-child(4) {
+  width: 27%;
+}
 .essay-body .ar-task-table table {
   min-width: 760px;
 }

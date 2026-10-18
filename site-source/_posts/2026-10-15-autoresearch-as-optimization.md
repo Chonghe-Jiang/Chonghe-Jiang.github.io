@@ -9,6 +9,7 @@ research_blog: true
 sections:
   - { id: methods, title: Methods }
   - { id: takeaways, title: Takeaways }
+  - { id: next-step, title: What’s next? }
 ---
 
 ## Methods {#methods}
@@ -26,9 +27,6 @@ sections:
 <button type="button" aria-pressed="false" data-components="parent" data-title="MIRA-AC" data-description="Learn research decisions from their downstream returns while keeping the executor fixed." data-url="https://arxiv.org/abs/2610.02525" data-training-label="Trained decision policy · fixed executor" data-method="MIRA-AC">MIRA-AC <span class="ar-training-dot" role="img" aria-label="Updates model parameters" title="Updates model parameters"></span></button>
 <button type="button" aria-pressed="false" data-components="parent propose evaluate" data-title="IdeaScientist" data-description="GRPO trains gap finding, innovation and report writing; a fixed orchestrator coordinates research proposal generation." data-url="https://arxiv.org/abs/2610.04074" data-training-label="Trained ideation roles · fixed orchestrator" data-method="IdeaScientist">IdeaScientist <span class="ar-training-dot" role="img" aria-label="Updates model parameters" title="Updates model parameters"></span></button>
 <button type="button" aria-pressed="false" data-components="parent propose" data-method="Guidance-TTT" data-title="Evolving in Thought Space" data-description="Train strategic guidance at test time; a frozen executor implements it." data-training-label="Test-time training · frozen executor" data-url="https://arxiv.org/abs/2610.06269">Evolving in Thought Space <span class="ar-training-dot" role="img" aria-label="Updates model parameters" title="Updates model parameters"></span></button>
-</div></div>
-<div class="ar-method-group" role="group" aria-labelledby="ar-group-evaluation"><span class="ar-group-label" id="ar-group-evaluation">Candidate evaluation</span><div class="ar-group-papers">
-<button type="button" aria-pressed="false" data-components="parent evaluate" data-title="DuoDiscover" data-description="Discover targets and cheap proxy evaluators together, and confirm gains with true evaluations." data-url="https://arxiv.org/abs/2610.17184" data-method="DuoDiscover">DuoDiscover</button>
 </div></div>
 </div>
 <div class="ar-evo-canvas">
@@ -95,6 +93,22 @@ These papers highlight two ways to improve research agents: refresh their contex
 </div>
 
 </figure>
+
+## What’s the Next Step? {#next-step}
+
+I see evaluation time as a major constraint on self-improving research agents. A promising idea still needs to be tested, and those tests can dominate the research budget. In [DuoDiscover’s vLLM study](https://arxiv.org/html/2610.17184#A4.SS1), one full evaluation takes about 85 minutes. This points to two directions.
+
+### Use fewer evaluations
+
+How can we find a better solution with fewer calls to the evaluator? Training-free methods can use past results to select more informative experiments and avoid repeating failed attempts. With training, a research policy can learn which directions are worth pursuing. Both aim for **sample-efficient search**: reaching a stronger verified result within a fixed evaluation budget.
+
+### Make evaluations cheaper
+
+Can a cheap approximation tell us which candidates deserve a full evaluation? Smaller test suites, shorter runs or surrogate models could make it possible to explore more candidates with the same resources.
+
+[DuoDiscover](https://arxiv.org/abs/2610.17184) takes this direction: agents develop optimization targets together with cheap, tailored proxy evaluators. They search using these proxies, then confirm improvements with the full evaluator. Fidelity tests also check whether proxy rankings still agree with full evaluations as the search progresses.
+
+The open question is when to trust an approximation and when to pay for a full test. A faster evaluator helps only if the search still produces better results under the real objective.
 
 Working on self-improving agents, I’m always interested in the models people choose and the tasks they test them on. Some familiar tasks, such as Erdős problems and packing benchmarks, already seem close to saturation. I’ve collected the models and tasks from these papers below as a reference for planning new experiments.
 

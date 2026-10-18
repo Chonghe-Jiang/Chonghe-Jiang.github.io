@@ -70,10 +70,6 @@
       propose: "Workers run distinct assignments with focused, freshly rebuilt contexts.",
       memory: "Keep candidates and outcomes in the harness; rebuild context for each role.",
     },
-    DuoDiscover: {
-      parent: "Workers choose targets and build cheap, tailored evaluators.",
-      evaluate: "Screen with proxies; confirm gains and recheck proxy rankings with full tests.",
-    },
     IdeaScientist: {
       parent: "Train gap finding and innovation to develop research directions.",
       propose: "A trained report writer turns ideas into research proposals.",

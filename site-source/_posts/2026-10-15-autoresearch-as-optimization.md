@@ -8,6 +8,7 @@ permalink: /blog/2026/revisiting-autoresearch/
 research_blog: true
 sections:
   - { id: methods, title: Methods }
+  - { id: takeaways, title: Takeaways }
   - { id: experiments, title: Models }
   - { id: evaluation-budget, title: Evaluation budget }
   - { id: tasks, title: Tasks }
@@ -45,6 +46,48 @@ sections:
 </div>
 <div class="ar-map-detail" hidden aria-live="polite" aria-atomic="true"><span class="ar-training-label">Search-state updates; policy training is optional</span><strong>Shared loop</strong><p>Feedback updates the search state; marked methods also train model parameters.</p><a hidden>Read the paper ↗</a></div>
 <figcaption>Select a paper to see its changes. <span class="ar-training-key"><span class="ar-training-dot" aria-hidden="true"></span> Updates model parameters</span></figcaption>
+</figure>
+
+## Takeaways {#takeaways}
+
+<figure class="ar-takeaway" id="ar-context-takeaway" aria-labelledby="ar-context-title">
+<header class="ar-takeaway-heading"><span class="ar-takeaway-kicker">01 / Training-free</span><h3 id="ar-context-title">Keep progress. Refresh context.</h3><p>Carry useful results forward while giving the next attempt a fresh context.</p></header>
+<div class="ar-takeaway-switch" hidden role="group" aria-label="Compare context management methods">
+<button type="button" data-variant="fork" aria-pressed="true">Fork-and-Flush</button>
+<button type="button" data-variant="forget" aria-pressed="false">Forgetting</button>
+<button type="button" data-variant="sla" aria-pressed="false">SLA</button>
+</div>
+<div class="ar-takeaway-diagram" aria-live="polite" aria-atomic="true">
+<div class="ar-takeaway-flow">
+<div class="ar-takeaway-node"><span class="ar-takeaway-role">Retain</span><strong data-field="first">Accumulated workspace</strong><p data-field="firstCopy">Artifacts from the search so far.</p></div>
+<span class="ar-takeaway-arrow" aria-hidden="true">→</span>
+<div class="ar-takeaway-node ar-takeaway-focus"><span class="ar-takeaway-role">Rebuild</span><strong data-field="second">Fresh contexts</strong><p data-field="secondCopy">Each branch starts a new conversation.</p><span class="ar-reset-note" data-field="reset">Reset chat history</span></div>
+<span class="ar-takeaway-arrow" aria-hidden="true">→</span>
+<div class="ar-takeaway-node"><span class="ar-takeaway-role">Explore</span><strong data-field="third">Parallel attempts</strong><p data-field="thirdCopy">Run each branch for a fixed horizon.</p></div>
+</div>
+<div class="ar-takeaway-return"><span data-field="feedback">Continue from the best branch</span></div>
+</div>
+<figcaption><span data-field="note">The workspace survives the reset; the winning branch supplies the next starting point.</span> <a data-source href="https://arxiv.org/abs/2610.07447">Read the paper ↗</a></figcaption>
+</figure>
+
+<figure class="ar-takeaway" id="ar-learning-takeaway" aria-labelledby="ar-learning-title">
+<header class="ar-takeaway-heading"><span class="ar-takeaway-kicker">02 / With training</span><h3 id="ar-learning-title">Train the research decisions.</h3><p>Give high-level decisions a dedicated learning role, with feedback on the work they produce.</p></header>
+<div class="ar-takeaway-switch" hidden role="group" aria-label="Compare trainable research roles">
+<button type="button" data-variant="mira" aria-pressed="false">MIRA-AC</button>
+<button type="button" data-variant="idea" aria-pressed="false">IdeaScientist</button>
+<button type="button" data-variant="guidance" aria-pressed="true">Evolving in Thought Space</button>
+</div>
+<div class="ar-takeaway-diagram" aria-live="polite" aria-atomic="true">
+<div class="ar-takeaway-flow">
+<div class="ar-takeaway-node ar-takeaway-focus"><span class="ar-takeaway-role">Learn</span><strong data-field="first">Guidance model θ</strong><p data-field="firstCopy">Propose strategic edits to a parent solution.</p></div>
+<span class="ar-takeaway-arrow" aria-hidden="true">→</span>
+<div class="ar-takeaway-node"><span class="ar-takeaway-role" data-field="middleRole">Execute</span><strong data-field="second">Frozen executor</strong><p data-field="secondCopy">Implement the edits as a complete program.</p></div>
+<span class="ar-takeaway-arrow" aria-hidden="true">→</span>
+<div class="ar-takeaway-node"><span class="ar-takeaway-role">Assess</span><strong data-field="third">Task verifier</strong><p data-field="thirdCopy">Run the program and measure its quality.</p></div>
+</div>
+<div class="ar-takeaway-return"><span data-field="feedback">Verifier reward updates guidance θ</span></div>
+</div>
+<figcaption><span data-field="note">Learning happens on the current task. Only the guidance model changes; the executor stays frozen.</span> <a data-source href="https://arxiv.org/abs/2610.06269">Read the paper ↗</a></figcaption>
 </figure>
 
 ## Models {#experiments}

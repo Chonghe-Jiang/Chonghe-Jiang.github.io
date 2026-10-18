@@ -112,3 +112,97 @@
     })
   );
 })();
+
+(() => {
+  const variants = {
+    fork: {
+      first: "Accumulated workspace",
+      firstCopy: "Artifacts from the search so far.",
+      second: "Fresh contexts",
+      secondCopy: "Each branch starts a new conversation.",
+      reset: "Reset chat history",
+      third: "Parallel attempts",
+      thirdCopy: "Run each branch for a fixed horizon.",
+      feedback: "Continue from the best branch",
+      note: "The workspace survives the reset; the winning branch supplies the next starting point.",
+      url: "https://arxiv.org/abs/2610.07447",
+    },
+    forget: {
+      first: "Best candidate",
+      firstCopy: "Keep the strongest solution and its score.",
+      second: "Restarted team",
+      secondCopy: "Start new sessions from that candidate.",
+      reset: "Discard other candidate history",
+      third: "New search",
+      thirdCopy: "Agents explore and share new candidates.",
+      feedback: "Retain the best result for the next reset",
+      note: "Forgetting reaches beyond chat: the team also discards the other candidate history.",
+      url: "https://arxiv.org/abs/2610.20563",
+    },
+    sla: {
+      first: "External research record",
+      firstCopy: "The harness keeps candidates and outcomes.",
+      second: "Role-specific context",
+      secondCopy: "Rebuild context for each invocation.",
+      reset: "No conversation carried over",
+      third: "Assigned experiments",
+      thirdCopy: "An Advisor directs fresh Workers.",
+      feedback: "Write results back to the research record",
+      note: "The search retains state outside conversations. The Advisor also decides what each Worker investigates.",
+      url: "https://arxiv.org/abs/2610.07625",
+    },
+    guidance: {
+      first: "Guidance model θ",
+      firstCopy: "Propose strategic edits to a parent solution.",
+      middleRole: "Execute",
+      second: "Frozen executor",
+      secondCopy: "Implement the edits as a complete program.",
+      third: "Task verifier",
+      thirdCopy: "Run the program and measure its quality.",
+      feedback: "Verifier reward updates guidance θ",
+      note: "Learning happens on the current task. Only the guidance model changes; the executor stays frozen.",
+      url: "https://arxiv.org/abs/2610.06269",
+    },
+    mira: {
+      first: "Meta-reasoner θ",
+      firstCopy: "Choose the next work order, or stop.",
+      middleRole: "Execute",
+      second: "Fresh executor",
+      secondCopy: "Carry out the investigation without policy updates.",
+      third: "Downstream return",
+      thirdCopy: "Assess progress over later investigations.",
+      feedback: "Actor–critic updates research decisions θ",
+      note: "MIRA-AC learns decisions at investigation boundaries, using a shared model for policy and value estimation.",
+      url: "https://arxiv.org/abs/2610.02525",
+    },
+    idea: {
+      first: "Ideation roles θ",
+      firstCopy: "Learn gap finding, innovation and report writing.",
+      middleRole: "Develop",
+      second: "Research proposal",
+      secondCopy: "A fixed orchestrator coordinates the trained roles.",
+      third: "Proposal assessment",
+      thirdCopy: "Judge novelty and quality against literature.",
+      feedback: "RL trains the ideation roles θ",
+      note: "IdeaScientist trains several roles. Its output is a proposal; evaluation does not execute the proposed experiment.",
+      url: "https://arxiv.org/abs/2610.04074",
+    },
+  };
+  document.querySelectorAll(".ar-takeaway").forEach((figure) => {
+    const controls = figure.querySelector(".ar-takeaway-switch");
+    if (!controls) return;
+    controls.hidden = false;
+    const buttons = [...controls.querySelectorAll("button")];
+    buttons.forEach((button) =>
+      button.addEventListener("click", () => {
+        const variant = variants[button.dataset.variant];
+        if (!variant) return;
+        buttons.forEach((other) => other.setAttribute("aria-pressed", String(other === button)));
+        figure.querySelectorAll("[data-field]").forEach((field) => {
+          field.textContent = variant[field.dataset.field];
+        });
+        figure.querySelector("[data-source]").href = variant.url;
+      })
+    );
+  });
+})();

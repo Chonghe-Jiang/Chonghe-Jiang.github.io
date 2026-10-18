@@ -102,13 +102,13 @@ I see evaluation time as a major constraint on self-improving research agents. A
 
 How can we find a better solution with fewer calls to the evaluator? Training-free methods can use past results to select more informative experiments and avoid repeating failed attempts. With training, a research policy can learn which directions are worth pursuing. Both aim for **sample-efficient search**: reaching a stronger verified result within a fixed evaluation budget.
 
+[Memento 3](https://arxiv.org/abs/2610.11794) offers a training-free example. The agent turns interaction feedback into a revisable handbook of environment rules, then compiles those rules into an executable world model. It checks the model against past observations and uses it to plan future actions. The LLM stays frozen; the handbook and simulator improve as evidence accumulates. This illustrates an algorithmic route to fewer real interactions: use what the agent has learned to guide its next attempt.
+
 ### Make evaluations cheaper
 
 Can a cheap approximation tell us which candidates deserve a full evaluation? Smaller test suites, shorter runs or surrogate models could make it possible to explore more candidates with the same resources.
 
-[DuoDiscover](https://arxiv.org/abs/2610.17184) takes this direction: agents develop optimization targets together with cheap, tailored proxy evaluators. They search using these proxies, then confirm improvements with the full evaluator. Fidelity tests also check whether proxy rankings still agree with full evaluations as the search progresses.
-
-The open question is when to trust an approximation and when to pay for a full test. A faster evaluator helps only if the search still produces better results under the real objective.
+[DuoDiscover](https://arxiv.org/abs/2610.17184) offers an example: agents develop optimization targets together with cheap, tailored proxy evaluators. They search using these proxies, then confirm improvements with the full evaluator. Fidelity tests also check whether proxy rankings still agree with full evaluations as the search progresses.
 
 Working on self-improving agents, I’m always interested in the models people choose and the tasks they test them on. Some familiar tasks, such as Erdős problems and packing benchmarks, already seem close to saturation. I’ve collected the models and tasks from these papers below as a reference for planning new experiments.
 

@@ -79,6 +79,10 @@
       propose: "A trained report writer turns ideas into research proposals.",
       evaluate: "Assess novelty and proposal quality against the literature.",
     },
+    "Guidance-TTT": {
+      parent: "Learn strategic edits from verifier rewards; PUCT selects parents.",
+      propose: "A frozen executor implements the guidance.",
+    },
     "MIRA-AC": {
       parent: "Learn which investigation to run next, or when to stop, from downstream returns.",
     },
@@ -86,7 +90,7 @@
   controls.hidden = false;
   buttons.forEach((button) =>
     button.addEventListener("click", () => {
-      const changes = operations[button.textContent.trim()] || {};
+      const changes = operations[button.dataset.method] || {};
       const overview = button.dataset.components === "all";
       buttons.forEach((b) => b.setAttribute("aria-pressed", String(b === button)));
       nodes.forEach((node) => {
@@ -100,11 +104,7 @@
       detail.querySelector("p").textContent = button.dataset.description;
       detail.querySelector(".ar-training-label").textContent = overview
         ? "Search-state updates; policy training is optional"
-        : button.textContent.trim() === "MIRA-AC"
-          ? "Trainable decision policy · fixed executor"
-          : button.textContent.trim() === "IdeaScientist"
-            ? "Trained ideation roles · fixed orchestrator"
-            : "Frozen LLM · search-state updates";
+        : button.dataset.trainingLabel || "Training-free · frozen models";
       const link = detail.querySelector("a");
       link.hidden = !button.dataset.url;
       if (button.dataset.url) link.href = button.dataset.url;

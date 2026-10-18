@@ -1132,6 +1132,16 @@ html[data-theme="dark"] .ar-figure {
   font-size: 0.72rem;
   font-weight: 600;
 }
+.ar-figure .ar-training-badge {
+  color: inherit;
+  display: inline-block;
+  margin-left: 0.3rem;
+  padding-left: 0.4rem;
+  border-left: 1px solid currentColor;
+  font-size: 0.62rem;
+  font-weight: 500;
+  vertical-align: 0.04em;
+}
 .ar-group-papers {
   display: flex;
   flex-wrap: wrap;

@@ -99,4 +99,4 @@ These papers highlight two ways to improve research agents: refresh their contex
 Working on self-improving agents, I’m always interested in the models people choose and the tasks they test them on. Some familiar tasks, such as Erdős problems and packing benchmarks, already seem close to saturation. I’ve collected the models and tasks from these papers below as a reference for planning new experiments.
 
 - [Models]({{ '/blog/2026/revisiting-autoresearch/models/' | relative_url }}) — model choices, agent setups and evaluation budgets.
-- [Tasks]({{ '/blog/2026/revisiting-autoresearch/tasks/' | relative_url }}) — benchmarks, evaluation time and recent progress.
+- [Tasks]({{ '/blog/2026/revisiting-autoresearch/tasks/' | relative_url }}) — benchmarks, evaluation time, resources and recent progress.

@@ -16,7 +16,7 @@ sections:
 ## Methods {#methods}
 
 <figure class="ar-figure ar-map ar-evolution" id="ar-map" aria-labelledby="ar-map-title">
-<div class="ar-figure-heading"><h3 id="ar-map-title">Same loop. Different update rules.</h3></div>
+<div class="ar-figure-heading"><h3 id="ar-map-title">Context management, experiment selection, and evaluation</h3></div>
 <div class="ar-map-controls ar-grouped-controls" hidden role="group" aria-label="Papers grouped by contribution">
 <button type="button" aria-pressed="true" data-components="all" data-title="Shared loop" data-description="Candidates and feedback carry progress around the loop. Most methods change search state; MIRA-AC also trains the decision policy.">Overview</button>
 <div class="ar-method-group" role="group" aria-labelledby="ar-group-state"><span class="ar-group-label" id="ar-group-state">State &amp; context</span><div class="ar-group-papers">

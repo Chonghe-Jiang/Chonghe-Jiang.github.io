@@ -8,45 +8,16 @@ permalink: /blog/2026/revisiting-ppo/
 research_blog: true
 math: true
 sections:
-  - { id: ppo-paper-map, title: The training loop }
-  - { id: recent-work, title: Actor & critic updates }
-  - { id: literature, title: Literature }
+  - { id: ppo-review, title: Review of PPO }
+  - { id: literature, title: Recent work }
   - { id: models, title: Models & Tasks }
 ---
 
 This post reviews **PPO and related policy-gradient methods for large language models**.
 
-<figure class="ppo-map" id="ppo-paper-map" aria-labelledby="ppo-map-title">
-<div class="ppo-map-heading"><span class="note-label">From rollout to update</span><h3 id="ppo-map-title">Where recent papers change PPO</h3></div>
-<ol class="ppo-stages">
-<li class="ppo-stage" data-stage="1"><div class="ppo-stage-top"><span class="ppo-stage-number">01</span></div><strong>Rollouts</strong><p>Generate trajectories</p><div class="ppo-stage-papers"><a href="https://arxiv.org/abs/2607.07508" data-paper="sao">SAO</a><a href="https://yifanzhang-pro.github.io/FlashREINFORCE/" data-paper="flash">FlashREINFORCE</a></div></li>
-<li class="ppo-stage" data-stage="2"><div class="ppo-stage-top"><span class="ppo-stage-number">02</span></div><strong>Reward & value</strong><p>Evaluate outcomes and prefixes</p><div class="ppo-stage-papers"><a href="https://arxiv.org/abs/2604.19295" data-paper="tempo">TEMPO</a><a href="https://arxiv.org/abs/2609.39247" data-paper="ac2">AC2</a><a href="https://arxiv.org/abs/2608.23566" data-paper="bpco">BPCO</a><a href="https://arxiv.org/abs/2610.15840" data-paper="lvrl">LVRL</a></div></li>
-<li class="ppo-stage" data-stage="3"><div class="ppo-stage-top"><span class="ppo-stage-number">03</span></div><strong>Advantages</strong><p>Assign credit relative to a baseline</p><div class="ppo-stage-papers"><a href="https://arxiv.org/abs/2607.07508" data-paper="sao">SAO</a><a href="https://arxiv.org/abs/2609.39247" data-paper="ac2">AC2</a><a href="https://yifanzhang-pro.github.io/FlashREINFORCE/" data-paper="flash">FlashREINFORCE</a><a href="https://arxiv.org/abs/2608.23566" data-paper="bpco">BPCO</a><a href="https://arxiv.org/abs/2610.15840" data-paper="lvrl">LVRL</a></div></li>
-<li class="ppo-stage" data-stage="4"><div class="ppo-stage-top"><span class="ppo-stage-number">04</span></div><strong>Policy objective</strong><p>Correct probabilities and limit updates</p><div class="ppo-stage-papers"><a href="https://arxiv.org/abs/2609.20807" data-paper="centering">Score Centering</a><a href="https://github.com/areal-project/AReaL/blob/main/docs/en/best_practices/algo_perf.md" data-paper="decoupled">Decoupled PPO</a><a href="https://arxiv.org/abs/2608.23566" data-paper="bpco">BPCO</a></div></li>
-<li class="ppo-stage" data-stage="5"><div class="ppo-stage-top"><span class="ppo-stage-number">05</span></div><strong>Updates</strong><p>Optimize actor and critic</p><div class="ppo-stage-papers"><a href="https://arxiv.org/abs/2609.36802" data-paper="easy">EasyPPO</a><a href="https://arxiv.org/abs/2607.07508" data-paper="sao">SAO</a><a href="https://arxiv.org/abs/2604.19295" data-paper="tempo">TEMPO</a><a href="https://github.com/areal-project/AReaL/blob/main/docs/en/best_practices/algo_perf.md" data-paper="decoupled">Decoupled PPO</a><a href="https://arxiv.org/abs/2608.23566" data-paper="bpco">BPCO</a><a href="https://arxiv.org/abs/2610.20597" data-paper="cope">CoPE</a></div></li>
-</ol>
-<div class="ppo-loop"><span aria-hidden="true">↶</span> Updated policy and value model feed the next round</div>
-<div class="ppo-map-interaction" hidden>
-<div class="ppo-paper-select" role="group" aria-label="Highlight a paper's contributions"><button type="button" data-paper="all" aria-pressed="true">All papers</button>
-<button type="button" data-paper="sao" data-stages="1 3 5" data-detail="Single-rollout asynchronous sampling, a learned value baseline, and strict double-sided token clipping." data-url="https://arxiv.org/abs/2607.07508" aria-pressed="false">SAO</button>
-<button type="button" data-paper="easy" data-stages="5" data-detail="Stabilize critic training with actor-only overlong filtering, noise-normalized regression, and smaller critic minibatches." data-url="https://arxiv.org/abs/2609.36802" aria-pressed="false">EasyPPO</button>
-<button type="button" data-paper="tempo" data-stages="2 5" data-detail="Use critic feedback for policy refinement on unlabeled questions, then recalibrate the critic on labeled data." data-url="https://arxiv.org/abs/2604.19295" aria-pressed="false">TEMPO</button>
-<button type="button" data-paper="ac2" data-stages="2 3" data-detail="Use generative critic estimates for action-chunk advantages and updates, gated by local readiness." data-url="https://arxiv.org/abs/2609.39247" aria-pressed="false">AC2</button>
-<button type="button" data-paper="flash" data-stages="1 3" data-detail="Single-rollout asynchronous learning with batch centering replaces the learned value baseline. This is a critic-free alternative to PPO." data-url="https://yifanzhang-pro.github.io/FlashREINFORCE/" aria-pressed="false">FlashREINFORCE</button>
-<button type="button" data-paper="centering" data-stages="4" data-detail="Apply an additive correction for gradient drift from training–inference mismatch. Score here means the log-probability gradient." data-url="https://arxiv.org/abs/2609.20807" aria-pressed="false">Score Centering</button>
-<button type="button" data-paper="decoupled" data-stages="4 5" data-detail="Separate behavior-policy importance correction from clipping around a recent proximal policy." data-url="https://github.com/areal-project/AReaL/blob/main/docs/en/best_practices/algo_perf.md" aria-pressed="false">Decoupled PPO</button>
-<button type="button" data-paper="bpco" data-stages="2 3 4 5" data-detail="Bounded value predictions, Monte Carlo targets, raw advantages, length-adaptive GAE, and Divergence PPO clipping." data-url="https://arxiv.org/abs/2608.23566" aria-pressed="false">BPCO</button>
-<button type="button" data-paper="lvrl" data-stages="2 3" data-detail="A frozen LLM assigns step credit through anchored hindsight value differences, conditioned on group context." data-url="https://arxiv.org/abs/2610.15840" aria-pressed="false">LVRL</button>
-<button type="button" data-paper="cope" data-stages="5" data-detail="Add successful-trajectory action forecasting to GRPO using the policy backbone; no learned value critic." data-url="https://arxiv.org/abs/2610.20597" aria-pressed="false">CoPE</button>
-</div>
-<div class="ppo-paper-detail" aria-live="polite" aria-atomic="true"><span class="ppo-detail-name">Explore the loop</span><p>Select a paper to highlight the stages it changes.</p><a hidden>Read the paper ↗</a></div>
-</div>
-<figcaption>Select a paper to locate its changes. FlashREINFORCE and CoPE use critic-free updates; LVRL uses a frozen critic.</figcaption>
-</figure>
+## Review of PPO {#ppo-review}
 
-## Two updates, different interventions {#recent-work}
-
-The actor changes which tokens the model generates. The critic predicts how well a continuation will turn out. To see where the papers differ, start with the return, then follow it into the two updates.
+The actor changes which tokens the model generates. The critic predicts how well a continuation will turn out. Start with the return, then follow it into these two updates.
 
 <div class="ppo-math-block" markdown="1">
 
@@ -150,7 +121,37 @@ Here $m_t^V$ selects valid training positions, $\omega_x$ weights examples or pr
 
 </div>
 
-## Where the papers intervene {#literature}
+## Review of Recent Work {#literature}
+
+<figure class="ppo-map" id="ppo-paper-map" aria-labelledby="ppo-map-title">
+<div class="ppo-map-heading"><span class="note-label">From rollout to update</span><h3 id="ppo-map-title">Where recent papers change PPO</h3></div>
+<ol class="ppo-stages">
+<li class="ppo-stage" data-stage="1"><div class="ppo-stage-top"><span class="ppo-stage-number">01</span></div><strong>Rollouts</strong><p>Generate trajectories</p><div class="ppo-stage-papers"><a href="https://arxiv.org/abs/2607.07508" data-paper="sao">SAO</a><a href="https://yifanzhang-pro.github.io/FlashREINFORCE/" data-paper="flash">FlashREINFORCE</a></div></li>
+<li class="ppo-stage" data-stage="2"><div class="ppo-stage-top"><span class="ppo-stage-number">02</span></div><strong>Reward & value</strong><p>Evaluate outcomes and prefixes</p><div class="ppo-stage-papers"><a href="https://arxiv.org/abs/2604.19295" data-paper="tempo">TEMPO</a><a href="https://arxiv.org/abs/2609.39247" data-paper="ac2">AC2</a><a href="https://arxiv.org/abs/2608.23566" data-paper="bpco">BPCO</a><a href="https://arxiv.org/abs/2610.15840" data-paper="lvrl">LVRL</a></div></li>
+<li class="ppo-stage" data-stage="3"><div class="ppo-stage-top"><span class="ppo-stage-number">03</span></div><strong>Advantages</strong><p>Assign credit relative to a baseline</p><div class="ppo-stage-papers"><a href="https://arxiv.org/abs/2607.07508" data-paper="sao">SAO</a><a href="https://arxiv.org/abs/2609.39247" data-paper="ac2">AC2</a><a href="https://yifanzhang-pro.github.io/FlashREINFORCE/" data-paper="flash">FlashREINFORCE</a><a href="https://arxiv.org/abs/2608.23566" data-paper="bpco">BPCO</a><a href="https://arxiv.org/abs/2610.15840" data-paper="lvrl">LVRL</a></div></li>
+<li class="ppo-stage" data-stage="4"><div class="ppo-stage-top"><span class="ppo-stage-number">04</span></div><strong>Policy objective</strong><p>Correct probabilities and limit updates</p><div class="ppo-stage-papers"><a href="https://arxiv.org/abs/2609.20807" data-paper="centering">Score Centering</a><a href="https://github.com/areal-project/AReaL/blob/main/docs/en/best_practices/algo_perf.md" data-paper="decoupled">Decoupled PPO</a><a href="https://arxiv.org/abs/2608.23566" data-paper="bpco">BPCO</a></div></li>
+<li class="ppo-stage" data-stage="5"><div class="ppo-stage-top"><span class="ppo-stage-number">05</span></div><strong>Updates</strong><p>Optimize actor and critic</p><div class="ppo-stage-papers"><a href="https://arxiv.org/abs/2609.36802" data-paper="easy">EasyPPO</a><a href="https://arxiv.org/abs/2607.07508" data-paper="sao">SAO</a><a href="https://arxiv.org/abs/2604.19295" data-paper="tempo">TEMPO</a><a href="https://github.com/areal-project/AReaL/blob/main/docs/en/best_practices/algo_perf.md" data-paper="decoupled">Decoupled PPO</a><a href="https://arxiv.org/abs/2608.23566" data-paper="bpco">BPCO</a><a href="https://arxiv.org/abs/2610.20597" data-paper="cope">CoPE</a></div></li>
+</ol>
+<div class="ppo-loop"><span aria-hidden="true">↶</span> Updated policy and value model feed the next round</div>
+<div class="ppo-map-interaction" hidden>
+<div class="ppo-paper-select" role="group" aria-label="Highlight a paper's contributions"><button type="button" data-paper="all" aria-pressed="true">All papers</button>
+<button type="button" data-paper="sao" data-stages="1 3 5" data-detail="Single-rollout asynchronous sampling, a learned value baseline, and strict double-sided token clipping." data-url="https://arxiv.org/abs/2607.07508" aria-pressed="false">SAO</button>
+<button type="button" data-paper="easy" data-stages="5" data-detail="Stabilize critic training with actor-only overlong filtering, noise-normalized regression, and smaller critic minibatches." data-url="https://arxiv.org/abs/2609.36802" aria-pressed="false">EasyPPO</button>
+<button type="button" data-paper="tempo" data-stages="2 5" data-detail="Use critic feedback for policy refinement on unlabeled questions, then recalibrate the critic on labeled data." data-url="https://arxiv.org/abs/2604.19295" aria-pressed="false">TEMPO</button>
+<button type="button" data-paper="ac2" data-stages="2 3" data-detail="Use generative critic estimates for action-chunk advantages and updates, gated by local readiness." data-url="https://arxiv.org/abs/2609.39247" aria-pressed="false">AC2</button>
+<button type="button" data-paper="flash" data-stages="1 3" data-detail="Single-rollout asynchronous learning with batch centering replaces the learned value baseline. This is a critic-free alternative to PPO." data-url="https://yifanzhang-pro.github.io/FlashREINFORCE/" aria-pressed="false">FlashREINFORCE</button>
+<button type="button" data-paper="centering" data-stages="4" data-detail="Apply an additive correction for gradient drift from training–inference mismatch. Score here means the log-probability gradient." data-url="https://arxiv.org/abs/2609.20807" aria-pressed="false">Score Centering</button>
+<button type="button" data-paper="decoupled" data-stages="4 5" data-detail="Separate behavior-policy importance correction from clipping around a recent proximal policy." data-url="https://github.com/areal-project/AReaL/blob/main/docs/en/best_practices/algo_perf.md" aria-pressed="false">Decoupled PPO</button>
+<button type="button" data-paper="bpco" data-stages="2 3 4 5" data-detail="Bounded value predictions, Monte Carlo targets, raw advantages, length-adaptive GAE, and Divergence PPO clipping." data-url="https://arxiv.org/abs/2608.23566" aria-pressed="false">BPCO</button>
+<button type="button" data-paper="lvrl" data-stages="2 3" data-detail="A frozen LLM assigns step credit through anchored hindsight value differences, conditioned on group context." data-url="https://arxiv.org/abs/2610.15840" aria-pressed="false">LVRL</button>
+<button type="button" data-paper="cope" data-stages="5" data-detail="Add successful-trajectory action forecasting to GRPO using the policy backbone; no learned value critic." data-url="https://arxiv.org/abs/2610.20597" aria-pressed="false">CoPE</button>
+</div>
+<div class="ppo-paper-detail" aria-live="polite" aria-atomic="true"><span class="ppo-detail-name">Explore the loop</span><p>Select a paper to highlight the stages it changes.</p><a hidden>Read the paper ↗</a></div>
+</div>
+<figcaption>Select a paper to locate its changes. FlashREINFORCE and CoPE use critic-free updates; LVRL uses a frozen critic.</figcaption>
+</figure>
+
+### Where the papers intervene
 
 The equations separate changes that can look similar in an implementation. Reward centering changes the advantage. Score centering changes the log-probability gradient; below, $w$ denotes its importance weight. A frozen LLM can replace learned value estimates, while an auxiliary prediction loss can add supervision without estimating values at all.
 

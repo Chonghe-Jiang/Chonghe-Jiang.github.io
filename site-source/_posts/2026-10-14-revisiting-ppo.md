@@ -1,15 +1,16 @@
 ---
 layout: research-post
 title: "Revisiting PPO for LLM Post-Training"
-description: "Recent approaches to rollouts, value estimation, and policy updates, with implications for test-time discovery."
+description: "How recent methods change sampling, credit assignment, and the actor–critic update."
 topic: Reinforcement learning · LLM post-training
 date: 2026-10-14 00:00:00 -0400
 permalink: /blog/2026/revisiting-ppo/
 research_blog: true
 math: true
 sections:
-  - { id: recent-work, title: Revisiting PPO }
-  - { id: special, title: What makes TTT special }
+  - { id: ppo-paper-map, title: The training loop }
+  - { id: recent-work, title: Actor & critic updates }
+  - { id: literature, title: Literature }
 ---
 
 Recent PPO work revisits how trajectories are sampled, how the critic estimates returns, and how policy updates handle distribution mismatch. Mapping these changes onto the training loop makes the methods easier to compare.
@@ -17,11 +18,11 @@ Recent PPO work revisits how trajectories are sampled, how the critic estimates 
 <figure class="ppo-map" id="ppo-paper-map" aria-labelledby="ppo-map-title">
 <div class="ppo-map-heading"><span class="note-label">From rollout to update</span><h3 id="ppo-map-title">Where recent papers change PPO</h3></div>
 <ol class="ppo-stages">
-<li class="ppo-stage" data-stage="1"><div class="ppo-stage-top"><span class="ppo-stage-number">01</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h7m-7 6h7m-7 6h7m4-12 5 6-5 6M12 12h8"/></svg></div><strong>Rollouts</strong><p>Generate trajectories</p><div class="ppo-stage-papers"><a href="https://arxiv.org/abs/2607.07508" data-paper="sao">SAO</a><a href="https://yifanzhang-pro.github.io/FlashREINFORCE/" data-paper="flash">FlashREINFORCE</a></div></li>
-<li class="ppo-stage" data-stage="2"><div class="ppo-stage-top"><span class="ppo-stage-number">02</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V5m0 14h16M8 15l4-5 4 2 4-7"/><circle cx="12" cy="10" r="1"/></svg></div><strong>Reward & value</strong><p>Evaluate outcomes and prefixes</p><div class="ppo-stage-papers"><a href="https://arxiv.org/abs/2604.19295" data-paper="tempo">TEMPO</a><a href="https://arxiv.org/abs/2609.39247" data-paper="ac2">AC2</a></div></li>
-<li class="ppo-stage" data-stage="3"><div class="ppo-stage-top"><span class="ppo-stage-number">03</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16M12 4v16m-5-5 5 5 5-5M7 9l5-5 5 5"/></svg></div><strong>Advantages</strong><p>Assign credit relative to a baseline</p><div class="ppo-stage-papers"><a href="https://arxiv.org/abs/2607.07508" data-paper="sao">SAO</a><a href="https://arxiv.org/abs/2609.39247" data-paper="ac2">AC2</a><a href="https://yifanzhang-pro.github.io/FlashREINFORCE/" data-paper="flash">FlashREINFORCE</a></div></li>
-<li class="ppo-stage" data-stage="4"><div class="ppo-stage-top"><span class="ppo-stage-number">04</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h13l-3-3m3 3-3 3M20 17H7l3-3m-3 3 3 3"/></svg></div><strong>Policy correction</strong><p>Account for distribution mismatch</p><div class="ppo-stage-papers"><a href="https://arxiv.org/abs/2609.20807" data-paper="centering">Score Centering</a><a href="https://github.com/areal-project/AReaL/blob/main/docs/en/best_practices/algo_perf.md" data-paper="decoupled">Decoupled PPO</a></div></li>
-<li class="ppo-stage" data-stage="5"><div class="ppo-stage-top"><span class="ppo-stage-number">05</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18h4v-5H4zm6 0h4V9h-4zm6 0h4V5h-4z"/></svg></div><strong>Updates</strong><p>Optimize actor and critic</p><div class="ppo-stage-papers"><a href="https://arxiv.org/abs/2609.36802" data-paper="easy">EasyPPO</a><a href="https://arxiv.org/abs/2607.07508" data-paper="sao">SAO</a><a href="https://arxiv.org/abs/2604.19295" data-paper="tempo">TEMPO</a><a href="https://github.com/areal-project/AReaL/blob/main/docs/en/best_practices/algo_perf.md" data-paper="decoupled">Decoupled PPO</a></div></li>
+<li class="ppo-stage" data-stage="1"><div class="ppo-stage-top"><span class="ppo-stage-number">01</span></div><strong>Rollouts</strong><p>Generate trajectories</p><div class="ppo-stage-papers"><a href="https://arxiv.org/abs/2607.07508" data-paper="sao">SAO</a><a href="https://yifanzhang-pro.github.io/FlashREINFORCE/" data-paper="flash">FlashREINFORCE</a></div></li>
+<li class="ppo-stage" data-stage="2"><div class="ppo-stage-top"><span class="ppo-stage-number">02</span></div><strong>Reward & value</strong><p>Evaluate outcomes and prefixes</p><div class="ppo-stage-papers"><a href="https://arxiv.org/abs/2604.19295" data-paper="tempo">TEMPO</a><a href="https://arxiv.org/abs/2609.39247" data-paper="ac2">AC2</a><a href="https://arxiv.org/abs/2608.23566" data-paper="bpco">BPCO</a><a href="https://arxiv.org/abs/2610.15840" data-paper="lvrl">LVRL</a></div></li>
+<li class="ppo-stage" data-stage="3"><div class="ppo-stage-top"><span class="ppo-stage-number">03</span></div><strong>Advantages</strong><p>Assign credit relative to a baseline</p><div class="ppo-stage-papers"><a href="https://arxiv.org/abs/2607.07508" data-paper="sao">SAO</a><a href="https://arxiv.org/abs/2609.39247" data-paper="ac2">AC2</a><a href="https://yifanzhang-pro.github.io/FlashREINFORCE/" data-paper="flash">FlashREINFORCE</a><a href="https://arxiv.org/abs/2608.23566" data-paper="bpco">BPCO</a><a href="https://arxiv.org/abs/2610.15840" data-paper="lvrl">LVRL</a></div></li>
+<li class="ppo-stage" data-stage="4"><div class="ppo-stage-top"><span class="ppo-stage-number">04</span></div><strong>Policy objective</strong><p>Correct probabilities and limit updates</p><div class="ppo-stage-papers"><a href="https://arxiv.org/abs/2609.20807" data-paper="centering">Score Centering</a><a href="https://github.com/areal-project/AReaL/blob/main/docs/en/best_practices/algo_perf.md" data-paper="decoupled">Decoupled PPO</a><a href="https://arxiv.org/abs/2608.23566" data-paper="bpco">BPCO</a></div></li>
+<li class="ppo-stage" data-stage="5"><div class="ppo-stage-top"><span class="ppo-stage-number">05</span></div><strong>Updates</strong><p>Optimize actor and critic</p><div class="ppo-stage-papers"><a href="https://arxiv.org/abs/2609.36802" data-paper="easy">EasyPPO</a><a href="https://arxiv.org/abs/2607.07508" data-paper="sao">SAO</a><a href="https://arxiv.org/abs/2604.19295" data-paper="tempo">TEMPO</a><a href="https://github.com/areal-project/AReaL/blob/main/docs/en/best_practices/algo_perf.md" data-paper="decoupled">Decoupled PPO</a><a href="https://arxiv.org/abs/2608.23566" data-paper="bpco">BPCO</a><a href="https://arxiv.org/abs/2610.20597" data-paper="cope">CoPE</a></div></li>
 </ol>
 <div class="ppo-loop"><span aria-hidden="true">↶</span> Updated policy and value model feed the next round</div>
 <div class="ppo-map-interaction" hidden>
@@ -33,80 +34,166 @@ Recent PPO work revisits how trajectories are sampled, how the critic estimates 
 <button type="button" data-paper="flash" data-stages="1 3" data-detail="Single-rollout asynchronous learning with batch centering replaces the learned value baseline. This is a critic-free alternative to PPO." data-url="https://yifanzhang-pro.github.io/FlashREINFORCE/" aria-pressed="false">FlashREINFORCE</button>
 <button type="button" data-paper="centering" data-stages="4" data-detail="Apply an additive correction for gradient drift from training–inference mismatch. Score here means the log-probability gradient." data-url="https://arxiv.org/abs/2609.20807" aria-pressed="false">Score Centering</button>
 <button type="button" data-paper="decoupled" data-stages="4 5" data-detail="Separate behavior-policy importance correction from clipping around a recent proximal policy." data-url="https://github.com/areal-project/AReaL/blob/main/docs/en/best_practices/algo_perf.md" aria-pressed="false">Decoupled PPO</button>
+<button type="button" data-paper="bpco" data-stages="2 3 4 5" data-detail="Bounded value predictions, Monte Carlo targets, raw advantages, length-adaptive GAE, and Divergence PPO clipping." data-url="https://arxiv.org/abs/2608.23566" aria-pressed="false">BPCO</button>
+<button type="button" data-paper="lvrl" data-stages="2 3" data-detail="A frozen LLM assigns step credit through anchored hindsight value differences, conditioned on group context." data-url="https://arxiv.org/abs/2610.15840" aria-pressed="false">LVRL</button>
+<button type="button" data-paper="cope" data-stages="5" data-detail="Add successful-trajectory action forecasting to GRPO using the policy backbone; no learned value critic." data-url="https://arxiv.org/abs/2610.20597" aria-pressed="false">CoPE</button>
 </div>
 <div class="ppo-paper-detail" aria-live="polite" aria-atomic="true"><span class="ppo-detail-name">Explore the loop</span><p>Select a paper to highlight the stages it changes.</p><a hidden>Read the paper ↗</a></div>
 </div>
-<figcaption>Selected contributions across PPO and related methods. A paper can span several stages; FlashREINFORCE removes the critic.</figcaption>
+<figcaption>Select a paper to locate its changes. FlashREINFORCE and CoPE use critic-free updates; LVRL uses a frozen critic.</figcaption>
 </figure>
 
-## Revisiting PPO {#recent-work}
+## Two updates, different interventions {#recent-work}
 
-PPO gives the actor and critic different jobs. The actor learns which actions to make more likely. The critic estimates the return expected from the current prompt and generated prefix, providing a baseline for the actor’s update.
+The actor changes which tokens the model generates. The critic predicts how well a continuation will turn out. To see where the papers differ, start with the return, then follow it into the two updates.
 
-<aside class="ppo-math-block" aria-labelledby="ppo-components-title" markdown="1">
+<div class="ppo-math-block" markdown="1">
 
-<h3 id="ppo-components-title">Two updates, different interventions</h3>
+### 1. From an outcome to an advantage
 
-For actor $\pi_\theta$ and critic $V_\phi$, write $\psi_\theta=\nabla_\theta\log\pi_\theta(a\mid s)$. Their updates expose the main components:
+Let $x$ be a prompt, $a_t=y_t$ the next token, and $s_t=(x,y_{<t})$ the prompt plus generated prefix. A trajectory $\tau$ ends with reward $R$. For now, use undiscounted, terminal-only rewards: $r_t=0$ before the final token and $r_T=R$.
+
+The objective is $J(\theta)=\mathbb E_{\tau\sim\pi_\theta}[R]$. Since the trajectory probability is a product of token probabilities, differentiating its log turns that product into a sum:
 
 $$
 \begin{aligned}
-g_{\mathrm{actor}}&=\mathbb E_{\mathcal D}\!\left[m\,\hat A\,(w\psi_\theta-c(s))\right],\\[4pt]
-L_V&=\mathbb E_{\mathcal D}\!\left[m^V\omega_x\,\ell(V_\phi(s),Y)\right].
+\nabla_\theta J
+&=\mathbb E_{\tau\sim\pi_\theta}
+\left[R\,\nabla_\theta\log p_\theta(\tau)\right]\\
+&=\mathbb E_{\tau\sim\pi_\theta}
+\left[\sum_{t=1}^{T}R\,\nabla_\theta\log\pi_\theta(a_t\mid s_t)\right].
 \end{aligned}
 $$
 
-$\mathcal D$: sampled trajectories · $m,m^V$: masks and aggregation · $\hat A$: advantage · $w$: probability correction · $c$: score correction · $\omega_x,Y$: critic weight and target. This is a component map: clipping enters through effective weights/masks; KL terms are omitted.
+This estimator gives every token the same outcome signal. A baseline asks a more useful question: **was this continuation better than expected from this prefix?** For any action-independent baseline $b(s)$, held fixed in the actor update,
 
-<div class="table-scroll" role="region" aria-label="Papers mapped to mathematical components" tabindex="0" markdown="1">
+$$
+\begin{aligned}
+\mathbb E_{a\sim\pi_\theta}[b(s)\nabla_\theta\log\pi_\theta(a\mid s)]
+&=b(s)\nabla_\theta\sum_a\pi_\theta(a\mid s)\\
+&=0.
+\end{aligned}
+$$
 
-| Work                                                                                                  | Main intervention                                                                                                              |
-| :---------------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------- |
-| [SAO](https://arxiv.org/html/2607.07508v1)                                                            | $\mathcal D$: one rollout per prompt; $\hat A$: skip-observation GAE; $w$: strict token masking; more frequent critic updates. |
-| [FlashREINFORCE](https://yifanzhang-pro.github.io/FlashREINFORCE/)                                    | $\hat A_i=R_i-\bar R_{\mathrm{batch}}$; single rollouts, sequence admission, per-trajectory averaging; no $L_V$.               |
-| [AC2](https://arxiv.org/html/2609.39247v2)                                                            | $\hat A_i=v_i-\bar v$, $Y=\bar v$; critic-ready problems use $v_i=V(s\cdot c_i)$ for unfinished chunks.                        |
-| [TEMPO](https://arxiv.org/html/2604.19295v1)                                                          | $\hat A_t=V(y_{\mathrm{complete}})-V(s_t)$; periodically recalibrate $V$ on labeled data.                                      |
-| [Score Centering](https://arxiv.org/html/2609.20807v1)                                                | $c(s)=\mathbb E_{a\sim\mu(\cdot\mid s)}[w\psi_\theta]$: center the weighted score under the sampler $\mu$.                     |
-| [Decoupled PPO](https://github.com/areal-project/AReaL/blob/main/docs/en/best_practices/algo_perf.md) | Separate $\nu/\mu$ for behavior correction from $\pi_\theta/\nu$ for PPO clipping; $\nu$ is a recent policy.                   |
-| [EasyPPO](https://arxiv.org/html/2609.36802v1)                                                        | $\omega_x\propto1/\max(\hat\sigma_x,\varepsilon)$; $m^V$ retains truncated samples; smaller critic minibatches.                |
+Subtracting $b(s_t)$ therefore leaves the on-policy expected gradient unchanged. The critic approximates $V^\pi(s_t)=\mathbb E[R\mid s_t]$, giving the Monte Carlo estimate $\hat A_t=R-V_\phi(s_t)$. Positive advantage increases the sampled action’s probability; negative advantage decreases it. The baseline can reduce variance, even though each rollout still supplies only one observed outcome.
+
+### 2. From value predictions to GAE
+
+Instead of waiting for the whole return at every token, compare successive predictions. With $V_{\mathrm{old}}$ fixed while constructing targets, the temporal-difference residual is
+
+$$
+\delta_t=r_t+\gamma V_{\mathrm{old}}(s_{t+1})-V_{\mathrm{old}}(s_t).
+$$
+
+[Generalized advantage estimation](https://arxiv.org/abs/1506.02438) adds these residuals with decaying weights:
+
+$$
+\hat A_t^{(\lambda)}
+=\sum_{l=0}^{T-t}(\gamma\lambda)^l\delta_{t+l}.
+$$
+
+$\gamma$ discounts future rewards; $\lambda$ controls how far credit propagates through observed residuals. At $\lambda=0$, only the next residual matters. At $\gamma=\lambda=1$, the intermediate value terms cancel. For a completed episode, $V_{\mathrm{old}}(s_{T+1})=0$, so
+
+$$
+\begin{aligned}
+\hat A_t^{(1)}
+&=\sum_{k=t}^{T}\big[r_k+V_{\mathrm{old}}(s_{k+1})-V_{\mathrm{old}}(s_k)\big]\\
+&=R-V_{\mathrm{old}}(s_t).
+\end{aligned}
+$$
+
+Smaller $\lambda$ can reduce variance, but makes the estimate depend more on the critic’s intermediate predictions. A bad baseline and a bad bootstrapped estimate are different problems: baseline error can add variance; bootstrapping can also bias credit assignment. A length cutoff needs its own terminal or bootstrap convention; the cancellation above assumes a completed episode.
+
+### 3. The actor: reuse data, limit the update
+
+Rollouts come from a fixed behavior policy $\mu$. As the actor changes, the sampled action’s probability ratio becomes
+
+$$
+\rho_t(\theta)=\frac{\pi_\theta(a_t\mid s_t)}{\mu(a_t\mid s_t)}.
+$$
+
+At a fixed sampled state, this ratio corrects the action distribution. The states still come from $\mu$: this is a local surrogate, not a full correction of the trajectory distribution. [PPO](https://arxiv.org/abs/1707.06347) maximizes
+
+$$
+\begin{aligned}
+J_{\mathrm{clip}}(\theta)
+=\mathbb E_{\mathcal D}\big[\min\big(&\rho_t\hat A_t,\\
+&\operatorname{clip}(\rho_t,1-\epsilon,1+\epsilon)\hat A_t\big)\big].
+\end{aligned}
+$$
+
+$\mathcal D$ is the collected rollout batch, $\epsilon$ sets the clipping range, and $\hat A_t$ stays fixed during this update. For positive advantage, the objective stops rewarding a ratio above $1+\epsilon$. For negative advantage, it stops rewarding a ratio below $1-\epsilon$. This limits the incentive to move farther in the favored direction; it does not impose a hard bound on the updated policy.
+
+Before clipping activates, the gradient contribution is $\rho_t\hat A_t\nabla_\theta\log\pi_\theta(a_t\mid s_t)$. That exposes three separate choices: the advantage, the probability correction, and the log-probability gradient. KL penalties and entropy bonuses can add further terms; they are omitted here.
+
+### 4. The critic: fit a return target
+
+The critic solves a regression problem. A common target and loss are
+
+$$
+\begin{aligned}
+Y_t&=\operatorname{stopgrad}\!\left[V_{\mathrm{old}}(s_t)+\hat A_t^{(\lambda_V)}\right],\\
+L_V(\phi)&=\frac12\mathbb E_{\mathcal D}\left[(V_\phi(s_t)-Y_t)^2\right].
+\end{aligned}
+$$
+
+With $\gamma=\lambda_V=1$ and a completed terminal-reward episode, $Y_t=R$. Smaller $\lambda_V$ mixes observed rewards with old value predictions. The actor’s $\lambda_\pi$ and critic’s $\lambda_V$ need not match. The actor increases expected reward; the critic reduces prediction error against a fixed target. They do not optimize the same objective.
+
+A useful way to locate changes to critic training is
+
+$$
+L_V=\mathbb E_{\mathcal D}\left[m_t^V\,\omega_x\,\ell(V_\phi(s_t),Y_t)\right].
+$$
+
+Here $m_t^V$ selects valid training positions, $\omega_x$ weights examples or prompts, and $\ell$ is the regression loss. A method can change the data retained, its weight, the target, or the critic’s inputs without changing the actor’s clipped objective.
 
 </div>
 
-For complete terminal-return PPO with $\gamma=\lambda=1$, $\hat A_t=R-V_{\mathrm{old}}(s_t)$. Reward centering changes $\hat A$; score centering changes the gradient term $c(s)$.
+## Where the papers intervene {#literature}
 
-</aside>
+The equations separate changes that can look similar in an implementation. Reward centering changes the advantage. Score centering changes the log-probability gradient; below, $w$ denotes its importance weight. A frozen LLM can replace learned value estimates, while an auxiliary prediction loss can add supervision without estimating values at all.
 
-These papers use the critic in different ways. A baseline reduces variance after we observe an outcome. A learned evaluator supplies feedback when a real outcome is unavailable or expensive. The second role asks much more of the model.
+<div class="table-scroll ppo-literature-table" role="region" aria-label="Papers mapped to PPO components" tabindex="0" markdown="1">
 
-## What makes TTT special? {#special}
+| Work                                                                                                  | Component                     | What changes                                                                                                                                                                              |
+| :---------------------------------------------------------------------------------------------------- | :---------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [SAO](https://arxiv.org/html/2607.07508v1)                                                            | Rollouts · GAE · updates      | One rollout per prompt, asynchronous collection, skip-observation GAE, strict token masking, and more frequent critic updates.                                                            |
+| [FlashREINFORCE](https://yifanzhang-pro.github.io/FlashREINFORCE/)                                    | Rollouts · baseline           | Uses $R_i-\bar R_{\mathrm{batch}}$, sequence admission and per-trajectory averaging. No learned critic or $L_V$.                                                                          |
+| [TEMPO](https://arxiv.org/html/2604.19295v1)                                                          | Value feedback                | Uses $V(y_{\mathrm{complete}})-V(s_t)$ on unlabeled questions, with periodic critic recalibration on labeled data.                                                                        |
+| [AC2](https://arxiv.org/html/2609.39247v2)                                                            | Chunk values · advantages     | Uses $v_i-\bar v$ and critic target $\bar v$. For critic-ready problems, unfinished chunks receive $v_i=V(s\cdot c_i)$.                                                                   |
+| [Score Centering](https://arxiv.org/html/2609.20807v1)                                                | Actor gradient                | Centers the weighted score: $w\psi_\theta-c(s)$, with $\psi_\theta=\nabla\log\pi_\theta$ and $c(s)=\mathbb E_{a\sim\mu}[w\psi_\theta]$. Addresses drift from training–inference mismatch. |
+| [Decoupled PPO](https://github.com/areal-project/AReaL/blob/main/docs/en/best_practices/algo_perf.md) | Probability ratios            | Separates behavior correction $\nu/\mu$ from clipping around $\pi_\theta/\nu$, where $\nu$ is a recent proximal policy.                                                                   |
+| [EasyPPO](https://arxiv.org/html/2609.36802v1)                                                        | Critic weighting · updates    | Uses $\omega_x\propto1/\max(\hat\sigma_x,\varepsilon)$, retains truncated samples for the critic, filters them for the actor, and uses smaller critic minibatches.                        |
+| [BPCO](https://arxiv.org/html/2608.23566v2)                                                           | Critic · GAE · clipping       | Bounds values to the reward range, uses $Y_t=R$, preserves raw advantages, and adapts $\lambda_\pi$ to length. Optional privileged critic inputs; Divergence PPO clipping.                |
+| [LVRL](https://arxiv.org/html/2610.15840v1)                                                           | Value estimates · step credit | A frozen LLM uses trajectory and group context to estimate values. Anchored value differences give action-level advantages; no critic optimization.                                       |
+| [CoPE](https://arxiv.org/html/2610.20597v2)                                                           | Auxiliary policy loss         | Adds successful-trajectory action forecasting to GRPO on a shared backbone. It changes supervision, without adding a value critic.                                                        |
 
-### One problem, many attempts
+</div>
 
-Here, **sample = 1 at the task level**. We adapt to one target problem, rather than training over a broad collection of unrelated questions. We can still generate many candidates and evaluate them on many cases. All those attempts serve the same search.
+### BPCO: change what the critic learns
 
-This also changes the input distribution. Each successful revision becomes a possible starting point for the next attempt. The model learns while the problem in front of it changes.
+[BPCO](https://arxiv.org/abs/2608.23566) separates the actor’s bootstrapping from the critic’s target: $\lambda_V=1$ keeps the target tied to the observed reward, while $\lambda_\pi(L)=1-1/(\alpha L)$ adapts credit propagation to response length. Its bounded head prevents impossible return predictions. An optional reference answer or rubric helps the critic during training without entering the policy’s prompt. Its **Divergence PPO** uses a token-probability-dependent clipping range; this is distinct from **Decoupled PPO** above.
 
-### We keep the best of all attempts
+### LVRL: redistribute the outcome across actions
 
-At the end, we want the strongest verified solution found anywhere in the history. The objective is closer to:
+[LLM Value Functions for Credit Assignment in Agentic RL](https://arxiv.org/abs/2610.15840) uses a frozen LLM to read completed trajectories, with other rollouts providing policy context. At the environment-action level, it anchors $\tilde V_0=\bar R_G$ and $\tilde V_T=R$, then computes
 
 $$
-\mathbb E\!\left[\max_{1\leq k\leq N} S(c_k)\right],
+\bar A_t=\tilde V_{t+1}-\tilde V_t,
+\qquad
+\sum_{t=0}^{T-1}\bar A_t=R-\bar R_G.
 $$
 
-where later candidates can depend on earlier results. Repeatedly producing a good existing solution helps average reward but adds little to that maximum. We need enough reliability to keep the search moving, alongside a willingness to try changes that might fail.
+It divides these differences by their group-wide step standard deviation; every token in an action shares that action’s advantage. The unnormalized sum is fixed by outcomes, but the LLM determines where credit goes. These are hindsight estimates, not an ordinary prefix-only value function. Anchoring preserves the total signal; it does not guarantee correct local credit.
 
-### Discovery needs depth
+### CoPE: learn more from successful trajectories
 
-An experiment often reveals what to try next. Generating a large batch before receiving feedback delays that process: every candidate in the batch starts from the same available history.
+[CoPE](https://arxiv.org/abs/2610.20597) keeps GRPO and adds a forecasting loss. From history $h_t$, the shared backbone predicts the next $K+1$ actions recorded in a successful rollout:
 
-With a fixed candidate budget, larger batches leave fewer rounds to learn from the results. Smaller batches give later attempts more opportunities to build on earlier discoveries.
+$$
+L_{\mathrm{AF}}
+=-\mathbb E_{\tau\mid\mathrm{success}}
+\left[\sum_t\log p_\theta(a_{t:t+K}\mid h_t)\right].
+$$
 
-<figure class="concept-figure depth-figure">
-<span class="note-label">The same 64 executions, different feedback schedules</span>
-<div class="depth-row"><div class="depth-label"><strong>Batch 32</strong><small>2 feedback rounds</small></div><div class="depth-rounds depth-two"><span>Round 1</span><span>Round 2</span></div></div>
-<div class="depth-row"><div class="depth-label"><strong>Batch 8</strong><small>8 feedback rounds</small></div><div class="depth-rounds depth-eight"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span></div></div>
-<figcaption>A fixed-budget illustration: smaller batches let later candidates use feedback from more rounds.</figcaption>
-</figure>
-
-Parallel exploration still matters, and smaller batches can make updates noisier. The question is how much breadth we can afford before sacrificing useful feedback depth.
+Training minimizes $L_{\mathrm{GRPO}}+\eta L_{\mathrm{AF}}$, averaging the forecasting term over successful rollouts within each group. A forecasting instruction distinguishes $p_\theta$ from the acting distribution, even though they share parameters. At inference, the agent still acts one step at a time. The added signal teaches which action sequences followed successful histories, rather than how much scalar value each history had.

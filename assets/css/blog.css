@@ -742,11 +742,6 @@
 
 /* Interactive map of selected contributions to the PPO loop. */
 .ppo-map {
-  --stage-1: #4169a2;
-  --stage-2: #217b72;
-  --stage-3: #9a6a22;
-  --stage-4: #7960a7;
-  --stage-5: #914855;
   margin: 2.2rem 0 2.8rem;
   padding: 1.4rem;
   border: 1px solid var(--essay-line);
@@ -766,22 +761,8 @@
   margin: 0;
   padding: 0;
 }
-.ppo-stage[data-stage="1"] {
-  --stage: var(--stage-1);
-}
-.ppo-stage[data-stage="2"] {
-  --stage: var(--stage-2);
-}
-.ppo-stage[data-stage="3"] {
-  --stage: var(--stage-3);
-}
-.ppo-stage[data-stage="4"] {
-  --stage: var(--stage-4);
-}
-.ppo-stage[data-stage="5"] {
-  --stage: var(--stage-5);
-}
 .ppo-stage {
+  --stage: var(--essay-accent);
   min-width: 0;
   position: relative;
   padding: 0.75rem 0.6rem;
@@ -869,7 +850,7 @@
   border-top-color: var(--essay-line);
 }
 .ppo-stage-papers a.is-selected {
-  color: var(--global-bg-color, white);
+  color: var(--essay-on-accent);
   background: var(--stage);
 }
 .ppo-loop {
@@ -898,8 +879,8 @@
   color: var(--essay-muted);
   background: transparent;
   border: 1px solid var(--essay-line);
-  border-radius: 20px;
-  padding: 0.3rem 0.65rem;
+  border-radius: 6px;
+  padding: 0.4rem 0.65rem;
   cursor: pointer;
 }
 .ppo-paper-select button[aria-pressed="true"] {
@@ -909,8 +890,9 @@
 }
 .ppo-paper-detail {
   margin-top: 0.9rem;
-  padding-left: 0.8rem;
-  border-left: 2px solid var(--essay-accent);
+  padding: 0.8rem 1rem;
+  background: var(--essay-card);
+  border-left: 3px solid var(--essay-accent);
   min-height: 100px;
 }
 .ppo-detail-name {
@@ -929,13 +911,6 @@
 .ppo-map figcaption {
   margin-top: 1rem;
   font-size: 0.65rem;
-}
-html[data-theme="dark"] .ppo-map {
-  --stage-1: #90b3ec;
-  --stage-2: #73c6b8;
-  --stage-3: #dbb574;
-  --stage-4: #b9a2e3;
-  --stage-5: #df9aa8;
 }
 @media (max-width: 650px) {
   .ppo-map {
@@ -999,43 +974,51 @@ html[data-theme="dark"] .ppo-map {
   }
 }
 
+/* A quiet reading panel, with the same palette as the autoresearch figures. */
 .ppo-math-block {
-  margin: 1.5rem 0;
-  padding: 1.2rem 1.3rem 0.2rem;
-  border: 1px solid var(--essay-line);
+  margin: 1.5rem 0 2.5rem;
+  padding: 0.2rem 1.4rem 0.5rem;
   border-left: 3px solid var(--essay-accent);
-  border-radius: 0 7px 7px 0;
   background: var(--essay-surface);
-  font-size: 0.8rem;
-  line-height: 1.75;
 }
 .ppo-math-block h3 {
-  margin: 0 0 0.7rem;
-  font-size: 1.1rem;
+  margin: 1.5rem 0 0.8rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--essay-line);
+  font-family: var(--essay-heading-font);
+  font-size: 1.2rem;
 }
-.ppo-math-block p {
-  margin-bottom: 0.8rem;
+.ppo-math-block h3:first-child {
+  padding-top: 0;
+  border-top: 0;
 }
 .essay-body .ppo-math-block mjx-container[display="true"] {
-  font-size: 115% !important;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.4rem 0;
+  font-size: 100% !important;
 }
-.ppo-math-block .table-scroll {
-  margin: 1rem 0;
+.ppo-literature-table table {
+  min-width: 620px;
+  font-size: 0.8rem;
 }
-.ppo-math-block table {
-  font-size: 0.75rem;
+.ppo-literature-table th:first-child {
+  width: 20%;
 }
-.ppo-math-block th,
-.ppo-math-block td {
-  padding: 0.6rem;
+.ppo-literature-table th:nth-child(2) {
+  width: 22%;
 }
-.ppo-math-block th:first-child,
-.ppo-math-block td:first-child {
-  width: 130px;
+.ppo-map [hidden] {
+  display: none !important;
+}
+.ppo-paper-select button:focus-visible {
+  outline: 2px solid var(--essay-accent);
+  outline-offset: 3px;
 }
 @media (max-width: 650px) {
   .ppo-math-block {
-    padding: 1rem 0.8rem 0.2rem;
+    padding: 0.1rem 0.8rem 0.3rem;
   }
 }
 

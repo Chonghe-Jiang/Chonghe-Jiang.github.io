@@ -50,7 +50,7 @@ sections:
 
 ## Takeaways {#takeaways}
 
-A closer look reveals shared ideas within two strands of recent work: refreshing context in training-free agents, and learning research decisions in trained agents.
+These papers highlight two ways to improve research agents: refresh their context, or train the roles that decide what to investigate next.
 
 <figure class="ar-takeaway" id="ar-takeaways" aria-label="Two perspectives on research agents">
 <div class="ar-takeaway-modes" hidden role="tablist" aria-label="Training approach">

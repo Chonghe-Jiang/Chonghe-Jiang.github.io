@@ -14,7 +14,7 @@ sections:
   - { id: models, title: Models & Tasks }
 ---
 
-This post reviews **PPO and related policy-gradient methods for large language models**, covering reasoning, coding, and tool-using agents. The methods revisit rollout sampling, value estimation, credit assignment, and policy updates. Some retain PPO’s learned critic; others replace it, remove it, or add auxiliary supervision. TEMPO also studies test-time adaptation.
+This post reviews **PPO and related policy-gradient methods for large language models**.
 
 <figure class="ppo-map" id="ppo-paper-map" aria-labelledby="ppo-map-title">
 <div class="ppo-map-heading"><span class="note-label">From rollout to update</span><h3 id="ppo-map-title">Where recent papers change PPO</h3></div>

@@ -8,39 +8,45 @@ permalink: /blog/2026/revisiting-ppo/
 research_blog: true
 math: true
 sections:
-  - { id: without-critic, title: Without critic networks }
+  - { id: without-critic, title: Without value networks }
   - { id: critic-roles, title: What critics do }
   - { id: critic-inputs, title: What critics see }
   - { id: update-stability, title: Stable updates }
-  - { id: grpo-supervision, title: Beyond GRPO rewards }
   - { id: comparison, title: Paper comparison }
 ---
 
-This post reviews **PPO and related policy-gradient methods for large language models** from five perspectives.
+This post reviews **PPO and related policy-gradient methods for large language models** from four perspectives.
 
 <span id="ppo-review"></span>
 Need a refresher on PPO? [Start with the basics]({{ '/blog/2026/revisiting-ppo/foundations/' | relative_url }}).
 
 <span id="literature"></span>
 <span id="ppo-paper-map"></span>
-<nav class="ppo-directions" aria-label="Five directions in policy optimization">
-<a href="#without-critic"><span class="ppo-direction-number">01</span><span><strong>Learning without critic networks</strong><small>FlashREINFORCE · SPO</small></span><span aria-hidden="true">↗</span></a>
+<nav class="ppo-directions" aria-label="Four directions in policy optimization">
+<a href="#without-critic"><span class="ppo-direction-number">01</span><span><strong>Learning without value networks</strong><small>FlashREINFORCE · SPO · CoPE</small></span><span aria-hidden="true">↗</span></a>
 <a href="#critic-roles"><span class="ppo-direction-number">02</span><span><strong>Changing what critics do</strong><small>TEMPO · AC2</small></span><span aria-hidden="true">↗</span></a>
 <a href="#critic-inputs"><span class="ppo-direction-number">03</span><span><strong>Changing what critics see</strong><small>BPCO · LVRL</small></span><span aria-hidden="true">↗</span></a>
 <a href="#update-stability"><span class="ppo-direction-number">04</span><span><strong>Stabilizing policy updates</strong><small>SAO · Score Centering · EasyPPO</small></span><span aria-hidden="true">↗</span></a>
-<a href="#grpo-supervision"><span class="ppo-direction-number">05</span><span><strong>Augmenting GRPO with supervision</strong><small>CoPE</small></span><span aria-hidden="true">↗</span></a>
 </nav>
 
 <span id="mechanisms"></span>
 
-## Learning without critic networks {#without-critic}
+## Learning without value networks {#without-critic}
 
-Replace learned value networks and same-prompt rollout groups with statistical baselines.
+FlashREINFORCE and SPO use statistical baselines; CoPE adds action forecasting to GRPO. All three learn without a value network.
 
-<figure class="ppo-family-figure" aria-label="statistical baselines mechanism comparison">
-<div class="ppo-variant-controls" role="group" aria-label="Choose a method" hidden><button type="button" data-variant="flash" aria-pressed="true" aria-controls="statistical-baselines-flash">FlashREINFORCE</button><button type="button" data-variant="spo" aria-pressed="false" aria-controls="statistical-baselines-spo">SPO</button></div>
+<figure class="ppo-family-figure" aria-label="Learning without value networks mechanism comparison">
+<div class="ppo-variant-controls" role="group" aria-label="Choose a method" hidden><button type="button" data-variant="flash" aria-pressed="true" aria-controls="statistical-baselines-flash">FlashREINFORCE</button><button type="button" data-variant="spo" aria-pressed="false" aria-controls="statistical-baselines-spo">SPO</button><button type="button" data-variant="cope" aria-pressed="false" aria-controls="statistical-baselines-cope">CoPE</button></div>
 <div class="ppo-variant-display" aria-live="polite"><div class="ppo-variant" id="statistical-baselines-flash" data-variant="flash"><div class="ppo-flow"><div class="ppo-flow-node"><span>Collect</span><strong>One rollout per prompt</strong><p>Independent completions form a batch.</p></div><span class="ppo-flow-arrow" aria-hidden="true">→</span><div class="ppo-flow-node is-focus"><span>Baseline</span><strong>Current batch mean</strong><p>Subtract the mean reward across prompts.</p></div><span class="ppo-flow-arrow" aria-hidden="true">→</span><div class="ppo-flow-node"><span>Learn</span><strong>Policy update</strong><p>Filter divergent trajectories; average within each.</p></div></div><p class="ppo-flow-note"><strong>FlashREINFORCE.</strong> Each fresh batch supplies its baseline and receives one update.</p></div>
 <div class="ppo-variant" id="statistical-baselines-spo" data-variant="spo"><div class="ppo-flow"><div class="ppo-flow-node"><span>Collect</span><strong>One new outcome</strong><p>Read the prompt’s existing tracker.</p></div><span class="ppo-flow-arrow" aria-hidden="true">→</span><div class="ppo-flow-node is-focus"><span>Baseline</span><strong>Per-prompt history</strong><p>Use the prior success-rate estimate.</p></div><span class="ppo-flow-arrow" aria-hidden="true">→</span><div class="ppo-flow-node"><span>Learn &amp; retain</span><strong>Policy + tracker updates</strong><p>Learn from the outcome and refresh prompt statistics.</p></div></div><p class="ppo-flow-note"><strong>SPO.</strong> Compute advantage before incorporating the new outcome.</p></div>
+<div class="ppo-variant" id="statistical-baselines-cope" data-variant="cope">
+<div class="ppo-cope-paths">
+<div class="ppo-flow"><div class="ppo-flow-node"><span>All rollouts</span><strong>Group rewards</strong><p>Compare outcomes for the same task.</p></div><span class="ppo-flow-arrow" aria-hidden="true">→</span><div class="ppo-flow-node"><span>Acting</span><strong>GRPO loss</strong><p>Learn from relative rewards.</p></div></div>
+<div class="ppo-flow"><div class="ppo-flow-node"><span>Successful rollouts</span><strong>Action sequences</strong><p>Use histories and the actions that followed.</p></div><span class="ppo-flow-arrow" aria-hidden="true">→</span><div class="ppo-flow-node is-focus"><span>Forecasting</span><strong>Auxiliary prediction loss</strong><p>Predict several subsequent actions.</p></div></div>
+</div>
+<div class="ppo-cope-merge"><span aria-hidden="true">↓</span><strong>Both losses update one shared policy backbone</strong></div>
+<p class="ppo-flow-note">CoPE adds supervision to GRPO; it does not introduce a value critic.</p>
+</div>
 </div>
 </figure>
 
@@ -64,6 +70,15 @@ Replace learned value networks and same-prompt rollout groups with statistical b
 
 - **Persistent baseline:** Track each prompt’s success rate from past outcomes. Compute advantage against the tracker before adding the current result.
 - **Adaptive memory:** Forget older outcomes faster when the policy changes more. Normalize advantages across the batch; use the tracker to prioritize prompts.
+
+<span id="grpo-supervision"></span>
+
+<span id="cope-learn-more-from-successful-trajectories"></span>
+
+### [CoPE](https://arxiv.org/html/2610.20597v2) {#cope}
+
+- **Forecast successful actions:** Add a supervised loss that predicts several subsequent actions from a history in a successful rollout.
+- **Shared policy backbone:** Train acting with GRPO and forecasting with the auxiliary loss. At inference the model still acts one step at a time; the extra supervision does not require a value critic.
 
 ## Changing what critics do {#critic-roles}
 
@@ -162,26 +177,6 @@ Control errors from asynchronous sampling, mismatched probabilities, and noisy c
 - **Noise-weighted critic loss:** Weight each prompt’s critic loss by the inverse standard deviation of its sampled returns. Prompts with more variable rewards have less influence.
 - **Smaller critic minibatches:** Apply gradient clipping to moderately smaller batches, limiting how many other samples an outlier can suppress. The actor retains the PPO objective.
 
-## Augmenting GRPO with supervision {#grpo-supervision}
-
-Extract an additional learning signal from successful action sequences.
-
-<figure class="ppo-family-figure" aria-label="CoPE combines GRPO and action forecasting on one policy">
-<div class="ppo-cope-paths">
-<div class="ppo-flow"><div class="ppo-flow-node"><span>All rollouts</span><strong>Group rewards</strong><p>Compare outcomes for the same task.</p></div><span class="ppo-flow-arrow" aria-hidden="true">→</span><div class="ppo-flow-node"><span>Acting</span><strong>GRPO loss</strong><p>Learn from relative rewards.</p></div></div>
-<div class="ppo-flow"><div class="ppo-flow-node"><span>Successful rollouts</span><strong>Action sequences</strong><p>Use histories and the actions that followed.</p></div><span class="ppo-flow-arrow" aria-hidden="true">→</span><div class="ppo-flow-node is-focus"><span>Forecasting</span><strong>Auxiliary prediction loss</strong><p>Predict several subsequent actions.</p></div></div>
-</div>
-<div class="ppo-cope-merge"><span aria-hidden="true">↓</span><strong>Both losses update one shared policy backbone</strong></div>
-<figcaption>CoPE adds supervision to GRPO; it does not introduce a value critic.</figcaption>
-</figure>
-
-<span id="cope-learn-more-from-successful-trajectories"></span>
-
-### [CoPE](https://arxiv.org/html/2610.20597v2) {#cope}
-
-- **Forecast successful actions:** Add a supervised loss that predicts several subsequent actions from a history in a successful rollout.
-- **Shared policy backbone:** Train acting with GRPO and forecasting with the auxiliary loss. At inference the model still acts one step at a time; the extra supervision does not require a value critic.
-
 <span id="models"></span>
 
 ## Where the papers intervene {#comparison}
@@ -196,6 +191,7 @@ Extract an additional learning signal from successful action sequences.
 | :----------------------------------------------------------------- | :--------- | :---------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------- |
 | [FlashREINFORCE](https://yifanzhang-pro.github.io/FlashREINFORCE/) | Both       | Rollouts · baseline           | Uses $R_i-\bar R_{\mathrm{batch}}$, sequence admission and per-trajectory averaging. No learned critic or $L_V$.                                                                                                         | **Models:** DeepSeek-R1-Distill-Qwen-1.5B; Qwen2.5-Math-1.5B; Qwen2.5-7B-Instruct; Qwen3-30B-A3B.<br><br>**Tasks:** [Math and Python tool use](tasks/#math); [ALFWorld](tasks/#agents).                        | No critic.                                                                                               |
 | [SPO](https://arxiv.org/html/2509.13232v2)                         | Agent      | Baseline · sampling           | Uses a per-prompt, KL-adaptive value tracker and batch-wide advantage normalization.                                                                                                                                     | **Models:** Qwen3-8B.<br><br>**Tasks:** [DAPO math with Python → AIME24/25, BeyondAIME, BRUMO25 and HMMT25](tasks/#math).                                                                                      | No critic network; a tabular Bayesian tracker estimates success rates.                                   |
+| [CoPE](https://arxiv.org/html/2610.20597v2)                        | Agent      | Auxiliary policy loss         | Adds successful-trajectory action forecasting to GRPO on a shared backbone. It changes supervision, without adding a value critic.                                                                                       | **Models:** Qwen2.5-7B-Instruct; Qwen2.5-14B-Instruct for AppWorld.<br><br>**Tasks:** [ALFWorld, ScienceWorld, WebShop, τ²-bench and AppWorld](tasks/#agents).                                                 | No value critic; acting and forecasting share one backbone.                                              |
 | [TEMPO](https://arxiv.org/html/2604.19295v1)                       | LLM        | Value feedback                | Uses $V(y_{\mathrm{complete}})-V(s_t)$ on unlabeled questions, with periodic critic recalibration on labeled data.                                                                                                       | **Models:** Qwen3-8B/14B-Base; OLMO3-7B-Base, after PPO initialization.<br><br>**Tasks:** [Math and general reasoning](tasks/#math), with unlabeled adaptation sets and separate held-out sets.                | Learned critic; GPT-OSS-120B judges general-domain answers.                                              |
 | [AC2](https://arxiv.org/html/2609.39247v2)                         | LLM        | Chunk values · advantages     | Uses $v_i-\bar v$ and critic target $\bar v$. For critic-ready problems, unfinished chunks receive $v_i=V(s\cdot c_i)$.                                                                                                  | **Models:** Qwen3-4B-Thinking-2507.<br><br>**Tasks:** [FineProofs-RL → IMO-ProofBench](tasks/#proofs).                                                                                                         | Actor and generative critic share weights; DeepSeek-V4-Flash grades proofs.                              |
 | [BPCO](https://arxiv.org/html/2608.23566v2)                        | LLM        | Critic · GAE · clipping       | Bounds values to the reward range, uses $Y_t=R$, preserves raw advantages, and adapts $\lambda_\pi$ to length. Optional privileged critic inputs; Divergence PPO clipping.                                               | **Models:** DeepSeek-R1-Distill-Qwen-1.5B; Qwen3-30B-A3B Base/non-Base; Qwen3-4B-Base for rubrics.<br><br>**Tasks:** [Math](tasks/#math): DeepScaleR or DAPO-Math-17K → AIME25; [OpenRubrics](tasks/#rubrics). | Learned critic; optional answer/rubric inputs. Qwen3-4B-Instruct-2507 is the rubric judge.               |
@@ -203,7 +199,6 @@ Extract an additional learning signal from successful action sequences.
 | [SAO](https://arxiv.org/html/2607.07508v1)                         | Agent      | Rollouts · GAE · updates      | One rollout per prompt, asynchronous collection, skip-observation GAE, strict token masking, and more frequent critic updates.                                                                                           | **Models:** Qwen3-30B-A3B-Thinking-2507; TIR-finetuned initialization for math.<br><br>**Tasks:** [Math with Python](tasks/#math); [SWE-bench Verified](tasks/#coding) with OpenHands.                         | Separate value model initialized from the policy checkpoint.                                             |
 | [Score Centering](https://arxiv.org/html/2609.20807v1)             | LLM        | Actor gradient                | Centers the weighted score: $w\psi_\theta-c(s)$, where $w$ is the importance weight, $\psi_\theta=\nabla\log\pi_\theta$ and $c(s)=\mathbb E_{a\sim\mu}[w\psi_\theta]$. Addresses drift from training–inference mismatch. | **Models:** Qwen3-0.6B-Instruct; Qwen3-30B-A3B-Base.<br><br>**Tasks:** [Countdown and INTELLECT-2 math](tasks/#math), under controlled sampler–trainer mismatch.                                               | No learned critic in the controlled comparison; group-centered REINFORCE.                                |
 | [EasyPPO](https://arxiv.org/html/2609.36802v1)                     | Both       | Critic weighting · updates    | Uses $\omega_x\propto1/\max(\hat\sigma_x,\varepsilon)$, retains truncated samples for the critic, filters them for the actor, and uses smaller critic minibatches.                                                       | **Models:** Qwen3.5-9B-Base for math/search; Qwen3.5-9B after SFT for coding.<br><br>**Tasks:** DAPO-Math-17K → AIME24; [FrontierSmith → FrontierCS](tasks/#coding); [Search-R1](tasks/#agents).               | Learned token-value critic. DeepSeek-V3.1 supplies coding SFT trajectories.                              |
-| [CoPE](https://arxiv.org/html/2610.20597v2)                        | Agent      | Auxiliary policy loss         | Adds successful-trajectory action forecasting to GRPO on a shared backbone. It changes supervision, without adding a value critic.                                                                                       | **Models:** Qwen2.5-7B-Instruct; Qwen2.5-14B-Instruct for AppWorld.<br><br>**Tasks:** [ALFWorld, ScienceWorld, WebShop, τ²-bench and AppWorld](tasks/#agents).                                                 | No value critic; acting and forecasting share one backbone.                                              |
 
 </div>
 

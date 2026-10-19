@@ -52,7 +52,15 @@ FlashREINFORCE and SPO use statistical baselines; CoPE adds action forecasting t
 
 ### [FlashREINFORCE](https://yifanzhang-pro.github.io/FlashREINFORCE/#method) {#flashreinforce}
 
-- **No learned critic:** Sample once per prompt and subtract the batch mean reward, across different prompts, to obtain signed advantages.
+- **No learned critic:** For a batch of $B$ independent prompts, center the observed rewards:
+
+  $$
+  \bar R=\frac{1}{B}\sum_{j=1}^{B}R_j,
+  \qquad A_i=R_i-\bar R.
+  $$
+
+  A response above the batch mean receives positive advantage; one below it receives negative advantage.
+
 - **Trajectory filtering:** Weight token updates by current-to-rollout probability ratios. For each sampled token, let $p_t$ and $q_t$ be its rollout and current-policy probabilities at the same history:
 
   $$
@@ -64,12 +72,35 @@ FlashREINFORCE and SPO use statistical baselines; CoPE adds action forecasting t
 
   Keep the whole trajectory only when $m=1$; $T$ counts model-generated tokens and $\delta$ is the threshold. This Bernoulli KL is a lower-bound proxy for full-vocabulary KL. [Details](https://yifanzhang-pro.github.io/FlashREINFORCE/FlashREINFORCE.pdf#page=4).
 
-- **Equal trajectory weight:** Average over tokens within each trajectory, then over the batch. Long failures do not get extra weight simply for being long; each fresh batch receives one update.
+- **Equal trajectory weight:** For token losses $\ell_{i,t}$ that include advantage and importance weighting, aggregate as
+
+  $$
+  L=\frac{1}{B}\sum_{i=1}^{B}m_i
+  \left(\frac{1}{T_i}\sum_{t=1}^{T_i}\ell_{i,t}\right).
+  $$
+
+  Here $m_i$ is the trajectory gate above. Averaging within each response removes its explicit length multiplier. Each fresh batch receives one update.
 
 ### [SPO](https://arxiv.org/html/2509.13232v2#S4) {#spo}
 
-- **Persistent baseline:** Track each prompt’s success rate from past outcomes. Compute advantage against the tracker before adding the current result.
-- **Adaptive memory:** Forget older outcomes faster when the policy changes more. Normalize advantages across the batch; use the tracker to prioritize prompts.
+- **Persistent baseline:** For prompt $x$, compare reward $R$ with the tracker’s estimate before this rollout:
+
+  $$
+  A=R-\hat v_{\mathrm{old}}(x),
+  \qquad
+  \tilde A=\frac{A-\bar A_{\mathcal B}}{\sigma_{A,\mathcal B}}.
+  $$
+
+  The baseline uses past outcomes; normalization uses the current batch $\mathcal B$ across prompts.
+
+- **Adaptive memory:** The Bayesian tracker has an equivalent moving-average update:
+
+  $$
+  \hat v_{\mathrm{new}}(x)=\hat v_{\mathrm{old}}(x)
+  +\eta_x\bigl(R-\hat v_{\mathrm{old}}(x)\bigr).
+  $$
+
+  The step size $\eta_x$ reflects policy change and accumulated evidence. A larger policy shift discounts older evidence more strongly. The tracker also supports prioritized prompt sampling.
 
 <span id="grpo-supervision"></span>
 
@@ -77,8 +108,24 @@ FlashREINFORCE and SPO use statistical baselines; CoPE adds action forecasting t
 
 ### [CoPE](https://arxiv.org/html/2610.20597v2) {#cope}
 
-- **Forecast successful actions:** Add a supervised loss that predicts several subsequent actions from a history in a successful rollout.
-- **Shared policy backbone:** Train acting with GRPO and forecasting with the auxiliary loss. At inference the model still acts one step at a time; the extra supervision does not require a value critic.
+- **Forecast successful actions:** From history $h_t$, predict the recorded action chunk $a_{t:t+K}$. For the successful subset $\mathcal S_x$ of a rollout group:
+
+  $$
+  L_{\mathrm{AF},x}=
+  -\frac{\displaystyle\sum_{\tau\in\mathcal S_x}\sum_t
+  \log p_\theta(a_{t:t+K}\mid h_t)}
+  {\max(1,|\mathcal S_x|)}.
+  $$
+
+  This averages supervision over successful trajectories; a group with no success contributes zero forecasting loss.
+
+- **Shared policy backbone:** Minimize
+
+  $$
+  L=L_{\mathrm{GRPO}}+\eta\,\mathbb E_x[L_{\mathrm{AF},x}].
+  $$
+
+  The coefficient $\eta$ controls the extra supervision. Acting and forecasting use the same weights with different instructions; inference still takes one action at a time.
 
 ## Changing what critics do {#critic-roles}
 
@@ -93,14 +140,48 @@ Use value estimates when a verified outcome is unavailable or costly to obtain.
 
 ### [TEMPO](https://arxiv.org/html/2604.19295v1#S3) {#tempo}
 
-- **Critic feedback at test time:** On unlabeled questions, use the critic’s final-response score as reward and subtract its prefix predictions for token-level advantages.
-- **Periodic recalibration:** Retrain the critic on labeled questions with verified rewards, then resume policy adaptation. This keeps feedback tied to external supervision as the actor changes.
+- **Critic feedback at test time:** Let $s_t$ be a response prefix and $s_{\mathrm{end}}$ the complete answer. On an unlabeled question, use
+
+  $$
+  \hat R=V_\phi(s_{\mathrm{end}}),
+  \qquad \hat A_t=\hat R-V_\phi(s_t).
+  $$
+
+  The actor learns from how much the predicted final score exceeds the prefix estimate. Both terms come from the critic; $\hat R$ is not a verified reward.
+
+- **Periodic recalibration:** On labeled questions, obtain verified rewards $R$ from current-policy responses and fit the critic to them:
+
+  $$
+  L_{\mathrm{cal}}(\phi)
+  =\mathbb E_{\mathrm{labeled},\,t}
+  \left[(V_\phi(s_t)-R)^2\right].
+  $$
+
+  Alternate this supervised calibration with policy adaptation on unlabeled questions, keeping the critic tied to external feedback.
 
 ### [AC2](https://arxiv.org/html/2609.39247v2#S3) {#ac2}
 
-- **Short continuations:** Sample prefixes from a replay buffer and generate several continuations. Once the critic passes readiness checks, stop at a chunk boundary and estimate the unfinished response’s value.
-- **Chunk advantages:** Subtract the group mean endpoint value from each continuation’s value. Train the shared generative critic to predict that group mean at the starting prefix.
-- **Full-rollout audits:** Still complete a fraction of ready problems to check critic accuracy against actual outcomes.
+- **Short continuations:** From replayed prefix $s$, sample chunks $c_i$. Once the problem passes critic-readiness checks, unfinished chunks can use predicted endpoint values:
+
+  $$
+  v_i=\begin{cases}
+  R_i, & \text{complete response},\\
+  V_\theta(s\cdot c_i), & \text{unfinished chunk}.
+  \end{cases}
+  $$
+
+  The symbol $\cdot$ means concatenation. A trusted prediction can replace the cost of completing a response.
+
+- **Chunk advantages:** Compare $G$ continuations of the same prefix:
+
+  $$
+  \bar v=\frac{1}{G}\sum_{j=1}^{G}v_j,
+  \qquad \hat A_i=v_i-\bar v.
+  $$
+
+  All new tokens in chunk $c_i$ share $\hat A_i$. Train the shared generative critic at $s$ to output the rounded group mean $\bar v$ as a value token; replayed prefix tokens receive no actor loss.
+
+- **Full-rollout audits:** Complete a fraction of ready problems to check critic predictions against actual outcomes.
 
 ## Changing what critics see {#critic-inputs}
 
@@ -117,16 +198,48 @@ Give the critic additional evidence for estimating value and assigning credit.
 
 ### [BPCO](https://arxiv.org/html/2608.23566v2#S3) {#bpco}
 
-- **Ground the critic:** Bound predictions to the reward range and regress directly on observed final rewards. Optional reference answers or rubrics go to the critic only.
-- **Preserve the learning signal:** Keep raw advantages and adapt GAE’s decay to response length, avoiding batch normalization that can amplify small residual signals.
-- **Divergence PPO:** Make clipping depend on the sampled token’s probability, rather than applying the same ratio bounds everywhere.
+- **Ground the critic:** With outcome-only rewards and no discounting, use
+
+  $$
+  R_{\min}\leq V_\phi(s_t)\leq R_{\max},
+  \qquad L_V=\mathbb E[(V_\phi(s_t)-R)^2].
+  $$
+
+  Bound the value head and fit observed final rewards, avoiding targets built from the critic’s own predictions. Optional reference answers or rubrics enter only the critic.
+
+- **Preserve the learning signal:** For a response of length $L$, use
+
+  $$
+  \lambda_\pi(L)=1-\frac{1}{\alpha L},
+  \qquad \lambda_V=1.
+  $$
+
+  Here $\alpha>0$ controls GAE decay. Longer responses use slower decay, preserving distant outcome feedback. Keep raw GAE advantages instead of dividing by the batch standard deviation.
+
+- **Divergence PPO:** If $p_t$ is the sampled token’s rollout probability, replace the fixed ratio-clipping interval with
+
+  $$
+  \left[1-\frac{\epsilon}{p_t},\;1+\frac{\epsilon}{p_t}\right].
+  $$
+
+  Its boundaries correspond to an absolute probability change of $\epsilon$. Clipping limits the incentive to move farther, rather than enforcing a hard constraint.
 
 <span id="lvrl-redistribute-the-outcome-across-actions"></span>
 
 ### [LVRL](https://arxiv.org/html/2610.15840v1) {#lvrl}
 
-- **Frozen LLM critic:** Read completed trajectories and related rollouts to estimate intermediate values in hindsight; no critic training is needed.
-- **Anchored credit:** Fix the starting value to the group mean reward and the final value to the observed reward. Adjacent value differences assign credit to actions and sum to the outcome’s improvement over the group mean, before normalization.
+- **Frozen LLM critic:** Read the completed trajectory, its outcome, and related rollouts to estimate intermediate values $\tilde V_t$. These are hindsight assessments, not prefix-only predictions; no critic training is needed.
+- **Anchored credit:** For group mean reward $\bar R_G$ and trajectory reward $R$, fix the endpoints and take differences:
+
+  $$
+  \begin{aligned}
+  \tilde V_0&=\bar R_G,\qquad \tilde V_T=R,\\
+  \bar A_t&=\tilde V_{t+1}-\tilde V_t,\\
+  \sum_{t=0}^{T-1}\bar A_t&=R-\bar R_G.
+  \end{aligned}
+  $$
+
+  Actual outcomes fix the total credit; the LLM decides its distribution across actions. Divide $\bar A_t$ by the group-wide step standard deviation for training. All tokens in one action share its advantage; anchoring does not guarantee correct local attribution.
 
 ## Stabilizing policy updates {#update-stability}
 
@@ -143,8 +256,28 @@ Control errors from asynchronous sampling, mismatched probabilities, and noisy c
 ### [SAO](https://arxiv.org/html/2607.07508v1#S3) {#sao}
 
 - **Single-rollout sampling:** Collect one trajectory per prompt asynchronously. A learned critic supplies the baseline, so training need not wait for sibling rollouts.
-- **Token masking:** Compare current token probabilities with logged rollout probabilities. Mask tokens whose ratio falls outside the allowed interval, regardless of advantage sign.
-- **Skip-observation GAE:** Connect consecutive model actions across tool feedback, without computing GAE through observation tokens. The feedback remains in the next action’s context.
+- **Token masking:** Let $\mu$ be the logged rollout policy and $\pi_\theta$ the learner:
+
+  $$
+  \begin{aligned}
+  \rho_t&=\frac{\pi_\theta(a_t\mid s_t)}{\mu(a_t\mid s_t)},\\
+  w_t&=\rho_t\,\mathbf 1[1-\epsilon_\ell<\rho_t<1+\epsilon_h].
+  \end{aligned}
+  $$
+
+  Use $w_t$ to weight the token’s advantage-gradient contribution. Outside the interval its contribution is zero, regardless of advantage sign.
+
+- **Skip-observation GAE:** Let $t^+$ index the next model-generated token, skipping intervening observation tokens:
+
+  $$
+  \begin{aligned}
+  \delta_t&=r_t+\gamma V(s_{t^+})-V(s_t),\\
+  \hat A_t&=\delta_t+\gamma\lambda\hat A_{t^+}.
+  \end{aligned}
+  $$
+
+  The next state still includes tool feedback in its context. GAE simply does not recurse through each tool-output token; terminal continuation values are zero.
+
 - **Critic updates:** Warm up the critic, freeze its attention layers, and update it twice per actor update to help it track the changing policy.
 
 ### [Score Centering](https://arxiv.org/html/2609.20807v1#S4) {#score-centering}
@@ -158,7 +291,7 @@ Control errors from asynchronous sampling, mismatched probabilities, and noisy c
   \end{aligned}
   $$
 
-  The centered score has zero mean under the sampler, removing the mismatch-induced drift term.
+  The centered score has zero mean under the sampler. If expected advantage is the same for every next-token choice, the expected update is zero; sampling mismatch alone no longer supplies a direction.
 
 - **Practical correction:** Store sampler probabilities for its top-$k$ tokens $H$ and approximate the remaining mass using the trainer’s distribution:
 
@@ -173,9 +306,25 @@ Control errors from asynchronous sampling, mismatched probabilities, and noisy c
 
 ### [EasyPPO](https://arxiv.org/html/2609.36802v1#S3) {#easyppo}
 
-- **Actor-only truncation filtering:** Exclude overlong responses from actor updates but retain them for critic training, so value estimates include the risk of failing to finish.
-- **Noise-weighted critic loss:** Weight each prompt’s critic loss by the inverse standard deviation of its sampled returns. Prompts with more variable rewards have less influence.
-- **Smaller critic minibatches:** Apply gradient clipping to moderately smaller batches, limiting how many other samples an outlier can suppress. The actor retains the PPO objective.
+- **Actor-only truncation filtering:** Let $C_i=1$ if response $i$ finishes within the length limit. Apply $C_i$ only to actor loss; keep every rollout in critic training. The critic then learns $\mathbb E[R\mid s]$, rather than $\mathbb E[R\mid s,C=1]$.
+- **Noise-weighted critic loss:** Let $\hat\sigma_x$ be the return standard deviation across rollouts of prompt $x$:
+
+  $$
+  \begin{aligned}
+  w_x&\propto\frac{1}{\max(\hat\sigma_x,\varepsilon)},\\
+  L_V&=\mathbb E_{x,i,t}\!\left[w_x\bigl(V_\phi(s_{i,t})-R_i\bigr)^2\right].
+  \end{aligned}
+  $$
+
+  High-variance prompts receive less weight, even when their mean reward is the same. This changes their influence on training, not their reward targets; $\varepsilon$ prevents division by zero.
+
+- **Smaller critic minibatches:** Clip each minibatch gradient $g$ separately:
+
+  $$
+  g_{\mathrm{clip}}=g\min\!\left(1,\frac{c}{\lVert g\rVert}\right).
+  $$
+
+  The threshold $c$ limits gradient norm. Smaller minibatches restrict how many other samples an outlier can suppress through this shared rescaling. The actor retains the PPO objective.
 
 <span id="models"></span>
 

@@ -89,7 +89,17 @@ Need a refresher on PPO? [Start with the basics]({{ '/blog/2026/revisiting-ppo/f
 ### [FlashREINFORCE](https://yifanzhang-pro.github.io/FlashREINFORCE/#method) {#flashreinforce}
 
 - **No learned critic:** Sample once per prompt and subtract the batch mean reward, across different prompts, to obtain signed advantages.
-- **Trajectory filtering:** Weight token updates by current-to-rollout probability ratios, then reject whole trajectories with excessive estimated policy divergence.
+- **Trajectory filtering:** Weight token updates by current-to-rollout probability ratios. For each sampled token, let $p_t$ and $q_t$ be its rollout and current-policy probabilities at the same history:
+
+  $$
+  \begin{aligned}
+  d_t &= p_t\log\frac{p_t}{q_t}+(1-p_t)\log\frac{1-p_t}{1-q_t},\\
+  \bar D &= \frac{1}{T}\sum_{t=1}^{T}d_t,\qquad m=\mathbf{1}[\bar D\leq\delta].
+  \end{aligned}
+  $$
+
+  Keep the whole trajectory only when $m=1$; $T$ counts model-generated tokens and $\delta$ is the threshold. This Bernoulli KL is a lower-bound proxy for full-vocabulary KL. [Details](https://yifanzhang-pro.github.io/FlashREINFORCE/FlashREINFORCE.pdf#page=4).
+
 - **Equal trajectory weight:** Average over tokens within each trajectory, then over the batch. Long failures do not get extra weight simply for being long; each fresh batch receives one update.
 
 ### [TEMPO](https://arxiv.org/html/2604.19295v1#S3) {#tempo}

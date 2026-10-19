@@ -59,21 +59,46 @@ $$
 \left[\sum_{t=1}^{T}R(\tau)\nabla_\theta\log\pi_\theta(a_t\mid s_t)\right].
 $$
 
-This estimator gives every token the same outcome signal. A baseline asks a more useful question: **was this continuation better than expected from this prefix?** For any action-independent baseline $b(s)$, held fixed in the actor update,
+**Why introduce a baseline?** In the estimator above, every token in a response is weighted by the final reward $R$. This is a valid policy-gradient estimator, but its samples can be noisy. We can subtract a reference value $b(s_t)$ from the reward to reduce variance:
+
+$$
+\nabla_\theta J
+=\mathbb E_{\tau\sim p_\theta}
+\left[\sum_{t=1}^{T}\big(R-b(s_t)\big)
+\nabla_\theta\log\pi_\theta(a_t\mid s_t)\right].
+$$
+
+**Why does subtraction preserve the gradient?** The baseline may depend on the prompt and generated prefix $s_t$, but not on the next token $a_t$. During the actor update, we treat it as a constant: gradients do not flow through it. At any fixed prefix $s$,
 
 $$
 \begin{aligned}
 \mathbb E_{a\sim\pi_\theta}[b(s)\nabla_\theta\log\pi_\theta(a\mid s)]
-&=b(s)\nabla_\theta\sum_a\pi_\theta(a\mid s)\\
-&=0.
+&=b(s)\sum_a\nabla_\theta\pi_\theta(a\mid s)\\
+&=b(s)\nabla_\theta 1=0.
 \end{aligned}
 $$
 
-Subtracting $b(s_t)$ therefore leaves the on-policy expected gradient unchanged. The critic approximates $V^\pi(s_t)=\mathbb E[R\mid s_t]$, giving the Monte Carlo estimate $\hat A_t=R-V_\phi(s_t)$. Positive advantage increases the sampled action’s probability; negative advantage decreases it. The baseline can reduce variance, even though each rollout still supplies only one observed outcome.
+The subtracted term therefore contributes zero in expectation. A suitable baseline can reduce the variance of the sampled gradient while leaving its on-policy expectation unchanged.
+
+**Where does the critic enter?** A natural baseline is the expected final reward when continuing from the current prefix. The critic learns to approximate this value:
+
+$$
+V_\phi(s_t)\approx V^\pi(s_t)=\mathbb E_{\tau\sim\pi}[R\mid s_t].
+$$
+
+Subtracting its prediction gives a Monte Carlo advantage estimate:
+
+$$
+\hat A_t^{\mathrm{MC}}=R-V_\phi(s_t).
+$$
+
+For example, a reward of $0.6$ gives an advantage of $+0.2$ if the critic predicted $0.4$, or $-0.2$ if it predicted $0.8$. A positive estimate encourages the sampled token; a negative estimate discourages it. Each prefix can have a different baseline, even though the observed final reward is shared across the response.
+
+This estimate compares the observed outcome with what was expected from a prefix. It does not establish which token caused success. Next, GAE uses successive value predictions to construct an alternative advantage estimate.
 
 ### 2. From value predictions to GAE
 
-Instead of waiting for the whole return at every token, compare successive predictions. With $V_{\mathrm{old}}$ fixed while constructing targets, the temporal-difference residual is
+GAE starts with a one-step prediction error. With $V_{\mathrm{old}}$ fixed while constructing targets, the temporal-difference residual is
 
 $$
 \delta_t=r_t+\gamma V_{\mathrm{old}}(s_{t+1})-V_{\mathrm{old}}(s_t).

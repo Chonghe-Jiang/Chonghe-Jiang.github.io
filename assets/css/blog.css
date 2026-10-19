@@ -753,36 +753,6 @@
   font-size: 1.4rem;
   letter-spacing: -0.025em;
 }
-.ppo-setting-legend {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.45rem 1rem;
-  margin: -0.5rem 0 1rem;
-  color: var(--essay-muted);
-  font-size: 0.65rem;
-  line-height: 1.6;
-}
-.ppo-setting-legend b {
-  margin-right: 0.25rem;
-  color: var(--essay-ink);
-  font-weight: 600;
-}
-.ppo-setting-tag {
-  display: inline-block;
-  flex-shrink: 0;
-  padding: 0.05rem 0.25rem;
-  border: 1px solid currentColor;
-  border-radius: 3px;
-  font-size: 0.54rem;
-  font-weight: 500;
-  line-height: 1.3;
-  vertical-align: middle;
-  white-space: nowrap;
-}
-.ppo-detail-setting {
-  margin-left: 0.35rem;
-  color: var(--essay-accent);
-}
 .ppo-stages {
   list-style: none;
   display: grid;

@@ -18,11 +18,6 @@
           link.classList.toggle("is-selected", !all && link.dataset.paper === button.dataset.paper);
         });
         detail.querySelector(".ppo-detail-name").textContent = all ? "Explore the loop" : button.querySelector(".ppo-paper-name").textContent;
-        const setting = detail.querySelector(".ppo-detail-setting");
-        setting.hidden = all;
-        setting.textContent = all ? "" : button.dataset.setting;
-        if (all) setting.removeAttribute("title");
-        else setting.title = button.querySelector(".ppo-setting-tag").title;
         detail.querySelector("p").textContent = all ? "Select a paper to highlight the stages it changes." : button.dataset.detail;
         const source = detail.querySelector("a");
         source.hidden = all;

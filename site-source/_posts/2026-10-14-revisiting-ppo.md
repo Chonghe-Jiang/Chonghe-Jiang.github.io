@@ -92,9 +92,7 @@ $$
 \hat A_t^{\mathrm{MC}}=R-V_\phi(s_t).
 $$
 
-For example, a reward of $0.6$ gives an advantage of $+0.2$ if the critic predicted $0.4$, or $-0.2$ if it predicted $0.8$. A positive estimate encourages the sampled token; a negative estimate discourages it. Each prefix can have a different baseline, even though the observed final reward is shared across the response.
-
-This estimate compares the observed outcome with what was expected from a prefix. It does not establish which token caused success. Next, GAE uses successive value predictions to construct an alternative advantage estimate.
+Positive advantage encourages the sampled token; negative advantage discourages it. The estimate compares the outcome with the critic’s expectation at each prefix. GAE builds on this by combining successive value predictions.
 
 ### 2. From value predictions to GAE
 

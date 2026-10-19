@@ -1009,17 +1009,39 @@
   font-size: 100% !important;
 }
 .ppo-literature-table table {
-  min-width: 760px;
+  min-width: 1440px;
+  table-layout: fixed;
   font-size: 0.8rem;
 }
 .ppo-literature-table th:first-child {
-  width: 18%;
+  width: 10%;
 }
 .ppo-literature-table th:nth-child(2) {
-  width: 14%;
+  width: 7%;
 }
 .ppo-literature-table th:nth-child(3) {
-  width: 22%;
+  width: 11%;
+}
+.ppo-literature-table th:nth-child(4) {
+  width: 26%;
+}
+.ppo-literature-table th:nth-child(5),
+.ppo-literature-table th:nth-child(6) {
+  width: 16%;
+}
+.ppo-literature-table th:nth-child(7) {
+  width: 14%;
+}
+.ppo-literature-table th:first-child,
+.ppo-literature-table td:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background: var(--essay-card);
+  box-shadow: 1px 0 0 var(--essay-line);
+}
+.ppo-literature-table td {
+  overflow-wrap: anywhere;
 }
 .ppo-map [hidden] {
   display: none !important;

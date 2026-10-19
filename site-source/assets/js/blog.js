@@ -1,31 +1,19 @@
 (() => {
-  const paperMap = document.getElementById("ppo-paper-map");
-  if (paperMap) {
-    const buttons = [...paperMap.querySelectorAll(".ppo-paper-select button")];
-    const stages = [...paperMap.querySelectorAll(".ppo-stage")];
-    const detail = paperMap.querySelector(".ppo-paper-detail");
-    paperMap.querySelector(".ppo-map-interaction").hidden = false;
-    buttons.forEach((button) =>
-      button.addEventListener("click", () => {
-        const all = button.dataset.paper === "all";
-        const selected = (button.dataset.stages || "").split(" ");
-        buttons.forEach((b) => b.setAttribute("aria-pressed", String(b === button)));
-        stages.forEach((stage) => {
-          stage.classList.toggle("is-selected", !all && selected.includes(stage.dataset.stage));
-          stage.classList.toggle("is-muted", !all && !selected.includes(stage.dataset.stage));
-        });
-        paperMap.querySelectorAll(".ppo-stage-papers a").forEach((link) => {
-          link.classList.toggle("is-selected", !all && link.dataset.paper === button.dataset.paper);
-        });
-        detail.querySelector(".ppo-detail-name").textContent = all ? "Explore the loop" : button.querySelector(".ppo-paper-name").textContent;
-        detail.querySelector("p").textContent = all ? "Select a paper to highlight the stages it changes." : button.dataset.detail;
-        const source = detail.querySelector("a");
-        source.hidden = all;
-        if (all) source.removeAttribute("href");
-        else source.href = button.dataset.url;
-      })
-    );
-  }
+  document.querySelectorAll(".ppo-family-figure").forEach((figure) => {
+    const controls = figure.querySelector(".ppo-variant-controls");
+    if (!controls) return;
+    const buttons = [...controls.querySelectorAll("button")];
+    const panels = [...figure.querySelectorAll(".ppo-variant")];
+    const select = (button) => {
+      buttons.forEach((item) => item.setAttribute("aria-pressed", String(item === button)));
+      panels.forEach((panel) => {
+        panel.hidden = panel.dataset.variant !== button.dataset.variant;
+      });
+    };
+    controls.hidden = false;
+    select(buttons[0]);
+    buttons.forEach((button) => button.addEventListener("click", () => select(button)));
+  });
 
   const tocLinks = [...document.querySelectorAll(".essay-toc a")];
   if ("IntersectionObserver" in window && tocLinks.length) {

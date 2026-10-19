@@ -1944,3 +1944,173 @@ html[data-theme="dark"] .ar-figure {
     font-size: 0.64rem;
   }
 }
+
+/* Five perspectives on policy optimization, using the shared reading palette. */
+.ppo-directions {
+  display: grid;
+  margin: 1.8rem 0 2.5rem;
+  border-top: 1px solid var(--essay-line);
+}
+.essay-body .ppo-directions a {
+  display: grid;
+  grid-template-columns: 2rem minmax(0, 1fr) 1rem;
+  gap: 0.7rem;
+  align-items: center;
+  padding: 0.85rem 0.35rem;
+  border-bottom: 1px solid var(--essay-line);
+  color: var(--essay-ink);
+  text-decoration: none;
+}
+.ppo-directions a:hover {
+  background: var(--essay-surface);
+}
+.ppo-direction-number {
+  color: var(--essay-accent);
+  font-size: 0.76rem;
+}
+.ppo-directions strong {
+  display: block;
+  font-size: 0.9rem;
+}
+.ppo-directions small {
+  display: block;
+  color: var(--essay-muted);
+  font-size: 0.75rem;
+}
+.ppo-family-figure {
+  margin: 1.5rem 0 2rem;
+  padding: 1.25rem;
+  border: 1px solid var(--essay-line);
+  border-radius: 10px;
+  background: var(--essay-card);
+}
+.ppo-family-figure [hidden] {
+  display: none !important;
+}
+.ppo-variant-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 1.2rem;
+  margin-bottom: 1.25rem;
+  border-bottom: 1px solid var(--essay-line);
+}
+.ppo-variant-controls button {
+  padding: 0.4rem 0 0.6rem;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  font: inherit;
+  font-size: 0.79rem;
+  color: var(--essay-muted);
+  cursor: pointer;
+}
+.ppo-variant-controls button[aria-pressed="true"] {
+  border-bottom-color: var(--essay-accent);
+  color: var(--essay-accent);
+}
+.ppo-variant-controls button:focus-visible,
+.ppo-directions a:focus-visible {
+  outline: 2px solid var(--essay-accent);
+  outline-offset: 3px;
+}
+.ppo-flow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 1.6rem minmax(0, 1fr) 1.6rem minmax(0, 1fr);
+  align-items: stretch;
+}
+.ppo-flow-node {
+  min-width: 0;
+  padding: 0.9rem;
+  border: 1px solid var(--essay-line);
+  border-radius: 7px;
+  background: var(--essay-surface);
+}
+.ppo-flow-node.is-focus {
+  border-color: var(--essay-accent);
+  box-shadow: inset 0 3px 0 var(--essay-accent);
+}
+.ppo-flow-node > span {
+  display: block;
+  margin-bottom: 0.65rem;
+  font-size: 0.64rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--essay-muted);
+}
+.ppo-flow-node.is-focus > span {
+  color: var(--essay-accent);
+}
+.ppo-flow-node strong {
+  display: block;
+  font-size: 0.86rem;
+  line-height: 1.45;
+}
+.essay-body .ppo-flow-node p {
+  margin: 0.5rem 0 0;
+  font-size: 0.76rem;
+  line-height: 1.65;
+  color: var(--essay-muted);
+}
+.ppo-flow-arrow {
+  align-self: center;
+  text-align: center;
+  color: var(--essay-muted);
+}
+.essay-body .ppo-flow-note,
+.ppo-family-figure figcaption {
+  margin: 1rem 0 0;
+  padding-top: 0.8rem;
+  border-top: 1px solid var(--essay-line);
+  font-size: 0.76rem;
+  line-height: 1.65;
+  color: var(--essay-muted);
+}
+.ppo-cope-paths {
+  display: grid;
+  gap: 0.8rem;
+}
+.ppo-cope-paths .ppo-flow {
+  grid-template-columns: minmax(0, 1fr) 1.6rem minmax(0, 1fr);
+}
+.ppo-cope-merge {
+  text-align: center;
+  font-size: 0.83rem;
+}
+.ppo-cope-merge span {
+  display: block;
+  margin: 0.5rem;
+  color: var(--essay-accent);
+}
+.ppo-cope-merge strong {
+  display: block;
+  padding: 0.8rem;
+  border: 1px solid var(--essay-accent);
+  border-radius: 7px;
+}
+@media (max-width: 600px) {
+  .ppo-family-figure {
+    padding: 0.9rem;
+  }
+  .ppo-flow,
+  .ppo-cope-paths .ppo-flow {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .ppo-flow-arrow {
+    transform: rotate(90deg);
+    padding: 0.1rem;
+  }
+  .ppo-cope-paths {
+    gap: 1.2rem;
+  }
+}
+@media print {
+  .ppo-family-figure .ppo-variant[hidden] {
+    display: block !important;
+  }
+  .ppo-variant-controls {
+    display: none;
+  }
+  .ppo-variant + .ppo-variant {
+    margin-top: 1rem;
+  }
+}

@@ -12,7 +12,7 @@ sections:
   - { id: critic-roles, title: What critics do }
   - { id: critic-inputs, title: What critics see }
   - { id: update-stability, title: Stable updates }
-  - { id: comparison, title: Paper comparison }
+  - { id: comparison, title: Details }
 ---
 
 This post reviews **PPO and related policy-gradient methods for large language models** from four perspectives.
@@ -179,7 +179,7 @@ Control errors from asynchronous sampling, mismatched probabilities, and noisy c
 
 <span id="models"></span>
 
-## Where the papers intervene {#comparison}
+## Details {#comparison}
 
 **Agent:** FlashREINFORCE, SPO, LVRL, SAO, EasyPPO, CoPE.
 

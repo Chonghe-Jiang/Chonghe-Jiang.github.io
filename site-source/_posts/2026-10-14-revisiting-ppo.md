@@ -25,16 +25,38 @@ The actor changes which tokens the model generates. The critic predicts how well
 
 Let $x$ be a prompt, $a_t=y_t$ the next token, and $s_t=(x,y_{<t})$ the prompt plus generated prefix. A trajectory $\tau$ ends with reward $R$. For now, use undiscounted, terminal-only rewards: $r_t=0$ before the final token and $r_T=R$.
 
-The objective is $J(\theta)=\mathbb E_{\tau\sim\pi_\theta}[R]$. Since the trajectory probability is a product of token probabilities, differentiating its log turns that product into a sum:
+For a fixed prompt, let $p_\theta(\tau)$ denote the probability of a complete response. Expand the expected reward as a sum over possible responses:
+
+$$
+J(\theta)=\mathbb E_{\tau\sim p_\theta}[R(\tau)]
+=\sum_\tau p_\theta(\tau)R(\tau).
+$$
+
+Assume the reward of a given response does not directly depend on $\theta$. Differentiating changes the probability of each response. The **log-derivative trick** rewrites that probability derivative:
+
+$$
+\nabla_\theta\log p_\theta(\tau)
+=\frac{\nabla_\theta p_\theta(\tau)}{p_\theta(\tau)}.
+$$
+
+Using $\nabla_\theta p_\theta(\tau)=p_\theta(\tau)\nabla_\theta\log p_\theta(\tau)$ gives
 
 $$
 \begin{aligned}
 \nabla_\theta J
-&=\mathbb E_{\tau\sim\pi_\theta}
-\left[R\,\nabla_\theta\log p_\theta(\tau)\right]\\
-&=\mathbb E_{\tau\sim\pi_\theta}
-\left[\sum_{t=1}^{T}R\,\nabla_\theta\log\pi_\theta(a_t\mid s_t)\right].
+&=\sum_\tau R(\tau)\nabla_\theta p_\theta(\tau)\\
+&=\sum_\tau p_\theta(\tau)R(\tau)\nabla_\theta\log p_\theta(\tau)\\
+&=\mathbb E_{\tau\sim p_\theta}
+\left[R(\tau)\nabla_\theta\log p_\theta(\tau)\right].
 \end{aligned}
+$$
+
+This lets us estimate the gradient from sampled responses without differentiating the reward function. Next, $p_\theta(\tau)=\prod_{t=1}^{T}\pi_\theta(a_t\mid s_t)$. Taking its log turns the product into a sum, giving the token-level policy gradient:
+
+$$
+\nabla_\theta J
+=\mathbb E_{\tau\sim p_\theta}
+\left[\sum_{t=1}^{T}R(\tau)\nabla_\theta\log\pi_\theta(a_t\mid s_t)\right].
 $$
 
 This estimator gives every token the same outcome signal. A baseline asks a more useful question: **was this continuation better than expected from this prefix?** For any action-independent baseline $b(s)$, held fixed in the actor update,

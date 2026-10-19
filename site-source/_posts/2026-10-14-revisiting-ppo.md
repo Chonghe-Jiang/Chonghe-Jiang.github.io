@@ -115,8 +115,27 @@ Need a refresher on PPO? [Start with the basics]({{ '/blog/2026/revisiting-ppo/f
 
 ### [Score Centering](https://arxiv.org/html/2609.20807v1#S4) {#score-centering}
 
-- **Center the gradient:** “Score” means the log-probability gradient. Subtract its expected value under the sampler at each prefix to remove drift caused by sampler–trainer mismatch.
-- **Practical correction:** Store the sampler’s top-token probabilities and approximate the remaining probability mass. The correction can also be combined with importance weighting.
+- **Center the gradient:** At a fixed prefix $s$, write $p_a=\pi_\theta(a\mid s)$, $q_a=\mu(a\mid s)$, and $\psi_a=\nabla_\theta\log p_a$. Subtract the sampler’s expected score:
+
+  $$
+  \begin{aligned}
+  c(s)&=\sum_a q_a\psi_a,\\
+  g_{\mathrm{SC}}(s)&=\mathbb E_{a\sim q}\!\left[\hat A(s,a)\bigl(\psi_a-c(s)\bigr)\right].
+  \end{aligned}
+  $$
+
+  The centered score has zero mean under the sampler, removing the mismatch-induced drift term.
+
+- **Practical correction:** Store sampler probabilities for its top-$k$ tokens $H$ and approximate the remaining mass using the trainer’s distribution:
+
+  $$
+  \begin{aligned}
+  \rho&=\frac{1-\sum_{a\in H}q_a}{1-\sum_{a\in H}p_a},\\
+  \hat c(s)&=\sum_{a\in H}(q_a-\rho p_a)\psi_a.
+  \end{aligned}
+  $$
+
+  This assigns unlogged tokens probability $\hat q_a=\rho p_a$ and uses $\sum_a p_a\psi_a=0$ to avoid summing over the tail. Hold the correction coefficients fixed when differentiating the loss. With importance weights, center $w_a\psi_a$ by subtracting $\mathbb E_{a\sim q}[w_a\psi_a]$ instead.
 
 ### [Decoupled PPO](https://github.com/areal-project/AReaL/blob/main/docs/en/best_practices/algo_perf.md#importance-weight-metrics) {#decoupled-ppo}
 

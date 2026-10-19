@@ -10,6 +10,7 @@ math: true
 sections:
   - { id: literature, title: Recent work }
   - { id: comparison, title: Paper comparison }
+  - { id: mechanisms, title: Key mechanisms }
 ---
 
 This post reviews **PPO and related policy-gradient methods for large language models**.
@@ -76,30 +77,66 @@ Need a refresher on PPO? [Start with the basics]({{ '/blog/2026/revisiting-ppo/f
 
 <a class="essay-read" href="{{ '/blog/2026/revisiting-ppo/tasks/' | relative_url }}">See details on the tasks <span aria-hidden="true">→</span></a>
 
-### BPCO: change what the critic learns
+## Key mechanisms {#mechanisms}
 
-[BPCO](https://arxiv.org/abs/2608.23566) separates the actor’s bootstrapping from the critic’s target: $\lambda_V=1$ keeps the target tied to the observed reward, while $\lambda_\pi(L)=1-1/(\alpha L)$ adapts credit propagation to response length. Its bounded head prevents impossible return predictions. An optional reference answer or rubric helps the critic during training without entering the policy’s prompt. Its **Divergence PPO** uses a token-probability-dependent clipping range; this is distinct from **Decoupled PPO** above.
+### [SAO](https://arxiv.org/html/2607.07508v1#S3) {#sao}
 
-### LVRL: redistribute the outcome across actions
+- **Single-rollout sampling:** Collect one trajectory per prompt asynchronously. A learned critic supplies the baseline, so training need not wait for sibling rollouts.
+- **Token masking:** Compare current token probabilities with logged rollout probabilities. Mask tokens whose ratio falls outside the allowed interval, regardless of advantage sign.
+- **Skip-observation GAE:** Connect consecutive model actions across tool feedback, without computing GAE through observation tokens. The feedback remains in the next action’s context.
+- **Critic updates:** Warm up the critic, freeze its attention layers, and update it twice per actor update to help it track the changing policy.
 
-[LLM Value Functions for Credit Assignment in Agentic RL](https://arxiv.org/abs/2610.15840) uses a frozen LLM to read completed trajectories, with other rollouts providing policy context. At the environment-action level, it anchors $\tilde V_0=\bar R_G$ and $\tilde V_T=R$, then computes
+### [FlashREINFORCE](https://yifanzhang-pro.github.io/FlashREINFORCE/#method) {#flashreinforce}
 
-$$
-\bar A_t=\tilde V_{t+1}-\tilde V_t,
-\qquad
-\sum_{t=0}^{T-1}\bar A_t=R-\bar R_G.
-$$
+- **No learned critic:** Sample once per prompt and subtract the batch mean reward, across different prompts, to obtain signed advantages.
+- **Trajectory filtering:** Weight token updates by current-to-rollout probability ratios, then reject whole trajectories with excessive estimated policy divergence.
+- **Equal trajectory weight:** Average over tokens within each trajectory, then over the batch. Long failures do not get extra weight simply for being long; each fresh batch receives one update.
 
-It divides these differences by their group-wide step standard deviation; every token in an action shares that action’s advantage. The unnormalized sum is fixed by outcomes, but the LLM determines where credit goes. These are hindsight estimates, not an ordinary prefix-only value function. Anchoring preserves the total signal; it does not guarantee correct local credit.
+### [TEMPO](https://arxiv.org/html/2604.19295v1#S3) {#tempo}
 
-### CoPE: learn more from successful trajectories
+- **Critic feedback at test time:** On unlabeled questions, use the critic’s final-response score as reward and subtract its prefix predictions for token-level advantages.
+- **Periodic recalibration:** Retrain the critic on labeled questions with verified rewards, then resume policy adaptation. This keeps feedback tied to external supervision as the actor changes.
 
-[CoPE](https://arxiv.org/abs/2610.20597) keeps GRPO and adds a forecasting loss. From history $h_t$, the shared backbone predicts the next $K+1$ actions recorded in a successful rollout:
+### [AC2](https://arxiv.org/html/2609.39247v2#S3) {#ac2}
 
-$$
-L_{\mathrm{AF}}
-=-\mathbb E_{\tau\mid\mathrm{success}}
-\left[\sum_t\log p_\theta(a_{t:t+K}\mid h_t)\right].
-$$
+- **Short continuations:** Sample prefixes from a replay buffer and generate several continuations. Once the critic passes readiness checks, stop at a chunk boundary and estimate the unfinished response’s value.
+- **Chunk advantages:** Subtract the group mean endpoint value from each continuation’s value. Train the shared generative critic to predict that group mean at the starting prefix.
+- **Full-rollout audits:** Still complete a fraction of ready problems to check critic accuracy against actual outcomes.
 
-Training minimizes $L_{\mathrm{GRPO}}+\eta L_{\mathrm{AF}}$, averaging the forecasting term over successful rollouts within each group. A forecasting instruction distinguishes $p_\theta$ from the acting distribution, even though they share parameters. At inference, the agent still acts one step at a time. The added signal teaches which action sequences followed successful histories, rather than how much scalar value each history had.
+### [Score Centering](https://arxiv.org/html/2609.20807v1#S4) {#score-centering}
+
+- **Center the gradient:** “Score” means the log-probability gradient. Subtract its expected value under the sampler at each prefix to remove drift caused by sampler–trainer mismatch.
+- **Practical correction:** Store the sampler’s top-token probabilities and approximate the remaining probability mass. The correction can also be combined with importance weighting.
+
+### [Decoupled PPO](https://github.com/areal-project/AReaL/blob/main/docs/en/best_practices/algo_perf.md#importance-weight-metrics) {#decoupled-ppo}
+
+- **Two probability ratios:** Use proximal-policy / behavior-policy probabilities for sampling correction, and current-policy / proximal-policy probabilities for PPO clipping.
+- **A recent clipping reference:** The proximal policy is one training step behind the current policy. This separates the size of a new update from how stale its rollout is.
+
+### [EasyPPO](https://arxiv.org/html/2609.36802v1#S3) {#easyppo}
+
+- **Actor-only truncation filtering:** Exclude overlong responses from actor updates but retain them for critic training, so value estimates include the risk of failing to finish.
+- **Noise-weighted critic loss:** Weight each prompt’s critic loss by the inverse standard deviation of its sampled returns. Prompts with more variable rewards have less influence.
+- **Smaller critic minibatches:** Apply gradient clipping to moderately smaller batches, limiting how many other samples an outlier can suppress. The actor retains the PPO objective.
+
+<span id="bpco-change-what-the-critic-learns"></span>
+
+### [BPCO](https://arxiv.org/html/2608.23566v2#S3) {#bpco}
+
+- **Ground the critic:** Bound predictions to the reward range and regress directly on observed final rewards. Optional reference answers or rubrics go to the critic only.
+- **Preserve the learning signal:** Keep raw advantages and adapt GAE’s decay to response length, avoiding batch normalization that can amplify small residual signals.
+- **Divergence PPO:** Make clipping depend on the sampled token’s probability, rather than applying the same ratio bounds everywhere. This differs from Decoupled PPO above.
+
+<span id="lvrl-redistribute-the-outcome-across-actions"></span>
+
+### [LVRL](https://arxiv.org/html/2610.15840v1) {#lvrl}
+
+- **Frozen LLM critic:** Read completed trajectories and related rollouts to estimate intermediate values in hindsight; no critic training is needed.
+- **Anchored credit:** Fix the starting value to the group mean reward and the final value to the observed reward. Adjacent value differences assign credit to actions and sum to the outcome’s improvement over the group mean, before normalization.
+
+<span id="cope-learn-more-from-successful-trajectories"></span>
+
+### [CoPE](https://arxiv.org/html/2610.20597v2) {#cope}
+
+- **Forecast successful actions:** Add a supervised loss that predicts several subsequent actions from a history in a successful rollout.
+- **Shared policy backbone:** Train acting with GRPO and forecasting with the auxiliary loss. At inference the model still acts one step at a time; the extra supervision does not require a value critic.

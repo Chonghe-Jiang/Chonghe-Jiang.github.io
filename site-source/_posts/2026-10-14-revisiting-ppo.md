@@ -120,8 +120,26 @@ Need a refresher on PPO? [Start with the basics]({{ '/blog/2026/revisiting-ppo/f
 
 ### [Decoupled PPO](https://github.com/areal-project/AReaL/blob/main/docs/en/best_practices/algo_perf.md#importance-weight-metrics) {#decoupled-ppo}
 
-- **Two probability ratios:** Use proximal-policy / behavior-policy probabilities for sampling correction, and current-policy / proximal-policy probabilities for PPO clipping.
-- **A recent clipping reference:** The proximal policy is one training step behind the current policy. This separates the size of a new update from how stale its rollout is.
+- **Two probability ratios:** Let $\mu$ be the rollout behavior policy, $\nu$ the proximal policy, and $\pi_\theta$ the current policy. At each sampled state–token pair:
+
+  $$
+  \begin{aligned}
+  w_t &= \frac{\nu(a_t\mid s_t)}{\mu(a_t\mid s_t)} && \text{sampling correction},\\
+  r_t(\theta) &= \frac{\pi_\theta(a_t\mid s_t)}{\nu(a_t\mid s_t)} && \text{PPO update ratio}.
+  \end{aligned}
+  $$
+
+- **A recent clipping reference:** The proximal policy is one training step behind the current policy. The actor minimizes
+
+  $$
+  \begin{aligned}
+  \tilde r_t &= \operatorname{clip}(r_t,1-\epsilon,1+\epsilon),\\
+  L_{\mathrm{actor}}(\theta)
+  &= -\mathbb E_{\mu}\!\left[w_t\min\!\left(r_t\hat A_t,\tilde r_t\hat A_t\right)\right].
+  \end{aligned}
+  $$
+
+  Hold $w_t$ and $\hat A_t$ fixed during the update. Clipping acts on $r_t$, separating the new update from rollout staleness carried by $w_t$.
 
 ### [EasyPPO](https://arxiv.org/html/2609.36802v1#S3) {#easyppo}
 

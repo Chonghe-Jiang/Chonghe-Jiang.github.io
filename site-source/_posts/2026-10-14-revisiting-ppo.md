@@ -8,163 +8,14 @@ permalink: /blog/2026/revisiting-ppo/
 research_blog: true
 math: true
 sections:
-  - { id: ppo-review, title: Review of PPO }
   - { id: literature, title: Recent work }
   - { id: models, title: Models & Tasks }
 ---
 
 This post reviews **PPO and related policy-gradient methods for large language models**.
 
-## Review of PPO {#ppo-review}
-
-The actor changes which tokens the model generates. The critic predicts how well a continuation will turn out. Start with the return, then follow it into these two updates.
-
-<div class="ppo-math-block" markdown="1">
-
-### 1. From an outcome to an advantage
-
-Let $x$ be a prompt, $a_t=y_t$ the next token, and $s_t=(x,y_{<t})$ the prompt plus generated prefix. A trajectory $\tau$ ends with reward $R$. For now, use undiscounted, terminal-only rewards: $r_t=0$ before the final token and $r_T=R$.
-
-For a fixed prompt, let $p_\theta(\tau)$ denote the probability of a complete response. Expand the expected reward as a sum over possible responses:
-
-$$
-J(\theta)=\mathbb E_{\tau\sim p_\theta}[R(\tau)]
-=\sum_\tau p_\theta(\tau)R(\tau).
-$$
-
-Assume the reward of a given response does not directly depend on $\theta$. Differentiating changes the probability of each response. The **log-derivative trick** rewrites that probability derivative:
-
-$$
-\nabla_\theta\log p_\theta(\tau)
-=\frac{\nabla_\theta p_\theta(\tau)}{p_\theta(\tau)}.
-$$
-
-Using $\nabla_\theta p_\theta(\tau)=p_\theta(\tau)\nabla_\theta\log p_\theta(\tau)$ gives
-
-$$
-\begin{aligned}
-\nabla_\theta J
-&=\sum_\tau R(\tau)\nabla_\theta p_\theta(\tau)\\
-&=\sum_\tau p_\theta(\tau)R(\tau)\nabla_\theta\log p_\theta(\tau)\\
-&=\mathbb E_{\tau\sim p_\theta}
-\left[R(\tau)\nabla_\theta\log p_\theta(\tau)\right].
-\end{aligned}
-$$
-
-This lets us estimate the gradient from sampled responses without differentiating the reward function. Next, $p_\theta(\tau)=\prod_{t=1}^{T}\pi_\theta(a_t\mid s_t)$. Taking its log turns the product into a sum, giving the token-level policy gradient:
-
-$$
-\nabla_\theta J
-=\mathbb E_{\tau\sim p_\theta}
-\left[\sum_{t=1}^{T}R(\tau)\nabla_\theta\log\pi_\theta(a_t\mid s_t)\right].
-$$
-
-**Why introduce a baseline?** In the estimator above, every token in a response is weighted by the final reward $R$. This is a valid policy-gradient estimator, but its samples can be noisy. We can subtract a reference value $b(s_t)$ from the reward to reduce variance:
-
-$$
-\nabla_\theta J
-=\mathbb E_{\tau\sim p_\theta}
-\left[\sum_{t=1}^{T}\big(R-b(s_t)\big)
-\nabla_\theta\log\pi_\theta(a_t\mid s_t)\right].
-$$
-
-**Why does subtraction preserve the gradient?** The baseline may depend on the prompt and generated prefix $s_t$, but not on the next token $a_t$. During the actor update, we treat it as a constant: gradients do not flow through it. At any fixed prefix $s$,
-
-$$
-\begin{aligned}
-\mathbb E_{a\sim\pi_\theta}[b(s)\nabla_\theta\log\pi_\theta(a\mid s)]
-&=b(s)\sum_a\nabla_\theta\pi_\theta(a\mid s)\\
-&=b(s)\nabla_\theta 1=0.
-\end{aligned}
-$$
-
-The subtracted term therefore contributes zero in expectation. A suitable baseline can reduce the variance of the sampled gradient while leaving its on-policy expectation unchanged.
-
-**Where does the critic enter?** A natural baseline is the expected final reward when continuing from the current prefix. The critic learns to approximate this value:
-
-$$
-V_\phi(s_t)\approx V^\pi(s_t)=\mathbb E_{\tau\sim\pi}[R\mid s_t].
-$$
-
-Subtracting its prediction gives a Monte Carlo advantage estimate:
-
-$$
-\hat A_t^{\mathrm{MC}}=R-V_\phi(s_t).
-$$
-
-Positive advantage encourages the sampled token; negative advantage discourages it. The estimate compares the outcome with the critic’s expectation at each prefix. GAE builds on this by combining successive value predictions.
-
-### 2. From value predictions to GAE
-
-GAE starts with a one-step prediction error. With $V_{\mathrm{old}}$ fixed while constructing targets, the temporal-difference residual is
-
-$$
-\delta_t=r_t+\gamma V_{\mathrm{old}}(s_{t+1})-V_{\mathrm{old}}(s_t).
-$$
-
-[Generalized advantage estimation](https://arxiv.org/abs/1506.02438) adds these residuals with decaying weights:
-
-$$
-\hat A_t^{(\lambda)}
-=\sum_{l=0}^{T-t}(\gamma\lambda)^l\delta_{t+l}.
-$$
-
-$\gamma$ discounts future rewards; $\lambda$ controls how far credit propagates through observed residuals. At $\lambda=0$, only the next residual matters. At $\gamma=\lambda=1$, the intermediate value terms cancel. For a completed episode, $V_{\mathrm{old}}(s_{T+1})=0$, so
-
-$$
-\begin{aligned}
-\hat A_t^{(1)}
-&=\sum_{k=t}^{T}\big[r_k+V_{\mathrm{old}}(s_{k+1})-V_{\mathrm{old}}(s_k)\big]\\
-&=R-V_{\mathrm{old}}(s_t).
-\end{aligned}
-$$
-
-Smaller $\lambda$ can reduce variance, but makes the estimate depend more on the critic’s intermediate predictions. A bad baseline and a bad bootstrapped estimate are different problems: baseline error can add variance; bootstrapping can also bias credit assignment. A length cutoff needs its own terminal or bootstrap convention; the cancellation above assumes a completed episode.
-
-### 3. The actor: reuse data, limit the update
-
-Rollouts come from a fixed behavior policy $\mu$. As the actor changes, the sampled action’s probability ratio becomes
-
-$$
-\rho_t(\theta)=\frac{\pi_\theta(a_t\mid s_t)}{\mu(a_t\mid s_t)}.
-$$
-
-At a fixed sampled state, this ratio corrects the action distribution. The states still come from $\mu$: this is a local surrogate, not a full correction of the trajectory distribution. [PPO](https://arxiv.org/abs/1707.06347) maximizes
-
-$$
-\begin{aligned}
-J_{\mathrm{clip}}(\theta)
-=\mathbb E_{\mathcal D}\big[\min\big(&\rho_t\hat A_t,\\
-&\operatorname{clip}(\rho_t,1-\epsilon,1+\epsilon)\hat A_t\big)\big].
-\end{aligned}
-$$
-
-$\mathcal D$ is the collected rollout batch, $\epsilon$ sets the clipping range, and $\hat A_t$ stays fixed during this update. For positive advantage, the objective stops rewarding a ratio above $1+\epsilon$. For negative advantage, it stops rewarding a ratio below $1-\epsilon$. This limits the incentive to move farther in the favored direction; it does not impose a hard bound on the updated policy.
-
-Before clipping activates, the gradient contribution is $\rho_t\hat A_t\nabla_\theta\log\pi_\theta(a_t\mid s_t)$. That exposes three separate choices: the advantage, the probability correction, and the log-probability gradient. KL penalties and entropy bonuses can add further terms; they are omitted here.
-
-### 4. The critic: fit a return target
-
-The critic solves a regression problem. A common target and loss are
-
-$$
-\begin{aligned}
-Y_t&=\operatorname{stopgrad}\!\left[V_{\mathrm{old}}(s_t)+\hat A_t^{(\lambda_V)}\right],\\
-L_V(\phi)&=\frac12\mathbb E_{\mathcal D}\left[(V_\phi(s_t)-Y_t)^2\right].
-\end{aligned}
-$$
-
-With $\gamma=\lambda_V=1$ and a completed terminal-reward episode, $Y_t=R$. Smaller $\lambda_V$ mixes observed rewards with old value predictions. The actor’s $\lambda_\pi$ and critic’s $\lambda_V$ need not match. The actor increases expected reward; the critic reduces prediction error against a fixed target. They do not optimize the same objective.
-
-A useful way to locate changes to critic training is
-
-$$
-L_V=\mathbb E_{\mathcal D}\left[m_t^V\,\omega_x\,\ell(V_\phi(s_t),Y_t)\right].
-$$
-
-Here $m_t^V$ selects valid training positions, $\omega_x$ weights examples or prompts, and $\ell$ is the regression loss. A method can change the data retained, its weight, the target, or the critic’s inputs without changing the actor’s clipped objective.
-
-</div>
+<span id="ppo-review"></span>
+Need a refresher on PPO? [Start with the basics]({{ '/blog/2026/revisiting-ppo/foundations/' | relative_url }}).
 
 ## Review of Recent Work {#literature}
 
@@ -198,7 +49,7 @@ Here $m_t^V$ selects valid training positions, $\omega_x$ weights examples or pr
 
 ### Where the papers intervene
 
-The equations separate changes that can look similar in an implementation. Reward centering changes the advantage. Score centering changes the log-probability gradient; below, $w$ denotes its importance weight. A frozen LLM can replace learned value estimates, while an auxiliary prediction loss can add supervision without estimating values at all.
+Reward centering changes the advantage. Score centering changes the log-probability gradient; below, $w$ denotes its importance weight. A frozen LLM can replace learned value estimates, while an auxiliary prediction loss can add supervision without estimating values at all.
 
 <div class="table-scroll ppo-literature-table" role="region" aria-label="Papers mapped to PPO components" tabindex="0" markdown="1">
 

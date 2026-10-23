@@ -147,6 +147,7 @@
   figure: /assets/img/papers/fisher.svg
   figure_alt: "Fisher market concept diagram: accelerated price adjustment followed by an oracle that recovers exact competitive equilibrium
     prices."
+  code: https://github.com/Chonghe-Jiang/Goods_ATM
   group: markets
 - key: chores
   category: optimization
@@ -163,6 +164,7 @@
   figure: /assets/img/papers/chores.svg
   figure_alt: "Chores equilibrium concept diagram: a difference-of-convex formulation leads to linear convergence to exact equilibrium and
     a smooth method for approximate equilibrium."
+  code: https://github.com/Chonghe-Jiang/Chores_DCA_SGR
   group: markets
 - key: gets
   category: optimization
@@ -246,15 +248,6 @@
     - Huikang Liu
     - Jinxin Wang
     - Anthony Man-Cho So
-  venue: Working paper · To be submitted
-  working: true
-  group: working_papers
-- key: portfolio
-  category: working_papers
-  title: Portfolio Marginal Risk Control
-  collaborators:
-    - Wenchu Zhang
-    - Zhaolin Hu
   venue: Working paper · To be submitted
   working: true
   group: working_papers

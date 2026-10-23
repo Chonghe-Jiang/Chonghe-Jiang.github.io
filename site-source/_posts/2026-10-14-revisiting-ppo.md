@@ -26,7 +26,7 @@ Need a refresher on PPO? [Start with the basics]({{ '/blog/2026/revisiting-ppo/f
 <a href="#without-critic"><span class="ppo-direction-number">01</span><span><strong>Learning without value networks</strong><small>FlashREINFORCE · SPO · CoPE</small></span><span aria-hidden="true">↗</span></a>
 <a href="#critic-roles"><span class="ppo-direction-number">02</span><span><strong>Changing what critics do</strong><small>TEMPO · AC2</small></span><span aria-hidden="true">↗</span></a>
 <a href="#critic-inputs"><span class="ppo-direction-number">03</span><span><strong>Changing what critics see</strong><small>BPCO · LVRL</small></span><span aria-hidden="true">↗</span></a>
-<a href="#update-stability"><span class="ppo-direction-number">04</span><span><strong>Stabilizing policy updates</strong><small>SAO · Score Centering · EasyPPO</small></span><span aria-hidden="true">↗</span></a>
+<a href="#update-stability"><span class="ppo-direction-number">04</span><span><strong>Stabilizing policy updates</strong><small>SAO · Score Centering · EasyPPO · StableReinforce</small></span><span aria-hidden="true">↗</span></a>
 </nav>
 
 <span id="mechanisms"></span>
@@ -246,10 +246,11 @@ Give the critic additional evidence for estimating value and assigning credit.
 Control errors from asynchronous sampling, mismatched probabilities, and noisy critic training.
 
 <figure class="ppo-family-figure" aria-label="update stability mechanism comparison">
-<div class="ppo-variant-controls" role="group" aria-label="Choose a method" hidden><button type="button" data-variant="sao" aria-pressed="true" aria-controls="update-stability-sao">SAO</button><button type="button" data-variant="centering" aria-pressed="false" aria-controls="update-stability-centering">Score Centering</button><button type="button" data-variant="easy" aria-pressed="false" aria-controls="update-stability-easy">EasyPPO</button></div>
+<div class="ppo-variant-controls" role="group" aria-label="Choose a method" hidden><button type="button" data-variant="sao" aria-pressed="true" aria-controls="update-stability-sao">SAO</button><button type="button" data-variant="centering" aria-pressed="false" aria-controls="update-stability-centering">Score Centering</button><button type="button" data-variant="easy" aria-pressed="false" aria-controls="update-stability-easy">EasyPPO</button><button type="button" data-variant="stable" aria-pressed="false" aria-controls="update-stability-stable">StableReinforce</button></div>
 <div class="ppo-variant-display" aria-live="polite"><div class="ppo-variant" id="update-stability-sao" data-variant="sao"><div class="ppo-flow"><div class="ppo-flow-node"><span>Collect</span><strong>Asynchronous rollouts</strong><p>Behavior policies can lag behind the learner.</p></div><span class="ppo-flow-arrow" aria-hidden="true">→</span><div class="ppo-flow-node is-focus"><span>Correct</span><strong>Mask divergent tokens</strong><p>Use logged rollout probabilities.</p></div><span class="ppo-flow-arrow" aria-hidden="true">→</span><div class="ppo-flow-node"><span>Learn</span><strong>Actor + critic</strong><p>Skip observations in GAE; update the critic faster.</p></div></div><p class="ppo-flow-note"><strong>SAO.</strong> Control policy lag while keeping a learned baseline for one-rollout sampling.</p></div>
 <div class="ppo-variant" id="update-stability-centering" data-variant="centering"><div class="ppo-flow"><div class="ppo-flow-node"><span>Sample</span><strong>Sampler ≠ trainer</strong><p>Quantization or staleness changes probabilities.</p></div><span class="ppo-flow-arrow" aria-hidden="true">→</span><div class="ppo-flow-node is-focus"><span>Correct</span><strong>Center the score</strong><p>Subtract the sampler’s expected gradient.</p></div><span class="ppo-flow-arrow" aria-hidden="true">→</span><div class="ppo-flow-node"><span>Learn</span><strong>Actor update</strong><p>Remove the mismatch-induced drift term.</p></div></div><p class="ppo-flow-note"><strong>Score Centering.</strong> The correction acts on the log-probability gradient, not the reward.</p></div>
 <div class="ppo-variant" id="update-stability-easy" data-variant="easy"><div class="ppo-flow"><div class="ppo-flow-node"><span>Collect</span><strong>Complete + truncated</strong><p>Keep both kinds for critic training.</p></div><span class="ppo-flow-arrow" aria-hidden="true">→</span><div class="ppo-flow-node is-focus"><span>Correct</span><strong>Balance critic gradients</strong><p>Weight return noise; clip smaller minibatches.</p></div><span class="ppo-flow-arrow" aria-hidden="true">→</span><div class="ppo-flow-node"><span>Learn</span><strong>PPO actor update</strong><p>Filter truncated responses from actor training.</p></div></div><p class="ppo-flow-note"><strong>EasyPPO.</strong> Retaining all critic outcomes preserves the baseline’s exposure to truncation.</p></div>
+<div class="ppo-variant" id="update-stability-stable" data-variant="stable"><div class="ppo-flow"><div class="ppo-flow-node"><span>Sample</span><strong>Record stability info</strong><p>Keep each sequence’s sampling provenance.</p></div><span class="ppo-flow-arrow" aria-hidden="true">→</span><div class="ppo-flow-node is-focus"><span>Update</span><strong>StableReinforce</strong><p>Core correction not yet disclosed.</p></div><span class="ppo-flow-arrow" aria-hidden="true">→</span><div class="ppo-flow-node"><span>Constrain</span><strong>Sampler–learner KL</strong><p>Keep the learner close to the sampler.</p></div></div><p class="ppo-flow-note"><strong>StableReinforce.</strong> Tinker alpha; targets off-policy instability.</p></div>
 </div>
 </figure>
 
@@ -326,6 +327,19 @@ Control errors from asynchronous sampling, mismatched probabilities, and noisy c
 
   The threshold $c$ limits gradient norm. Smaller minibatches restrict how many other samples an outlier can suppress through this shared rescaling. The actor retains the PPO objective.
 
+### [StableReinforce](https://tinker-docs.thinkingmachines.ai/tinker/losses/stable-reinforce/) {#stable-reinforce}
+
+- **Off-policy stability:** Thinking Machines’ REINFORCE variant targets asynchronous policy lag and numerical mismatch. Sampling records extra stability information; training links tokens to their source sequences and accepts externally supplied advantages.
+- **Sampler–learner KL:** The disclosed regularizer is
+
+  $$
+  L_{\mathrm{KL}}=\beta\sum_t\left[\log q(a_t\mid s_t)-\log p_\theta(a_t\mid s_t)\right].
+  $$
+
+  Here $q$ generated the samples. This estimates $\beta\,\mathrm{KL}(q\|p_\theta)$ at sampled prefixes, pulling the learner toward the sampler rather than a frozen reference model.
+
+The alpha documentation does not specify the extra information or full policy-gradient correction. This KL term alone does not explain the method’s claimed stability.
+
 <span id="models"></span>
 
 ## Details {#comparison}
@@ -348,6 +362,7 @@ Control errors from asynchronous sampling, mismatched probabilities, and noisy c
 | [SAO](https://arxiv.org/html/2607.07508v1)                         | Agent      | Rollouts · GAE · updates      | One rollout per prompt, asynchronous collection, skip-observation GAE, strict token masking, and more frequent critic updates.                                                                                           | **Models:** Qwen3-30B-A3B-Thinking-2507; TIR-finetuned initialization for math.<br><br>**Tasks:** [Math with Python](tasks/#math); [SWE-bench Verified](tasks/#coding) with OpenHands.                         | Separate value model initialized from the policy checkpoint.                                             |
 | [Score Centering](https://arxiv.org/html/2609.20807v1)             | LLM        | Actor gradient                | Centers the weighted score: $w\psi_\theta-c(s)$, where $w$ is the importance weight, $\psi_\theta=\nabla\log\pi_\theta$ and $c(s)=\mathbb E_{a\sim\mu}[w\psi_\theta]$. Addresses drift from training–inference mismatch. | **Models:** Qwen3-0.6B-Instruct; Qwen3-30B-A3B-Base.<br><br>**Tasks:** [Countdown and INTELLECT-2 math](tasks/#math), under controlled sampler–trainer mismatch.                                               | No learned critic in the controlled comparison; group-centered REINFORCE.                                |
 | [EasyPPO](https://arxiv.org/html/2609.36802v1)                     | Both       | Critic weighting · updates    | Uses $\omega_x\propto1/\max(\hat\sigma_x,\varepsilon)$, retains truncated samples for the critic, filters them for the actor, and uses smaller critic minibatches.                                                       | **Models:** Qwen3.5-9B-Base for math/search; Qwen3.5-9B after SFT for coding.<br><br>**Tasks:** DAPO-Math-17K → AIME24; [FrontierSmith → FrontierCS](tasks/#coding); [Search-R1](tasks/#agents).               | Learned token-value critic. DeepSeek-V3.1 supplies coding SFT trajectories.                              |
+| [StableReinforce](https://tinker-docs.thinkingmachines.ai/tinker/losses/stable-reinforce/) | Not specified | Update stability | Recorded sampling information and sampler–learner KL; full correction undisclosed. | Internal post-training; models and tasks not specified. | Advantages supplied by caller. |
 
 </div>
 

@@ -49,6 +49,7 @@
   url: https://arxiv.org/abs/2604.01658
   figure: /assets/img/papers/coral-paradigms.svg
   figure_alt: "CORAL, Figure 1: fixed evolutionary search, autonomous single-agent evolution, and autonomous multi-agent evolution shown side by side."
+  code: https://github.com/Human-Agent-Society/CORAL
   group: agents
 - key: probelowrank
   category: llm_optimization

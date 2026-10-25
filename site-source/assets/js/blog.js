@@ -58,6 +58,11 @@
       propose: "Workers run distinct assignments with focused, freshly rebuilt contexts.",
       memory: "Keep candidates and outcomes in the harness; rebuild context for each role.",
     },
+    "RSI-top": {
+      parent: "When progress stalls, inspect different metric subsets and retrieve useful trajectories.",
+      propose: "Propose portfolios with verbalized probabilities, grounded in different search lineages.",
+      memory: "Index full trajectories with fixed task-specific metrics; keep details available on demand.",
+    },
     IdeaScientist: {
       parent: "Train gap finding and innovation to develop research directions.",
       propose: "A trained report writer turns ideas into research proposals.",
@@ -90,6 +95,7 @@
         ? "Search-state updates; policy training is optional"
         : button.dataset.trainingLabel || "Training-free · frozen models";
       const link = detail.querySelector("a");
+      link.textContent = button.dataset.sourceLabel || "Read the paper ↗";
       link.hidden = !button.dataset.url;
       if (button.dataset.url) link.href = button.dataset.url;
       else link.removeAttribute("href");
@@ -134,6 +140,19 @@
       feedback: "Write results back to the research record",
       note: "The search retains state outside conversations. The Advisor also decides what each Worker investigates.",
       url: "https://arxiv.org/abs/2610.07625",
+    },
+    rsi: {
+      first: "Full search history",
+      firstCopy: "Keep code, reasoning, outcomes and failures.",
+      second: "Dashboard + retrieval",
+      secondCopy: "Give planners different metric views; unfold relevant trajectories.",
+      reset: "Retrieve selectively; retain the archive",
+      third: "Diverse directions",
+      thirdCopy: "Propose alternative ideas across different search lineages.",
+      feedback: "Return new candidates to the native search",
+      note: "When progress stalls, planners propose portfolios with verbalized probabilities to surface less-obvious ideas. Model weights and native search rules stay fixed.",
+      url: "https://rsi-top.github.io/",
+      sourceLabel: "Read the blog ↗",
     },
     guidance: {
       first: "Guidance model θ",
@@ -186,6 +205,7 @@
           field.textContent = variant[field.dataset.field];
         });
         figure.querySelector("[data-source]").href = variant.url;
+        figure.querySelector("[data-source]").textContent = variant.sourceLabel || "Read the paper ↗";
       })
     );
   });

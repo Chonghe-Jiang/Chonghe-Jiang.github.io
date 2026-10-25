@@ -250,7 +250,7 @@ Control errors from asynchronous sampling, mismatched probabilities, and noisy c
 <div class="ppo-variant-display" aria-live="polite"><div class="ppo-variant" id="update-stability-sao" data-variant="sao"><div class="ppo-flow"><div class="ppo-flow-node"><span>Collect</span><strong>Asynchronous rollouts</strong><p>Behavior policies can lag behind the learner.</p></div><span class="ppo-flow-arrow" aria-hidden="true">→</span><div class="ppo-flow-node is-focus"><span>Correct</span><strong>Mask divergent tokens</strong><p>Use logged rollout probabilities.</p></div><span class="ppo-flow-arrow" aria-hidden="true">→</span><div class="ppo-flow-node"><span>Learn</span><strong>Actor + critic</strong><p>Skip observations in GAE; update the critic faster.</p></div></div><p class="ppo-flow-note"><strong>SAO.</strong> Control policy lag while keeping a learned baseline for one-rollout sampling.</p></div>
 <div class="ppo-variant" id="update-stability-centering" data-variant="centering"><div class="ppo-flow"><div class="ppo-flow-node"><span>Sample</span><strong>Sampler ≠ trainer</strong><p>Quantization or staleness changes probabilities.</p></div><span class="ppo-flow-arrow" aria-hidden="true">→</span><div class="ppo-flow-node is-focus"><span>Correct</span><strong>Center the score</strong><p>Subtract the sampler’s expected gradient.</p></div><span class="ppo-flow-arrow" aria-hidden="true">→</span><div class="ppo-flow-node"><span>Learn</span><strong>Actor update</strong><p>Remove the mismatch-induced drift term.</p></div></div><p class="ppo-flow-note"><strong>Score Centering.</strong> The correction acts on the log-probability gradient, not the reward.</p></div>
 <div class="ppo-variant" id="update-stability-easy" data-variant="easy"><div class="ppo-flow"><div class="ppo-flow-node"><span>Collect</span><strong>Complete + truncated</strong><p>Keep both kinds for critic training.</p></div><span class="ppo-flow-arrow" aria-hidden="true">→</span><div class="ppo-flow-node is-focus"><span>Correct</span><strong>Balance critic gradients</strong><p>Weight return noise; clip smaller minibatches.</p></div><span class="ppo-flow-arrow" aria-hidden="true">→</span><div class="ppo-flow-node"><span>Learn</span><strong>PPO actor update</strong><p>Filter truncated responses from actor training.</p></div></div><p class="ppo-flow-note"><strong>EasyPPO.</strong> Retaining all critic outcomes preserves the baseline’s exposure to truncation.</p></div>
-<div class="ppo-variant" id="update-stability-stable" data-variant="stable"><div class="ppo-flow"><div class="ppo-flow-node"><span>Sample</span><strong>Record stability info</strong><p>Keep each sequence’s sampling provenance.</p></div><span class="ppo-flow-arrow" aria-hidden="true">→</span><div class="ppo-flow-node is-focus"><span>Update</span><strong>StableReinforce</strong><p>Core correction not yet disclosed.</p></div><span class="ppo-flow-arrow" aria-hidden="true">→</span><div class="ppo-flow-node"><span>Constrain</span><strong>Sampler–learner KL</strong><p>Keep the learner close to the sampler.</p></div></div><p class="ppo-flow-note"><strong>StableReinforce.</strong> Tinker alpha; targets off-policy instability.</p></div>
+<div class="ppo-variant" id="update-stability-stable" data-variant="stable"><div class="ppo-flow"><div class="ppo-flow-node"><span>Sample</span><strong>Record stability info</strong><p>Keep each sequence’s sampling provenance.</p></div><span class="ppo-flow-arrow" aria-hidden="true">→</span><div class="ppo-flow-node is-focus"><span>Update</span><strong>8-token score estimate</strong><p>Subtract a sampled mean score from the token’s score.</p></div><span class="ppo-flow-arrow" aria-hidden="true">→</span><div class="ppo-flow-node"><span>Constrain</span><strong>Sampler–learner KL</strong><p>Keep the learner close to the sampler.</p></div></div><p class="ppo-flow-note"><strong>StableReinforce.</strong> Score-centering mechanism inferred by Martin Marek; the full objective is not officially disclosed.</p></div>
 </div>
 </figure>
 
@@ -283,16 +283,27 @@ Control errors from asynchronous sampling, mismatched probabilities, and noisy c
 
 ### [Score Centering](https://arxiv.org/html/2609.20807v1#S4) {#score-centering}
 
-- **Center the gradient:** At a fixed prefix $s$, write $p_a=\pi_\theta(a\mid s)$, $q_a=\mu(a\mid s)$, and $\psi_a=\nabla_\theta\log p_a$. Subtract the sampler’s expected score:
+- **Why center the score?** At a fixed prefix $s$, let $p_a=\pi_\theta(a\mid s)$ be the learner, $q_a=\mu(a\mid s)$ the sampler, and $\psi_a=\nabla_\theta\log p_a$ the score. Write $A=\hat A(s,a)$ for the advantage, held fixed during the actor update. [Kunhao Zheng’s decomposition](https://x.com/KunhaoZ/status/2114328898989113847) makes the unwanted drift explicit:
+
+  $$
+  \mathbb E_q[A\psi]
+  =\underbrace{\operatorname{Cov}_q(A,\psi)}_{\text{signal}}
+  +\underbrace{\mathbb E_q[A]\,\mathbb E_q[\psi]}_{\text{drift}}.
+  $$
+
+  On-policy, $\mathbb E_p[\psi]=0$. When sampling and training distributions differ, that identity need not hold under $q$: even adding a constant to every advantage can change the expected update.
+
+- **Remove that drift:** Subtract the sampler’s expected score:
 
   $$
   \begin{aligned}
   c(s)&=\sum_a q_a\psi_a,\\
-  g_{\mathrm{SC}}(s)&=\mathbb E_{a\sim q}\!\left[\hat A(s,a)\bigl(\psi_a-c(s)\bigr)\right].
+  g_{\mathrm{SC}}(s)&=\mathbb E_q\!\left[A\bigl(\psi-c(s)\bigr)\right]
+  =\operatorname{Cov}_q(A,\psi).
   \end{aligned}
   $$
 
-  The centered score has zero mean under the sampler. If expected advantage is the same for every next-token choice, the expected update is zero; sampling mismatch alone no longer supplies a direction.
+  Centering advantages by their exact mean at this prefix would zero the first factor of the drift term; score centering zeros the second. A batch-wide zero mean does not guarantee a zero mean at every prefix. The remaining covariance is still under $q$, so this is not a complete off-policy correction.
 
 - **Practical correction:** Store sampler probabilities for its top-$k$ tokens $H$ and approximate the remaining mass using the trainer’s distribution:
 
@@ -329,16 +340,43 @@ Control errors from asynchronous sampling, mismatched probabilities, and noisy c
 
 ### [StableReinforce](https://tinker-docs.thinkingmachines.ai/tinker/losses/stable-reinforce/) {#stable-reinforce}
 
-- **Off-policy stability:** Thinking Machines’ REINFORCE variant targets asynchronous policy lag and numerical mismatch. Sampling records extra stability information; training links tokens to their source sequences and accepts externally supplied advantages.
-- **Sampler–learner KL:** The disclosed regularizer is
+[Martin Marek’s October 25 thread](https://x.com/mrtnm/status/2114145574987702525) identifies StableReinforce as **REINFORCE with Monte Carlo score centering**. His custom loss reproduces its gradients within numerical precision in a controlled probe. This is independent reverse-engineering evidence; Tinker has not published the full policy-gradient formula.
+
+- **Estimate the mean score by sampling:** [Marek infers](https://x.com/mrtnm/status/2114145584739192907) eight auxiliary next-token draws at each prefix:
+
+  $$
+  \begin{aligned}
+  u_k&\sim q(\cdot\mid s),\qquad K=8,\\
+  \hat c(s)&=\frac1K\sum_{k=1}^{K}\nabla_\theta\log p_\theta(u_k\mid s),\\
+  \hat g_{\mathrm{SC}}&=A\left[\nabla_\theta\log p_\theta(a\mid s)-\hat c(s)\right].
+  \end{aligned}
+  $$
+
+  With independent sampler draws, $\hat c$ is an unbiased estimate of $c(s)$. This trades the original paper’s deterministic top-$k$ approximation for Monte Carlo noise; it does not make the whole update an unbiased on-policy gradient.
+
+- **Why the gradient gives it away:** For logits $z$ and a one-hot token vector $e_a$, $\nabla_z\log p(a)=e_a-p$. Subtracting the sampled mean cancels the dense $-p$ term:
+
+  $$
+  \nabla_z\log p(a)-\frac1K\sum_k\nabla_z\log p(u_k)
+  =e_a-\frac1K\sum_k e_{u_k}.
+  $$
+
+  Only the selected tokens remain. Marek observes this sparse pattern in StableReinforce, then matches gradients across all layers with a custom centered loss. The cancellation describes the policy-gradient term; a separate KL penalty can add a dense gradient.
+
+<details class="ar-eval-notes" markdown="1">
+<summary>How did he recover the gradients?</summary>
+
+The probe uses **Qwen3.5-4B with rank-1 LoRA**. An Adam step with $\varepsilon=10{,}000$ makes the denominator nearly constant, so weight changes reveal the gradient up to a scale. The rank-1 output adapter then exposes the logit-gradient direction. In the single-token probe, StableReinforce moves only eight logit coordinates, with corrections in multiples of $1/8$; ordinary REINFORCE produces a dense gradient. [Probe setup](https://x.com/mrtnm/status/2114145580037623915) · [gradient match](https://x.com/mrtnm/status/2114145588031693048).
+
+</details>
+
+- **Official API and KL:** Tinker accepts caller-supplied advantages and records sampling information for stability. Its default, optional $k_1$ regularizer is
 
   $$
   L_{\mathrm{KL}}=\beta\sum_t\left[\log q(a_t\mid s_t)-\log p_\theta(a_t\mid s_t)\right].
   $$
 
-  Here $q$ generated the samples. This estimates $\beta\,\mathrm{KL}(q\|p_\theta)$ at sampled prefixes, pulling the learner toward the sampler rather than a frozen reference model.
-
-The alpha documentation does not specify the extra information or full policy-gradient correction. This KL term alone does not explain the method’s claimed stability.
+  This estimates $\beta\,\mathrm{KL}(q\|p_\theta)$ at sampled prefixes, pulling the learner toward the sampler rather than a frozen reference model. The [documentation](https://tinker-docs.thinkingmachines.ai/tinker/losses/stable-reinforce/) also offers a $k_3$ estimator. Score centering changes the reward-weighted update; KL separately limits divergence.
 
 <span id="models"></span>
 
@@ -362,7 +400,7 @@ The alpha documentation does not specify the extra information or full policy-gr
 | [SAO](https://arxiv.org/html/2607.07508v1)                         | Agent      | Rollouts · GAE · updates      | One rollout per prompt, asynchronous collection, skip-observation GAE, strict token masking, and more frequent critic updates.                                                                                           | **Models:** Qwen3-30B-A3B-Thinking-2507; TIR-finetuned initialization for math.<br><br>**Tasks:** [Math with Python](tasks/#math); [SWE-bench Verified](tasks/#coding) with OpenHands.                         | Separate value model initialized from the policy checkpoint.                                             |
 | [Score Centering](https://arxiv.org/html/2609.20807v1)             | LLM        | Actor gradient                | Centers the weighted score: $w\psi_\theta-c(s)$, where $w$ is the importance weight, $\psi_\theta=\nabla\log\pi_\theta$ and $c(s)=\mathbb E_{a\sim\mu}[w\psi_\theta]$. Addresses drift from training–inference mismatch. | **Models:** Qwen3-0.6B-Instruct; Qwen3-30B-A3B-Base.<br><br>**Tasks:** [Countdown and INTELLECT-2 math](tasks/#math), under controlled sampler–trainer mismatch.                                               | No learned critic in the controlled comparison; group-centered REINFORCE.                                |
 | [EasyPPO](https://arxiv.org/html/2609.36802v1)                     | Both       | Critic weighting · updates    | Uses $\omega_x\propto1/\max(\hat\sigma_x,\varepsilon)$, retains truncated samples for the critic, filters them for the actor, and uses smaller critic minibatches.                                                       | **Models:** Qwen3.5-9B-Base for math/search; Qwen3.5-9B after SFT for coding.<br><br>**Tasks:** DAPO-Math-17K → AIME24; [FrontierSmith → FrontierCS](tasks/#coding); [Search-R1](tasks/#agents).               | Learned token-value critic. DeepSeek-V3.1 supplies coding SFT trajectories.                              |
-| [StableReinforce](https://tinker-docs.thinkingmachines.ai/tinker/losses/stable-reinforce/) | Not specified | Update stability | Recorded sampling information and sampler–learner KL; full correction undisclosed. | Internal post-training; models and tasks not specified. | Advantages supplied by caller. |
+| [StableReinforce](https://tinker-docs.thinkingmachines.ai/tinker/losses/stable-reinforce/) | Not specified | Update stability | Marek’s probe matches REINFORCE with 8-token Monte Carlo score centering; optional sampler–learner KL. Full objective not officially disclosed. | **Probe:** Qwen3.5-4B, rank-1 LoRA; gradient matching, not a task benchmark.<br><br>**Official experiments:** Models and tasks not specified. | Advantages supplied by caller. |
 
 </div>
 

@@ -21,6 +21,7 @@ sections:
 <button type="button" aria-pressed="false" data-components="propose memory" data-title="Fork-and-Flush" data-description="Fork the workspace into fresh-context continuations, then continue the best branch." data-url="https://arxiv.org/abs/2610.07447" data-method="Fork-and-Flush">Fork-and-Flush</button>
 <button type="button" aria-pressed="false" data-components="parent memory" data-title="Scaling Discovery Requires Forgetting" data-description="Restart the team from the best candidate after clearing sessions and the other candidate history." data-url="https://arxiv.org/abs/2610.20563" data-method="Forgetting">Forgetting</button>
 <button type="button" aria-pressed="false" data-components="parent propose memory" data-title="Stateless Language Agents" data-description="The harness retains evidence and rebuilds each context; an Advisor assigns experiments to Workers." data-url="https://arxiv.org/abs/2610.07625" data-method="SLA">SLA</button>
+<button type="button" aria-pressed="false" data-components="parent propose memory" data-title="RSI-top" data-description="Yuzhen Mao and colleagues compress search history into a metric dashboard. When progress stalls, planners retrieve selected trajectories and explore different views, ideas and lineages; model weights stay fixed." data-url="https://rsi-top.github.io/" data-source-label="Read the blog ↗" data-method="RSI-top">RSI-top</button>
 </div></div>
 <div class="ar-method-group" role="group" aria-labelledby="ar-group-decisions"><span class="ar-group-label" id="ar-group-decisions">Search decisions</span><div class="ar-group-papers">
 <button type="button" aria-pressed="false" data-components="parent" data-title="Contrastive Concept-Tree Search" data-description="Use concepts associated with strong and weak programs to guide parent selection and edits." data-url="https://arxiv.org/abs/2602.03132" data-method="CCTS">CCTS</button>
@@ -45,7 +46,7 @@ sections:
 
 ## Takeaways {#takeaways}
 
-These papers highlight two ways to improve research agents: refresh their context, or train the roles that decide what to investigate next.
+These papers highlight two ways to improve research agents: change what they see in context, or train the roles that decide what to investigate next.
 
 <figure class="ar-takeaway" id="ar-takeaways" aria-label="Two perspectives on research agents">
 <div class="ar-takeaway-modes" hidden role="tablist" aria-label="Training approach">
@@ -53,11 +54,12 @@ These papers highlight two ways to improve research agents: refresh their contex
 <button type="button" id="ar-mode-learning" role="tab" aria-selected="false" aria-controls="ar-learning-takeaway" tabindex="-1">With training</button>
 </div>
 <div class="ar-takeaway-panel" id="ar-context-takeaway">
-<header class="ar-takeaway-heading"><h3 id="ar-context-title">Refresh context</h3><p>Carry useful results forward while giving the next attempt a fresh context.</p></header>
+<header class="ar-takeaway-heading"><h3 id="ar-context-title">Refresh context</h3><p>Carry useful evidence forward, then rebuild or selectively retrieve context for the next attempt.</p></header>
 <div class="ar-takeaway-switch" hidden role="group" aria-label="Compare context management methods">
 <button type="button" data-variant="fork" aria-pressed="true">Fork-and-Flush</button>
 <button type="button" data-variant="forget" aria-pressed="false">Forgetting</button>
 <button type="button" data-variant="sla" aria-pressed="false">SLA</button>
+<button type="button" data-variant="rsi" aria-pressed="false">RSI-top</button>
 </div>
 <div class="ar-takeaway-diagram" aria-live="polite" aria-atomic="true">
 <div class="ar-takeaway-flow">

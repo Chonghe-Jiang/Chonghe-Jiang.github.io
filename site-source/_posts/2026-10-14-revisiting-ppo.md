@@ -1,6 +1,6 @@
 ---
 layout: research-post
-title: "Revisiting PPO for LLM Post-Training"
+title: "Revisiting PPO for LLM Post-Training - Algorithm"
 description: "PPO and related policy-gradient methods for LLM post-training."
 topic: Reinforcement learning · LLM post-training
 date: 2026-10-14 00:00:00 -0400

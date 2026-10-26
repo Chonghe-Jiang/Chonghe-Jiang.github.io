@@ -17,6 +17,8 @@ sections:
 
 This post reviews **PPO and related policy-gradient methods for large language models** from four perspectives.
 
+For application-driven objectives, see [Applications in Continual Learning]({{ '/blog/2026/ppo-continual-learning/' | relative_url }}).
+
 <span id="ppo-review"></span>
 Need a refresher on PPO? [Start with the basics]({{ '/blog/2026/revisiting-ppo/foundations/' | relative_url }}).
 

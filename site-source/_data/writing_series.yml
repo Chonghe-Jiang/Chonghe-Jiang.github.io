@@ -1,0 +1,4 @@
+- id: revisiting-rl
+  title: Revisiting RL for LLM Post-Training
+  description: Policy optimization methods and their applications in continual learning.
+  url: /blog/revisiting-rl/

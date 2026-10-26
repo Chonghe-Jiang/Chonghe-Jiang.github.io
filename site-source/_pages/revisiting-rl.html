@@ -1,0 +1,23 @@
+---
+layout: default
+title: Revisiting RL for LLM Post-Training
+description: Policy optimization methods and their applications in continual learning.
+permalink: /blog/revisiting-rl/
+research_blog: true
+---
+
+{% assign series = site.data.writing_series | where: 'id', 'revisiting-rl' | first %}
+{% assign entries = site.posts | where: 'series', series.id | sort: 'series_order' %}
+<section class="writing-index writing-series-page" aria-labelledby="series-title">
+  <header class="writing-header">
+    <a class="essay-back" href="{{ '/blog/' | relative_url }}">← All writing</a>
+    <p class="essay-eyebrow">Collection</p>
+    <h1 id="series-title">{{ series.title }}</h1>
+    <p>{{ series.description }}</p>
+  </header>
+  <ol class="writing-series-list">
+      {% for entry in entries %}
+      <li><a href="{{ entry.url | relative_url }}"><span class="writing-series-number" aria-hidden="true">{{ forloop.index | prepend: '0' }}</span><span><strong>{{ entry.series_label }}</strong><small>{{ entry.description }}</small></span><span aria-hidden="true">→</span></a></li>
+      {% endfor %}
+    </ol>
+</section>

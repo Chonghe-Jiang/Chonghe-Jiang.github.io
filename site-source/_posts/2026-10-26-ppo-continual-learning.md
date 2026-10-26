@@ -1,11 +1,16 @@
 ---
 layout: research-post
-title: "Revisiting PPO for LLM Post-Training - Applications in Continual Learning"
+title: "Revisiting RL for LLM Post-Training - Applications in Continual Learning"
 description: "Reducing forgetting during updates. Improving adaptation from experience."
 topic: Reinforcement learning · Continual learning
 date: 2026-10-26 00:00:00 -0400
 permalink: /blog/2026/ppo-continual-learning/
 research_blog: true
+series: revisiting-rl
+series_order: 2
+series_label: Applications in Continual Learning
+back_url: /blog/revisiting-rl/
+back_label: Revisiting RL
 math: true
 sections:
   - { id: reducing-forgetting, title: Reducing forgetting }

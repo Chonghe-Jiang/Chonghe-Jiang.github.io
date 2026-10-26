@@ -14,18 +14,35 @@ research_blog: true
     <h1 id="writing-title">Writing</h1>
     <p>Notes on papers and research ideas.</p>
   </header>
-  {% for post in site.posts %}
-  <article class="writing-card">
-    <div class="writing-meta">
-      <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: '%b %d, %Y' }}</time
-      ><span>Research note {{ forloop.rindex | prepend: '0' }}</span>
+  {% for series in site.data.writing_series %}
+  {% assign entries = site.posts | where: 'series', series.id | sort: 'series_order' %}
+  {% if entries.size > 0 %}
+  <section class="writing-card" aria-labelledby="{{ series.id }}">
+    <div class="writing-meta"><span>Collection</span></div>
+    <div class="writing-card-copy">
+      <h2 id="{{ series.id }}"><a href="{{ series.url | relative_url }}">{{ series.title }}</a></h2>
+      <p>{{ series.description }}</p>
+      <ol class="writing-series-list">
+      {% for entry in entries %}
+      <li><a href="{{ entry.url | relative_url }}"><span class="writing-series-number" aria-hidden="true">{{ forloop.index | prepend: '0' }}</span><span><strong>{{ entry.series_label }}</strong><small>{{ entry.description }}</small></span><span aria-hidden="true">→</span></a></li>
+      {% endfor %}
+    </ol>
     </div>
+  </section>
+  {% endif %}
+  {% endfor %}
+  {% assign standalone_posts = site.posts | sort: 'title' %}
+  {% for post in standalone_posts %}
+  {% unless post.series %}
+  <article class="writing-card">
+    <div class="writing-meta"><span>Article</span></div>
     <div class="writing-card-copy">
       <p class="essay-eyebrow">{{ post.topic }}</p>
       <h2><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h2>
       <p>{{ post.description }}</p>
-      <a class="essay-read" href="{{ post.url | relative_url }}">Read the essay <span aria-hidden="true">↗</span></a>
+      <a class="essay-read" href="{{ post.url | relative_url }}">Read the essay <span aria-hidden="true">→</span></a>
     </div>
   </article>
+  {% endunless %}
   {% endfor %}
 </section>

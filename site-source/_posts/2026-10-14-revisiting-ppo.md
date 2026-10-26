@@ -1,6 +1,6 @@
 ---
 layout: research-post
-title: "Revisiting RL for LLM Post-Training - Algorithm"
+title: "Revisiting RL for LLM Post-Training - Sample-Efficient Algorithms"
 description: "PPO and related policy-gradient methods for LLM post-training."
 topic: Reinforcement learning · LLM post-training
 date: 2026-10-14 00:00:00 -0400
@@ -8,7 +8,7 @@ permalink: /blog/2026/revisiting-ppo/
 research_blog: true
 series: revisiting-rl
 series_order: 1
-series_label: Algorithm
+series_label: Sample-Efficient Algorithms
 back_url: /blog/revisiting-rl/
 back_label: Revisiting RL
 math: true

@@ -19,7 +19,7 @@ sections:
 
 Learning a new task should preserve useful skills. Experience on an unfamiliar task should make the next attempt better. RL can address both goals, but they require different training signals.
 
-This companion to [Algorithm]({{ '/blog/2026/revisiting-ppo/' | relative_url }}) follows those two goals through policy optimization and RL-based self-adaptation.
+This companion to [Sample-Efficient Algorithms]({{ '/blog/2026/revisiting-ppo/' | relative_url }}) follows those two goals through policy optimization and RL-based self-adaptation.
 
 <nav class="ppo-directions" aria-label="Two goals for continual learning">
 <a href="#reducing-forgetting"><span class="ppo-direction-number">01</span><span><strong>Reducing Forgetting</strong><small>CPO · TSRL</small></span><span aria-hidden="true">↗</span></a>

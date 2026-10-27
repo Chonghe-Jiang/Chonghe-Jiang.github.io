@@ -13,6 +13,7 @@ back_url: /blog/revisiting-rl/
 back_label: Revisiting RL
 math: true
 sections:
+  - { id: learning-across-windows, title: Learning across windows }
   - { id: reducing-forgetting, title: Reducing forgetting }
   - { id: improving-adaptation, title: Improving adaptation }
 ---
@@ -25,6 +26,59 @@ This companion to [Sample-Efficient Algorithms]({{ '/blog/2026/revisiting-ppo/' 
 <a href="#reducing-forgetting"><span class="ppo-direction-number">01</span><span><strong>Reducing Forgetting</strong><small>CPO · TSRL</small></span><span aria-hidden="true">↗</span></a>
 <a href="#improving-adaptation"><span class="ppo-direction-number">02</span><span><strong>Improving Adaptation</strong><small>ORBIT · LaMer · SEAL</small></span><span aria-hidden="true">↗</span></a>
 </nav>
+
+## Learning Across Windows {#learning-across-windows}
+
+Suppose tasks arrive in windows $W_1, W_2, \ldots$. Each window brings prompts and a way to score responses. We can train on one window, pool the windows seen so far, or keep updating the same model as each window arrives.
+
+<figure class="cl-window-figure" aria-labelledby="cl-window-title">
+<div class="cl-window-heading"><strong id="cl-window-title">Same data stream. Three training setups.</strong><span>Move through the arriving windows</span></div>
+<div class="cl-window-controls" role="group" aria-label="Choose the latest available window" hidden>
+<button type="button" data-stage="1" aria-pressed="false" aria-controls="cl-window-comparison">Window 1</button>
+<button type="button" data-stage="2" aria-pressed="false" aria-controls="cl-window-comparison">Window 2</button>
+<button type="button" data-stage="3" aria-pressed="true" aria-controls="cl-window-comparison">Window 3</button>
+<button type="button" data-stage="4" aria-pressed="false" aria-controls="cl-window-comparison">Window 4</button>
+</div>
+<div id="cl-window-comparison" aria-live="polite" aria-atomic="true">
+<p class="cl-window-status">Windows 1–3 have arrived; window 4 is still ahead.</p>
+<div class="cl-window-row" data-mode="single">
+<div class="cl-window-label"><span>01</span><div><strong>Single-window RL</strong><p>Train on the current window only.</p></div></div>
+<div class="cl-window-data" aria-label="Data used at this stage">
+<div class="cl-window-chip is-past" data-window="1"><strong>W<sub>1</sub></strong><span>Not used now</span></div>
+<div class="cl-window-chip is-past" data-window="2"><strong>W<sub>2</sub></strong><span>Not used now</span></div>
+<div class="cl-window-chip is-used" data-window="3"><strong>W<sub>3</sub></strong><span>Used now</span></div>
+<div class="cl-window-chip is-future" data-window="4"><strong>W<sub>4</sub></strong><span>Not yet available</span></div>
+</div>
+<div class="cl-window-path"><span data-start>Same initial model θ₀</span><span aria-hidden="true">→</span><strong data-train>RL on W₃</strong><span aria-hidden="true">→</span><span data-result>Independent model</span></div>
+<p class="cl-window-note" data-note>No earlier window contributes to this training run.</p>
+</div>
+<div class="cl-window-row" data-mode="joint">
+<div class="cl-window-label"><span>02</span><div><strong>Joint RL</strong><p>Pool all windows available so far.</p></div></div>
+<div class="cl-window-data" aria-label="Data used at this stage">
+<div class="cl-window-chip is-used" data-window="1"><strong>W<sub>1</sub></strong><span>Used now</span></div>
+<div class="cl-window-chip is-used" data-window="2"><strong>W<sub>2</sub></strong><span>Used now</span></div>
+<div class="cl-window-chip is-used" data-window="3"><strong>W<sub>3</sub></strong><span>Used now</span></div>
+<div class="cl-window-chip is-future" data-window="4"><strong>W<sub>4</sub></strong><span>Not yet available</span></div>
+</div>
+<div class="cl-window-path"><span data-start>Same initial model θ₀</span><span aria-hidden="true">→</span><strong data-train>RL on W₁ ∪ W₂ ∪ W₃</strong><span aria-hidden="true">→</span><span data-result>Joint model</span></div>
+<p class="cl-window-note" data-note>Earlier prompts remain available for sampling.</p>
+</div>
+<div class="cl-window-row" data-mode="continual">
+<div class="cl-window-label"><span>03</span><div><strong>Continual RL</strong><p>Continue training as each window arrives.</p></div></div>
+<div class="cl-window-data" aria-label="Data used at this stage">
+<div class="cl-window-chip is-past" data-window="1"><strong>W<sub>1</sub></strong><span>Not used now</span></div>
+<div class="cl-window-chip is-past" data-window="2"><strong>W<sub>2</sub></strong><span>Not used now</span></div>
+<div class="cl-window-chip is-used" data-window="3"><strong>W<sub>3</sub></strong><span>Used now</span></div>
+<div class="cl-window-chip is-future" data-window="4"><strong>W<sub>4</sub></strong><span>Not yet available</span></div>
+</div>
+<div class="cl-window-path"><span data-start>Previous model θ₂</span><span aria-hidden="true">→</span><strong data-train>RL on W₃</strong><span aria-hidden="true">→</span><span data-result>Updated model θ₃</span></div>
+<p class="cl-window-note" data-note>Earlier learning survives through the weights; old-task performance can fall.</p>
+</div>
+</div>
+<figcaption>Highlighted windows supply prompts for the current RL stage; responses are generated by the training policy. Single-window and joint runs start from the same initial model here. Continual RL carries weights forward. Replay can give it access to selected earlier prompts.</figcaption>
+</figure>
+
+The continual setup creates the retention question: **after learning $W_t$, how well does the model still perform on $W_1, \ldots, W_{t-1}$?** Joint training keeps earlier prompts in the training pool, at the cost of retaining and revisiting that data. Neither setup guarantees that tasks will not interfere. A window here is a slice of arriving tasks or data, not a PPO minibatch.
 
 ## Reducing Forgetting {#reducing-forgetting}
 

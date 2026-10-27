@@ -1,4 +1,39 @@
 (() => {
+  document.querySelectorAll(".cl-window-figure").forEach((figure) => {
+    const controls = figure.querySelector(".cl-window-controls");
+    const buttons = [...controls.querySelectorAll("button")];
+    const subscript = ["₀", "₁", "₂", "₃", "₄"];
+    const select = (stage) => {
+      buttons.forEach((button) => button.setAttribute("aria-pressed", String(Number(button.dataset.stage) === stage)));
+      figure.querySelector(".cl-window-status").textContent =
+        stage === 4 ? "All four windows have arrived." :
+        stage === 1 ? "Window 1 has arrived; windows 2–4 are still ahead." :
+        `Windows 1–${stage} have arrived; ${stage === 3 ? "window 4 is" : "windows 3–4 are"} still ahead.`;
+      figure.querySelectorAll(".cl-window-row").forEach((row) => {
+        const mode = row.dataset.mode;
+        row.querySelectorAll(".cl-window-chip").forEach((chip) => {
+          const window = Number(chip.dataset.window);
+          const state = window > stage ? "future" : (mode === "joint" || window === stage) ? "used" : "past";
+          chip.className = `cl-window-chip is-${state}`;
+          chip.querySelector("span").textContent = { future: "Not yet available", used: "Used now", past: "Not used now" }[state];
+        });
+        row.querySelector("[data-start]").textContent = mode === "continual" ?
+          `${stage === 1 ? "Initial" : "Previous"} model θ${subscript[stage - 1]}` : "Same initial model θ₀";
+        row.querySelector("[data-train]").textContent = "RL on " + (mode === "joint" ?
+          Array.from({ length: stage }, (_, i) => `W${subscript[i + 1]}`).join(" ∪ ") : `W${subscript[stage]}`);
+        if (mode === "continual") {
+          row.querySelector("[data-result]").textContent = `Updated model θ${subscript[stage]}`;
+          row.querySelector("[data-note]").textContent = stage === 1 ?
+            "The first stage is shared; the setups diverge when later windows arrive." :
+            "Earlier learning survives through the weights; old-task performance can fall.";
+        }
+      });
+    };
+    controls.hidden = false;
+    buttons.forEach((button) => button.addEventListener("click", () => select(Number(button.dataset.stage))));
+    select(3);
+  });
+
   document.querySelectorAll(".ppo-family-figure").forEach((figure) => {
     const controls = figure.querySelector(".ppo-variant-controls");
     if (!controls) return;

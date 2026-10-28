@@ -1,0 +1,53 @@
+# Newest first. Dates use only the precision supported by the source.
+# Personal milestones were confirmed by Chonghe on 2026-10-28.
+- date: "2026-10-21"
+  kind: paper
+  text: >-
+    Our new preprint [**FrontierCS 2**](https://arxiv.org/abs/2610.29932) benchmarks LLM agents on computer science R&D in working research repositories.
+  source: https://arxiv.org/abs/2610.29932
+- date: "2026-10-20"
+  kind: paper
+  text: >-
+    [**T-WLA: Bridging Slow Vision and Fast Touch**](https://arxiv.org/abs/2610.28814) is on arXiv. We combine visual planning with fast tactile corrections for robot manipulation.
+  source: https://arxiv.org/abs/2610.28814
+- date: "2026-10-05"
+  kind: paper
+  text: >-
+    We released [**Evolving in Thought Space**](https://arxiv.org/abs/2610.06269): a small guidance model learns at test time to steer a frozen, larger executor toward better discoveries.
+  source: https://arxiv.org/abs/2610.06269
+- date: "2026-09-24"
+  kind: acceptance
+  text: >-
+    [**FrontierOR**](https://arxiv.org/abs/2605.25246) was accepted to **NeurIPS 2026**, Evaluations & Datasets Track.
+  source: https://quao627.github.io/data/news.js
+- date: "2026-08"
+  kind: award
+  text: >-
+    I received the **MIT Presidential Fellowship**.
+  source: Confirmed by Chonghe, 2026-10-28
+- date: "2026-07-08"
+  kind: acceptance
+  text: >-
+    [**CORAL**](https://arxiv.org/abs/2604.01658), our work on autonomous multi-agent evolution for open-ended discovery, was accepted to **COLM 2026**.
+  source: https://quao627.github.io/data/news.js
+- date: "2026-02-15"
+  kind: acceptance
+  text: >-
+    [**AlphaOPT**](https://arxiv.org/abs/2510.18428) was accepted to **KDD 2026** and selected for an **oral presentation**.
+  source: https://quao627.github.io/data/news.js
+  status_source: https://scholar.google.com/citations?user=KfuBD5kAAAAJ
+- date: "2025-10-09"
+  kind: paper
+  text: >-
+    Our [**goods markets paper**](https://arxiv.org/abs/2510.07759) is on arXiv, with a short version accepted to **WINE 2025**. We study accelerated price adjustment and exact equilibrium recovery.
+  source: https://arxiv.org/abs/2510.07759
+- date: "2025-09-17"
+  kind: award
+  text: >-
+    [**AlphaOPT**](https://arxiv.org/abs/2510.18428) was named a **Best Paper Award finalist** by the INFORMS Data Mining Society.
+  source: https://quao627.github.io/data/news.js
+- date: "2025-07"
+  kind: education
+  text: >-
+    I graduated from **CUHK** with an **M.Phil in Operations Research**, advised by [Anthony Man-Cho So](https://www1.se.cuhk.edu.hk/~manchoso/) and [Viet Anh Nguyen](https://www.vietanhnguyen.net/).
+  source: Confirmed by Chonghe, 2026-10-28; homepage biography

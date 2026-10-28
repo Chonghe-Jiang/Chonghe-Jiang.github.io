@@ -20,6 +20,45 @@ layout: default
       <div class="profile-social">{% social_links %}</div>
     </aside>
   </div>
+  <section class="home-news" id="news" aria-labelledby="news-heading">
+    <div class="section-heading"><h2 id="news-heading">News</h2></div>
+    {% for news_group in (1..2) %}
+      {% if news_group == 1 %}
+        {% assign news_items = site.data.news | slice: 0, 6 %}
+      {% else %}
+        {% assign news_items = site.data.news | slice: 6, 1000 %}
+        {% if news_items.size > 0 %}
+          <details class="news-archive">
+            <summary>
+              <span class="news-show">Show {{ news_items.size }} earlier updates</span><span class="news-hide">Hide earlier updates</span>
+            </summary>
+        {% endif %}
+      {% endif %}
+      {% if news_items.size > 0 %}
+        <ul class="home-news-list">
+          {% for item in news_items %}
+            {% assign display_date = item.date %}
+            {% if item.date.size == 7 %}{% assign display_date = item.date | append: '-01' %}{% endif %}
+            <li>
+              <time datetime="{{ item.date }}">{{ display_date | date: '%b %Y' }}</time>
+              <span class="home-news-icon news-{{ item.kind }}" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                  {% case item.kind %}
+                    {% when 'award' %}<path d="M8 3h8v6a4 4 0 0 1-8 0V3ZM8 5H4v3a4 4 0 0 0 4 4m8-7h4v3a4 4 0 0 1-4 4m-4 1v6m-4 2h8"/>
+                    {% when 'acceptance' %}<path d="m5 12 4 4L19 6"/>
+                    {% when 'education' %}<path d="m2 9 10-5 10 5-10 5-10-5Zm4 2v6c4 3 8 3 12 0v-6m4-2v8"/>
+                    {% else %}<path d="M14 3H5v18h14V8l-5-5Zm0 0v5h5M8 12h8m-8 4h6"/>
+                  {% endcase %}
+                </svg>
+              </span>
+              <div class="home-news-copy">{{ item.text | markdownify }}</div>
+            </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+      {% if news_group == 2 and news_items.size > 0 %}</details>{% endif %}
+    {% endfor %}
+  </section>
   <section class="selected-work" id="research" aria-labelledby="research-heading">
     <div class="section-heading">
       <h2 id="research-heading">Research</h2>

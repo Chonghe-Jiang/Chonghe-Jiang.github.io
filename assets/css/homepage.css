@@ -748,3 +748,114 @@ summary:focus-visible {
     margin-bottom: 0.4rem;
   }
 }
+
+/* Compact news timeline; older updates remain available without JavaScript. */
+.home-news {
+  margin-top: 2.8rem;
+  scroll-margin-top: 6rem;
+}
+.home-news-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0 0;
+}
+.home-news-list li {
+  display: grid;
+  grid-template-columns: 5.7rem 1.4rem minmax(0, 1fr);
+  gap: 0.75rem;
+  align-items: start;
+  padding: 0.5rem 0;
+  font-size: 0.88rem;
+  line-height: 1.75;
+}
+.home-news-list time {
+  color: var(--global-text-color-light);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.81rem;
+  padding-top: 0.08rem;
+}
+.home-news-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.4rem;
+  height: 1.4rem;
+  margin-top: 0.15rem;
+  border-radius: 50%;
+  background: var(--site-surface);
+  color: var(--global-text-color-light);
+}
+.home-news-icon svg {
+  width: 0.9rem;
+  height: 0.9rem;
+}
+.home-news-icon.news-award,
+.home-news-icon.news-education {
+  color: var(--global-theme-color);
+}
+.post .home-news-copy p {
+  margin: 0;
+  font-size: inherit;
+  line-height: inherit;
+}
+.home-news-copy strong {
+  font-weight: 600;
+}
+.home-news-copy a {
+  text-decoration: underline;
+  text-decoration-color: var(--global-divider-color);
+  text-underline-offset: 0.18em;
+}
+.news-archive {
+  margin-top: 0.65rem;
+}
+.news-archive summary {
+  width: fit-content;
+  cursor: pointer;
+  font-size: 0.81rem;
+  color: var(--global-text-color-light);
+}
+.news-archive summary:hover {
+  color: var(--global-theme-color);
+}
+.news-archive summary:focus-visible {
+  outline: 2px solid var(--global-theme-color);
+  outline-offset: 4px;
+}
+.news-archive .news-hide,
+.news-archive[open] .news-show {
+  display: none;
+}
+.news-archive[open] .news-hide {
+  display: inline;
+}
+.news-archive .home-news-list {
+  margin-top: 0.5rem;
+}
+@media (max-width: 600px) {
+  .home-news {
+    margin-top: 2.2rem;
+  }
+  .home-news-list li {
+    grid-template-columns: 1.4rem minmax(0, 1fr);
+    grid-template-areas: "icon date" "icon copy";
+    gap: 0 0.65rem;
+    padding: 0.65rem 0;
+  }
+  .home-news-list time {
+    grid-area: date;
+    font-size: 0.74rem;
+  }
+  .home-news-icon {
+    grid-area: icon;
+  }
+  .home-news-copy {
+    grid-area: copy;
+  }
+}
+@media print {
+  .news-archive > .home-news-list {
+    display: block;
+  }
+}

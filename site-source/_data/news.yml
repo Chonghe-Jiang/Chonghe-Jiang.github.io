@@ -1,10 +1,20 @@
 # Newest first. Dates use only the precision supported by the source.
 # Personal milestones were confirmed by Chonghe on 2026-10-28.
+- date: "2026-10-28"
+  kind: conference
+  text: >-
+    I'll be at the [**INFORMS Annual Meeting**](https://meetings.informs.org/wordpress/annual/) in San Francisco in November and [**NeurIPS 2026**](https://neurips.cc/Conferences/2026) in December. Come say hi!
+  source: Attendance plans confirmed by Chonghe, 2026-10-28
 - date: "2026-10-21"
   kind: paper
   text: >-
     [**FrontierCS 2.0**](https://arxiv.org/abs/2610.29932) is out!
   source: https://arxiv.org/abs/2610.29932
+- date: "2026-10-09"
+  kind: conference
+  text: >-
+    I attended [**COLM 2026**](https://colm.cc/) in San Francisco, where we presented [**CORAL**](https://arxiv.org/abs/2604.01658).
+  source: Attendance confirmed by Chonghe, 2026-10-28; https://quao627.github.io/data/news.js
 - date: "2026-10-05"
   kind: paper
   text: >-
@@ -25,17 +35,37 @@
   text: >-
     I received the **MIT Presidential Fellowship**.
   source: Confirmed by Chonghe, 2026-10-28
+- date: "2026-07-29"
+  kind: conference
+  text: >-
+    I presented our work on **time series imputation** at the [**INFORMS TSL Conference**](https://connect.informs.org/tsl/conferences/tsl-conference2026) at MIT in Cambridge.
+  source: https://easychair.org/smart-program/TSLConference2026/
 - date: "2026-07-08"
   kind: acceptance
   text: >-
     [**CORAL**](https://arxiv.org/abs/2604.01658), our work on autonomous multi-agent evolution for open-ended discovery, was accepted to **COLM 2026**.
   source: https://quao627.github.io/data/news.js
+- date: "2026-05"
+  kind: conference
+  text: >-
+    I presented **LLMs for Operations Research: Benchmarking and Efficient Algorithms** at the [**POMS Annual Conference**](https://pomsmeetings.org/conf-2026/) in Reno.
+  source: Homepage Bio; attendance confirmed by Chonghe, 2026-10-28; https://pomsmeetings.org/conf-2026/
+- date: "2026-03"
+  kind: conference
+  text: >-
+    I presented our [**goods markets work**](https://arxiv.org/abs/2510.07759) at the [**INFORMS Optimization Society Conference**](https://ios2026.isye.gatech.edu/) in Atlanta.
+  source: Homepage Bio; attendance confirmed by Chonghe, 2026-10-28; https://ios2026.isye.gatech.edu/
 - date: "2026-02-15"
   kind: acceptance
   text: >-
     [**AlphaOPT**](https://arxiv.org/abs/2510.18428) was accepted to **KDD 2026** and selected for an **oral presentation**.
   source: https://quao627.github.io/data/news.js
   status_source: https://scholar.google.com/citations?user=KfuBD5kAAAAJ
+- date: "2025-12"
+  kind: conference
+  text: >-
+    I presented our [**goods markets paper**](https://arxiv.org/abs/2510.07759) at [**WINE 2025**](https://wine2025.cs.rutgers.edu/) in New Brunswick.
+  source: Homepage Bio; attendance confirmed by Chonghe, 2026-10-28; https://wine2025.cs.rutgers.edu/
 - date: "2025-10-09"
   kind: paper
   text: >-

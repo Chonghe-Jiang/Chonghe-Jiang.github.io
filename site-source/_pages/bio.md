@@ -42,7 +42,7 @@ nav_order: 2
 </div>
 <div class="bio-talk"><div class="bio-talk-heading"><h3>Interpretable Time Series Imputation via Hankel Lifting and Robust Regularization</h3>
 </div>
-<p class="bio-detail">2026 INFORMS TSL Conference, Cambridge, MA, USA, Jun. 2026</p>
+<p class="bio-detail">2026 INFORMS TSL Conference, Cambridge, MA, USA, Jul. 2026</p>
 </div>
 <div class="bio-talk"><div class="bio-talk-heading"><h3>FrontierOR: Benchmarking LLMs’ Capacity for Efficient Algorithm Design in Large-Scale Optimization</h3>
 <a class="bio-resource" href="https://drive.google.com/file/d/1UuWygB3ulSvv-1MduSjdDpr1MtIfK3Lq/view?usp=sharing">Slides ↗</a>

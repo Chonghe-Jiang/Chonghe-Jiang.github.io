@@ -3,17 +3,12 @@
 - date: "2026-10-21"
   kind: paper
   text: >-
-    Our new preprint [**FrontierCS 2**](https://arxiv.org/abs/2610.29932) benchmarks LLM agents on computer science R&D in working research repositories.
+    [**FrontierCS 2.0**](https://arxiv.org/abs/2610.29932) is out!
   source: https://arxiv.org/abs/2610.29932
-- date: "2026-10-20"
-  kind: paper
-  text: >-
-    [**T-WLA: Bridging Slow Vision and Fast Touch**](https://arxiv.org/abs/2610.28814) is on arXiv. We combine visual planning with fast tactile corrections for robot manipulation.
-  source: https://arxiv.org/abs/2610.28814
 - date: "2026-10-05"
   kind: paper
   text: >-
-    We released [**Evolving in Thought Space**](https://arxiv.org/abs/2610.06269): a small guidance model learns at test time to steer a frozen, larger executor toward better discoveries.
+    We released [**Evolving in Thought Space**](https://arxiv.org/abs/2610.06269): a small guidance model learns at test time to steer a frozen, larger executor toward better discoveries. Great collaboration with [Ao Qu](https://quao627.github.io/)! [X](https://x.com/ao_qu18465/status/2107551843115262086) · [Code](https://github.com/Human-Agent-Society/reef/tree/guidance-ttt-support). Also see [my blog on recent trends in autoresearch](/blog/2026/revisiting-autoresearch/).
   source: https://arxiv.org/abs/2610.06269
 - date: "2026-09-24"
   kind: acceptance
@@ -49,5 +44,5 @@
 - date: "2025-07"
   kind: education
   text: >-
-    I graduated from **CUHK** with an **M.Phil in Operations Research**, advised by [Anthony Man-Cho So](https://www1.se.cuhk.edu.hk/~manchoso/) and [Viet Anh Nguyen](https://www.vietanhnguyen.net/).
+    I graduated from **CUHK** with an **M.Phil in Operations Research**. My three-plus years in Ma Liu Shui will always stay with me. Thank you to [Anthony](https://www1.se.cuhk.edu.hk/~manchoso/) and [Viet](https://www.vietanhnguyen.net/) for guiding me into the world of research.
   source: Confirmed by Chonghe, 2026-10-28; homepage biography

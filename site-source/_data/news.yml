@@ -10,15 +10,10 @@
   text: >-
     [**FrontierCS 2.0**](https://arxiv.org/abs/2610.29932) is out!
   source: https://arxiv.org/abs/2610.29932
-- date: "2026-10-09"
-  kind: conference
-  text: >-
-    I attended [**COLM 2026**](https://colm.cc/) in San Francisco, where we presented [**CORAL**](https://arxiv.org/abs/2604.01658).
-  source: Attendance confirmed by Chonghe, 2026-10-28; https://quao627.github.io/data/news.js
 - date: "2026-10-05"
   kind: paper
   text: >-
-    We released [**Evolving in Thought Space**](https://arxiv.org/abs/2610.06269): a small guidance model learns at test time to steer a frozen, larger executor toward better discoveries. Great collaboration with [Ao Qu](https://quao627.github.io/)! [X](https://x.com/ao_qu18465/status/2107551843115262086) · [Code](https://github.com/Human-Agent-Society/reef/tree/guidance-ttt-support). Also see [my blog on recent trends in autoresearch](/blog/2026/revisiting-autoresearch/).
+    We released [**Evolving in Thought Space**](https://arxiv.org/abs/2610.06269): a small guidance model learns at test time to steer a frozen, larger executor toward better discoveries. Great collaboration with [Ao Qu](https://quao627.github.io/)! Check out the [post on X](https://x.com/ao_qu18465/status/2107551843115262086) and [code](https://github.com/Human-Agent-Society/reef/tree/guidance-ttt-support). Also see [my blog on recent trends in autoresearch](/blog/2026/revisiting-autoresearch/).
   source: https://arxiv.org/abs/2610.06269
 - date: "2026-09-24"
   kind: acceptance
@@ -28,7 +23,7 @@
 - date: "2026-09-01"
   kind: paper
   text: >-
-    Our paper on [**risk-budget allocation for joint chance constraints**](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7371978) is out! Great collaboration with Zhekai!
+    Our paper [**Optimized Risk-Budget Allocation for Safe Approximations of Joint Chance Constraints**](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7371978) is out! Great collaboration with Zhekai!
   source: https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7371978
 - date: "2026-08"
   kind: award
@@ -38,7 +33,7 @@
 - date: "2026-07-29"
   kind: conference
   text: >-
-    I presented our work on **time series imputation** at the [**INFORMS TSL Conference**](https://connect.informs.org/tsl/conferences/tsl-conference2026) at MIT in Cambridge.
+    I presented our work on **Time Series Imputation** at the [**INFORMS TSL Conference**](https://connect.informs.org/tsl/conferences/tsl-conference2026) at MIT in Cambridge.
   source: https://easychair.org/smart-program/TSLConference2026/
 - date: "2026-07-08"
   kind: acceptance
@@ -53,7 +48,7 @@
 - date: "2026-03"
   kind: conference
   text: >-
-    I presented our [**goods markets work**](https://arxiv.org/abs/2510.07759) at the [**INFORMS Optimization Society Conference**](https://ios2026.isye.gatech.edu/) in Atlanta.
+    I presented our [**Goods Markets**](https://arxiv.org/abs/2510.07759) paper at the [**INFORMS Optimization Society Conference**](https://ios2026.isye.gatech.edu/) in Atlanta.
   source: Homepage Bio; attendance confirmed by Chonghe, 2026-10-28; https://ios2026.isye.gatech.edu/
 - date: "2026-02-15"
   kind: acceptance
@@ -64,12 +59,12 @@
 - date: "2025-12"
   kind: conference
   text: >-
-    I presented our [**goods markets paper**](https://arxiv.org/abs/2510.07759) at [**WINE 2025**](https://wine2025.cs.rutgers.edu/) in New Brunswick.
+    I presented our [**Goods Markets**](https://arxiv.org/abs/2510.07759) paper at [**WINE 2025**](https://wine2025.cs.rutgers.edu/) in New Brunswick.
   source: Homepage Bio; attendance confirmed by Chonghe, 2026-10-28; https://wine2025.cs.rutgers.edu/
 - date: "2025-10-09"
   kind: paper
   text: >-
-    Our [**goods markets paper**](https://arxiv.org/abs/2510.07759) is on arXiv, with a short version accepted to **WINE 2025**. We study accelerated price adjustment and exact equilibrium recovery.
+    Our [**Goods Markets**](https://arxiv.org/abs/2510.07759) paper is on arXiv, with a short version accepted to **WINE 2025**. We study accelerated price adjustment and exact equilibrium recovery.
   source: https://arxiv.org/abs/2510.07759
 - date: "2025-09-17"
   kind: award
@@ -79,5 +74,5 @@
 - date: "2025-07"
   kind: education
   text: >-
-    I graduated from **CUHK** with an **M.Phil in Operations Research**. My three-plus years in Ma Liu Shui will always stay with me. Thank you to [Anthony](https://www1.se.cuhk.edu.hk/~manchoso/) and [Viet](https://www.vietanhnguyen.net/) for guiding me into the world of research.
+    I graduated from **CUHK** with an **M.Phil in Operations Research**. Thank you to [Anthony](https://www1.se.cuhk.edu.hk/~manchoso/) and [Viet](https://www.vietanhnguyen.net/) for guiding me into the world of research.
   source: Confirmed by Chonghe, 2026-10-28; homepage biography

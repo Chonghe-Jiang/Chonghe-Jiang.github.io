@@ -15,6 +15,11 @@
   text: >-
     [**FrontierOR**](https://arxiv.org/abs/2605.25246) was accepted to **NeurIPS 2026**, Evaluations & Datasets Track.
   source: https://quao627.github.io/data/news.js
+- date: "2026-09-01"
+  kind: paper
+  text: >-
+    Our paper on [**risk-budget allocation for joint chance constraints**](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7371978) is out! Great collaboration with Zhekai!
+  source: https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7371978
 - date: "2026-08"
   kind: award
   text: >-

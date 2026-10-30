@@ -31,7 +31,7 @@ Need a refresher on PPO? [Start with the basics]({{ '/blog/2026/revisiting-ppo/f
 <span id="ppo-paper-map"></span>
 <nav class="ppo-directions" aria-label="Four directions in policy optimization">
 <a href="#without-critic"><span class="ppo-direction-number">01</span><span><strong>Learning without value networks</strong><small>FlashREINFORCE · SPO · CoPE</small></span><span aria-hidden="true">↗</span></a>
-<a href="#critic-roles"><span class="ppo-direction-number">02</span><span><strong>Changing what critics do</strong><small>TEMPO · AC2</small></span><span aria-hidden="true">↗</span></a>
+<a href="#critic-roles"><span class="ppo-direction-number">02</span><span><strong>Changing what critics do</strong><small>TEMPO · AC2 · SAPO</small></span><span aria-hidden="true">↗</span></a>
 <a href="#critic-inputs"><span class="ppo-direction-number">03</span><span><strong>Changing what critics see</strong><small>BPCO · LVRL</small></span><span aria-hidden="true">↗</span></a>
 <a href="#update-stability"><span class="ppo-direction-number">04</span><span><strong>Stabilizing policy updates</strong><small>SAO · Score Centering · EasyPPO · StableReinforce</small></span><span aria-hidden="true">↗</span></a>
 </nav>
@@ -136,12 +136,13 @@ FlashREINFORCE and SPO use statistical baselines; CoPE adds action forecasting t
 
 ## Changing what critics do {#critic-roles}
 
-Use value estimates to learn before a long rollout finishes.
+Change how policy and value learning share a model, or use values to learn before a long rollout finishes.
 
 <figure class="ppo-family-figure" aria-label="critic roles mechanism comparison">
-<div class="ppo-variant-controls" role="group" aria-label="Choose a method" hidden><button type="button" data-variant="tempo" aria-pressed="true" aria-controls="critic-roles-tempo">TEMPO</button><button type="button" data-variant="ac2" aria-pressed="false" aria-controls="critic-roles-ac2">AC2</button></div>
+<div class="ppo-variant-controls" role="group" aria-label="Choose a method" hidden><button type="button" data-variant="tempo" aria-pressed="true" aria-controls="critic-roles-tempo">TEMPO</button><button type="button" data-variant="ac2" aria-pressed="false" aria-controls="critic-roles-ac2">AC2</button><button type="button" data-variant="sapo" aria-pressed="false" aria-controls="critic-roles-sapo">SAPO</button></div>
 <div class="ppo-variant-display" aria-live="polite"><div class="ppo-variant" id="critic-roles-tempo" data-variant="tempo"><div class="ppo-flow"><div class="ppo-flow-node"><span>Resume</span><strong>Roll out one segment</strong><p>Restore state; run H interactions.</p></div><span class="ppo-flow-arrow" aria-hidden="true">→</span><div class="ppo-flow-node is-focus"><span>Estimate</span><strong>Reason about future return</strong><p>Evaluate the endpoint.</p></div><span class="ppo-flow-arrow" aria-hidden="true">→</span><div class="ppo-flow-node"><span>Learn</span><strong>Train both roles</strong><p>Shared model, different rewards.</p></div></div><p class="ppo-flow-note"><strong>TEMPO (dots).</strong> Learn before the episode ends.</p></div>
 <div class="ppo-variant" id="critic-roles-ac2" data-variant="ac2"><div class="ppo-flow"><div class="ppo-flow-node"><span>Generate</span><strong>Several short chunks</strong><p>Start from a stored trajectory prefix.</p></div><span class="ppo-flow-arrow" aria-hidden="true">→</span><div class="ppo-flow-node is-focus"><span>Estimate</span><strong>Critic supplies endpoint values</strong><p>Predict outcomes without finishing every response.</p></div><span class="ppo-flow-arrow" aria-hidden="true">→</span><div class="ppo-flow-node"><span>Learn</span><strong>Compare continuations</strong><p>Center chunk values within their group.</p></div></div><p class="ppo-flow-note"><strong>AC2.</strong> Readiness checks permit short rollouts; full-rollout audits check the critic.</p></div>
+<div class="ppo-variant" id="critic-roles-sapo" data-variant="sapo"><div class="ppo-flow"><div class="ppo-flow-node"><span>Collect</span><strong>One rollout per task</strong><p>Complete an agent episode.</p></div><span class="ppo-flow-arrow" aria-hidden="true">→</span><div class="ppo-flow-node is-focus"><span>Read values</span><strong>Shared policy logits</strong><p>Read V before a response; Q after it.</p></div><span class="ppo-flow-arrow" aria-hidden="true">→</span><div class="ppo-flow-node"><span>Learn</span><strong>PPO + value regression</strong><p>Turn-level GAE; auxiliary SARSA.</p></div></div><p class="ppo-flow-note"><strong>SAPO.</strong> Keep learned values inside the policy model.</p></div>
 </div>
 </figure>
 
@@ -187,6 +188,35 @@ The appendix derives importance correction for reused prefixes; segment updates 
   All new tokens in chunk $c_i$ share $\hat A_i$. Train the shared generative critic at $s$ to output the rounded group mean $\bar v$ as a value token; replayed prefix tokens receive no actor loss.
 
 - **Full-rollout audits:** Complete a fraction of ready problems to check critic predictions against actual outcomes.
+
+### [SAPO](https://arxiv.org/html/2608.19842v4#S4) {#sapo}
+
+**Single-Rollout Autoregressive Policy Optimization**. [Code](https://github.com/dy-liang/SAPO).
+
+- **Shared logit readouts:** Reuse two reserved vocabulary logits to estimate values from the policy model:
+
+  $$
+  \begin{aligned}
+  v_\theta(c)&=\frac{z_{\theta,+}(c)-z_{\theta,-}(c)}{\tau_v},\\
+  V_\theta(s_t)&=R_{\max}v_\theta(s_t),\\
+  Q_\theta(s_t,a_t)&=R_{\max}v_\theta([s_t;a_t]).
+  \end{aligned}
+  $$
+
+  The pre-response readout cannot see the current action; the post-response readout cannot see the next observation. These are unbounded scalar estimates, not generated value answers. The reserved entries are excluded from action sampling.
+
+- **Turn-level credit:** Collect one trajectory per task. Compute GAE across interaction turns using $V$, standardize across batch turns, then broadcast each turn's advantage to its response tokens. PPO ratios and clipping remain token-level; no same-task rollout group is needed.
+
+- **Auxiliary Q learning:** Fit scaled targets with clipped value regression alongside the policy objective:
+
+  $$
+  \begin{aligned}
+  y_t^V&=V_t^{\mathrm{old}}+A_t^{\mathrm{turn}},\\
+  y_t^Q&=r_t+\gamma(1-d_t)Q_{t+1}^{\mathrm{old}}.
+  \end{aligned}
+  $$
+
+  $Q_{t+1}^{\mathrm{old}}$ evaluates the next action from that same rollout; $d_t$ marks termination. The SARSA target trains the shared value representation. $Q$ does not directly enter GAE.
 
 ## Changing what critics see {#critic-inputs}
 
@@ -387,7 +417,7 @@ The probe uses **Qwen3.5-4B with rank-1 LoRA**. An Adam step with $\varepsilon=1
 
 ## Details {#comparison}
 
-**Agent:** FlashREINFORCE, SPO, TEMPO, LVRL, SAO, EasyPPO, CoPE.
+**Agent:** FlashREINFORCE, SPO, TEMPO, SAPO, LVRL, SAO, EasyPPO, CoPE.
 
 **LLM:** FlashREINFORCE, AC2, BPCO, Score Centering, EasyPPO.
 
@@ -400,6 +430,7 @@ The probe uses **Qwen3.5-4B with rank-1 LoRA**. An Adam step with $\varepsilon=1
 | [CoPE](https://arxiv.org/html/2610.20597v2)                                                | Agent         | Auxiliary policy loss               | Adds successful-trajectory action forecasting to GRPO on a shared backbone. It changes supervision, without adding a value critic.                                                                                       | **Models:** Qwen2.5-7B-Instruct; Qwen2.5-14B-Instruct for AppWorld.<br><br>**Tasks:** [ALFWorld, ScienceWorld, WebShop, τ²-bench and AppWorld](tasks/#agents).                                                 | No value critic; acting and forecasting share one backbone.                                              |
 | [TEMPO (dots)](https://studio.dots.ai/dots/tempo-blog.html)                                | Agent         | Segmented rollouts · value learning | Bootstrapped segment returns; critic trained through estimation rewards.                                                                                                                                                 | **Models:** Checkpoint unspecified in the report.<br><br>**Tasks:** [ARC-AGI-3](tasks/#arc-agi-3).                                                                                                             | Shared generative actor–critic; GRPO updates.                                                            |
 | [AC2](https://arxiv.org/html/2609.39247v2)                                                 | LLM           | Chunk values · advantages           | Uses $v_i-\bar v$ and critic target $\bar v$. For critic-ready problems, unfinished chunks receive $v_i=V(s\cdot c_i)$.                                                                                                  | **Models:** Qwen3-4B-Thinking-2507.<br><br>**Tasks:** [FineProofs-RL → IMO-ProofBench](tasks/#proofs).                                                                                                         | Actor and generative critic share weights; DeepSeek-V4-Flash grades proofs.                              |
+| [SAPO](https://arxiv.org/html/2608.19842v4) | Agent | Shared policy/value model · turn-level GAE | Reads $V$ and $Q$ from policy logits; combines PPO, value regression and auxiliary SARSA with one rollout per task. | **Models:** Qwen2.5-1.5B/7B-Instruct; Qwen3-14B.<br><br>**Tasks:** [ALFWorld and WebShop](tasks/#agents). | Learned values share the policy transformer and LM head; no separate critic model or value head. |
 | [BPCO](https://arxiv.org/html/2608.23566v2)                                                | LLM           | Critic · GAE · clipping             | Bounds values to the reward range, uses $Y_t=R$, preserves raw advantages, and adapts $\lambda_\pi$ to length. Optional privileged critic inputs; Divergence PPO clipping.                                               | **Models:** DeepSeek-R1-Distill-Qwen-1.5B; Qwen3-30B-A3B Base/non-Base; Qwen3-4B-Base for rubrics.<br><br>**Tasks:** [Math](tasks/#math): DeepScaleR or DAPO-Math-17K → AIME25; [OpenRubrics](tasks/#rubrics). | Learned critic; optional answer/rubric inputs. Qwen3-4B-Instruct-2507 is the rubric judge.               |
 | [LVRL](https://arxiv.org/html/2610.15840v1)                                                | Agent         | Value estimates · step credit       | A frozen LLM uses trajectory and group context to estimate values. Anchored value differences give action-level advantages; no critic optimization.                                                                      | **Models:** Qwen3-4B/8B for AppWorld and BabyAI; Qwen3-8B/32B for repository tasks.<br><br>**Tasks:** [AppWorld, BabyAI](tasks/#agents); [R2E-Gym → SWE-bench Verified](tasks/#coding).                        | Frozen Claude Opus 4.6 value critic. LVOPD uses Qwen3-235B-A22B-Thinking-2507-FP8 as teacher and critic. |
 | [SAO](https://arxiv.org/html/2607.07508v1)                                                 | Agent         | Rollouts · GAE · updates            | One rollout per prompt, asynchronous collection, skip-observation GAE, strict token masking, and more frequent critic updates.                                                                                           | **Models:** Qwen3-30B-A3B-Thinking-2507; TIR-finetuned initialization for math.<br><br>**Tasks:** [Math with Python](tasks/#math); [SWE-bench Verified](tasks/#coding) with OpenHands.                         | Separate value model initialized from the policy checkpoint.                                             |

@@ -41,17 +41,6 @@ layout: default
             {% if item.date.size == 7 %}{% assign display_date = item.date | append: '-01' %}{% endif %}
             <li>
               <time datetime="{{ item.date }}">{{ display_date | date: '%b %Y' }}</time>
-              <span class="home-news-icon news-{{ item.kind }}" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                  {% case item.kind %}
-                    {% when 'award' %}<path d="M8 3h8v6a4 4 0 0 1-8 0V3ZM8 5H4v3a4 4 0 0 0 4 4m8-7h4v3a4 4 0 0 1-4 4m-4 1v6m-4 2h8"/>
-                    {% when 'acceptance' %}<path d="m5 12 4 4L19 6"/>
-                    {% when 'conference' %}<path d="M5 5h14v16H5V5Zm3-2v4m8-4v4M5 10h14m-11 4h2m4 0h2m-8 3h2"/>
-                    {% when 'education' %}<path d="m2 9 10-5 10 5-10 5-10-5Zm4 2v6c4 3 8 3 12 0v-6m4-2v8"/>
-                    {% else %}<path d="M14 3H5v18h14V8l-5-5Zm0 0v5h5M8 12h8m-8 4h6"/>
-                  {% endcase %}
-                </svg>
-              </span>
               <div class="home-news-copy">{{ item.text | markdownify }}</div>
             </li>
           {% endfor %}

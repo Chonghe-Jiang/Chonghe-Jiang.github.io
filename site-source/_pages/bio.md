@@ -15,7 +15,7 @@ nav_order: 2
 <div class="education-entry"><span class="education-degree">M.Phil</span><div><h3>The Chinese University of Hong Kong</h3>
 <p class="education-program">M.Phil in Operations Research</p>
 <p class="bio-detail">Supervisor: <a href="https://www1.se.cuhk.edu.hk/~manchoso/">Anthony Man-Cho So</a></p>
-<p class="bio-detail">Thesis: First-order Algorithms for Computational Economics <a href="https://drive.google.com/file/d/13NZ1UJP7cYWHM_pYl0cmD5x6LlRB5z7S/view?usp=sharing">Slides</a></p>
+<p class="bio-detail">Thesis: First-order Algorithms for Computational Economics <a href="https://repository.lib.cuhk.edu.hk/en/item/cuhk-3618218">Thesis</a> · <a href="https://drive.google.com/file/d/13NZ1UJP7cYWHM_pYl0cmD5x6LlRB5z7S/view?usp=sharing">Slides</a></p>
 <p class="bio-detail">Thesis Committee Members: <a href="https://www1.se.cuhk.edu.hk/~manchoso/">Anthony Man-Cho So</a>, <a href="https://www1.se.cuhk.edu.hk/~zylong/">Daniel Zhuoyu Long</a>, <a href="https://www.vietanhnguyen.net/">Viet Anh Nguyen</a></p>
 <p class="bio-detail">Grade: 3.93/4.0</p>
 </div></div>

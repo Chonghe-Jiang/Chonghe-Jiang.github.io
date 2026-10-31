@@ -167,7 +167,7 @@ layout: default
                     {% if paper.url or paper.code %}
                       <div class="paper-links">
                         {% if paper.url -%}
-                          <a href="{{ paper.url }}" target="_blank" rel="noopener">paper</a>
+                          <a href="{{ paper.url }}" target="_blank" rel="noopener">{{ paper.link_label | default: 'paper' | escape }}</a>
                         {%- endif %}
                         {% if paper.code -%}
                           <a href="{{ paper.code }}" target="_blank" rel="noopener">code</a>

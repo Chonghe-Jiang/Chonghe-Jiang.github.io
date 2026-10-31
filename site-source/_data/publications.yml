@@ -133,6 +133,17 @@
   code: https://github.com/Minw913/FrontierOR
   group: llm_for_optimization
   focus: Beyond modeling · Algorithm efficiency
+- key: mphil_thesis
+  category: optimization
+  short_title: M.Phil. Thesis
+  title: First-order Algorithms for Computational Economics
+  authors:
+    - Chonghe Jiang
+  venue: M.Phil. Thesis · The Chinese University of Hong Kong · 2025
+  description: First-order methods for computing competitive equilibria in goods and chores markets.
+  url: https://repository.lib.cuhk.edu.hk/en/item/cuhk-3618218
+  link_label: thesis
+  group: markets
 - key: fisher
   category: optimization
   short_title: Fisher Market Equilibrium

@@ -34,6 +34,9 @@
     {% if page.research_blog %}
       <link rel="stylesheet" href="{{ '/assets/css/blog.css' | relative_url | bust_file_cache }}">
     {% endif %}
+    {% if page.multiagent_blog %}
+      <link rel="stylesheet" href="{{ '/assets/css/multiagent.css' | relative_url | bust_file_cache }}">
+    {% endif %}
   </head>
 
   <!-- Body -->
@@ -90,6 +93,9 @@
     <script defer src="{{ "/assets/js/homepage.js" | relative_url | bust_file_cache }}"></script>
     {% if page.research_blog %}
       <script defer src="{{ '/assets/js/blog.js' | relative_url | bust_file_cache }}"></script>
+    {% endif %}
+    {% if page.multiagent_blog %}
+      <script defer src="{{ '/assets/js/multiagent.js' | relative_url | bust_file_cache }}"></script>
     {% endif %}
   </body>
 </html>

@@ -2,3 +2,7 @@
   title: Revisiting RL for LLM Post-Training
   description: Sample-efficient policy optimization methods for LLM post-training.
   url: /blog/revisiting-rl/
+- id: multi-agent-scaling
+  title: Multi-Agent Scaling
+  description: How agent teams coordinate, learn, and use additional compute.
+  url: /blog/multi-agent-scaling/

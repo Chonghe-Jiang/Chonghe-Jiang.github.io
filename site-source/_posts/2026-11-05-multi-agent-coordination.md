@@ -1,6 +1,6 @@
 ---
 layout: research-post
-title: "How Agent Teams Coordinate: With and Without Training"
+title: "Multi-Agent Scaling"
 description: "Six approaches to organizing agent teams, from shared workspaces and markets to learned participation and collective rewards."
 topic: Multi-Agent Scaling · Coordination · Reinforcement Learning
 date: 2026-11-05 00:00:00 -0800
@@ -9,9 +9,8 @@ research_blog: true
 multiagent_blog: true
 series: multi-agent-scaling
 series_order: 1
-series_label: Coordination With and Without Training
-back_url: /blog/multi-agent-scaling/
-back_label: Multi-Agent Scaling
+back_url: /blog/
+back_label: All writing
 sections:
   - { id: reading-the-map, title: Reading the map }
   - { id: training-free, title: "01 · Training-free" }

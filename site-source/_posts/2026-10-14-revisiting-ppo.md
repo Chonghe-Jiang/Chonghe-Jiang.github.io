@@ -1,6 +1,6 @@
 ---
 layout: research-post
-title: "Revisiting RL for LLM Post-Training - Sample-Efficient Algorithms"
+title: "Revisiting RL for LLM Post-Training"
 description: "PPO and related policy-gradient methods for LLM post-training."
 topic: Reinforcement learning · LLM post-training
 date: 2026-10-14 00:00:00 -0400
@@ -8,9 +8,8 @@ permalink: /blog/2026/revisiting-ppo/
 research_blog: true
 series: revisiting-rl
 series_order: 1
-series_label: Sample-Efficient Algorithms
-back_url: /blog/revisiting-rl/
-back_label: Revisiting RL
+back_url: /blog/
+back_label: All writing
 math: true
 sections:
   - { id: without-critic, title: Without value networks }
@@ -31,7 +30,7 @@ Need a refresher on PPO? [Start with the basics]({{ '/blog/2026/revisiting-ppo/f
 <a href="#without-critic"><span class="ppo-direction-number">01</span><span><strong>Learning without value networks</strong><small>FlashREINFORCE · SPO · CoPE</small></span><span aria-hidden="true">↗</span></a>
 <a href="#critic-roles"><span class="ppo-direction-number">02</span><span><strong>Changing what critics do</strong><small>TEMPO · AC2 · SAPO</small></span><span aria-hidden="true">↗</span></a>
 <a href="#critic-inputs"><span class="ppo-direction-number">03</span><span><strong>Changing what critics see</strong><small>BPCO · LVRL</small></span><span aria-hidden="true">↗</span></a>
-<a href="#update-stability"><span class="ppo-direction-number">04</span><span><strong>Stabilizing policy updates</strong><small>SAO · Score Centering · EasyPPO · StableReinforce</small></span><span aria-hidden="true">↗</span></a>
+<a href="#update-stability"><span class="ppo-direction-number">04</span><span><strong>Stabilizing policy updates</strong><small>SAO · Score Centering · REINFORCE Zero · EasyPPO · StableReinforce</small></span><span aria-hidden="true">↗</span></a>
 </nav>
 
 <span id="mechanisms"></span>
@@ -279,9 +278,10 @@ Give the critic additional evidence for estimating value and assigning credit.
 Control errors from asynchronous sampling, mismatched probabilities, and noisy critic training.
 
 <figure class="ppo-family-figure" aria-label="update stability mechanism comparison">
-<div class="ppo-variant-controls" role="group" aria-label="Choose a method" hidden><button type="button" data-variant="sao" aria-pressed="true" aria-controls="update-stability-sao">SAO</button><button type="button" data-variant="centering" aria-pressed="false" aria-controls="update-stability-centering">Score Centering</button><button type="button" data-variant="easy" aria-pressed="false" aria-controls="update-stability-easy">EasyPPO</button><button type="button" data-variant="stable" aria-pressed="false" aria-controls="update-stability-stable">StableReinforce</button></div>
+<div class="ppo-variant-controls" role="group" aria-label="Choose a method" hidden><button type="button" data-variant="sao" aria-pressed="true" aria-controls="update-stability-sao">SAO</button><button type="button" data-variant="centering" aria-pressed="false" aria-controls="update-stability-centering">Score Centering</button><button type="button" data-variant="zero" aria-pressed="false" aria-controls="update-stability-zero">REINFORCE Zero</button><button type="button" data-variant="easy" aria-pressed="false" aria-controls="update-stability-easy">EasyPPO</button><button type="button" data-variant="stable" aria-pressed="false" aria-controls="update-stability-stable">StableReinforce</button></div>
 <div class="ppo-variant-display" aria-live="polite"><div class="ppo-variant" id="update-stability-sao" data-variant="sao"><div class="ppo-flow"><div class="ppo-flow-node"><span>Collect</span><strong>Asynchronous rollouts</strong><p>Behavior policies can lag behind the learner.</p></div><span class="ppo-flow-arrow" aria-hidden="true">→</span><div class="ppo-flow-node is-focus"><span>Correct</span><strong>Mask divergent tokens</strong><p>Use logged rollout probabilities.</p></div><span class="ppo-flow-arrow" aria-hidden="true">→</span><div class="ppo-flow-node"><span>Learn</span><strong>Actor + critic</strong><p>Skip observations in GAE; update the critic faster.</p></div></div><p class="ppo-flow-note"><strong>SAO.</strong> Control policy lag while keeping a learned baseline for one-rollout sampling.</p></div>
 <div class="ppo-variant" id="update-stability-centering" data-variant="centering"><div class="ppo-flow"><div class="ppo-flow-node"><span>Sample</span><strong>Sampler ≠ trainer</strong><p>Quantization or staleness changes probabilities.</p></div><span class="ppo-flow-arrow" aria-hidden="true">→</span><div class="ppo-flow-node is-focus"><span>Correct</span><strong>Center the score</strong><p>Subtract the sampler’s expected gradient.</p></div><span class="ppo-flow-arrow" aria-hidden="true">→</span><div class="ppo-flow-node"><span>Learn</span><strong>Actor update</strong><p>Remove the mismatch-induced drift term.</p></div></div><p class="ppo-flow-note"><strong>Score Centering.</strong> The correction acts on the log-probability gradient, not the reward.</p></div>
+<div class="ppo-variant" id="update-stability-zero" data-variant="zero"><div class="ppo-flow"><div class="ppo-flow-node"><span>Align</span><strong>Match execution</strong><p>Identical weights and histories give matching token probabilities.</p></div><span class="ppo-flow-arrow" aria-hidden="true">→</span><div class="ppo-flow-node is-focus"><span>Correct</span><strong>Unclipped token IS</strong><p>Use recorded sampling probabilities to account for stale weights.</p></div><span class="ppo-flow-arrow" aria-hidden="true">→</span><div class="ppo-flow-node"><span>Learn</span><strong>Asynchronous REINFORCE</strong><p>Group-mean advantages; no sample-rejection gates.</p></div></div><p class="ppo-flow-note"><strong>REINFORCE Zero.</strong> Kernel alignment reduces numerical mismatch before importance sampling corrects policy lag.</p></div>
 <div class="ppo-variant" id="update-stability-easy" data-variant="easy"><div class="ppo-flow"><div class="ppo-flow-node"><span>Collect</span><strong>Complete + truncated</strong><p>Keep both kinds for critic training.</p></div><span class="ppo-flow-arrow" aria-hidden="true">→</span><div class="ppo-flow-node is-focus"><span>Correct</span><strong>Balance critic gradients</strong><p>Weight return noise; clip smaller minibatches.</p></div><span class="ppo-flow-arrow" aria-hidden="true">→</span><div class="ppo-flow-node"><span>Learn</span><strong>PPO actor update</strong><p>Filter truncated responses from actor training.</p></div></div><p class="ppo-flow-note"><strong>EasyPPO.</strong> Retaining all critic outcomes preserves the baseline’s exposure to truncation.</p></div>
 <div class="ppo-variant" id="update-stability-stable" data-variant="stable"><div class="ppo-flow"><div class="ppo-flow-node"><span>Sample</span><strong>Record stability info</strong><p>Keep each sequence’s sampling provenance.</p></div><span class="ppo-flow-arrow" aria-hidden="true">→</span><div class="ppo-flow-node is-focus"><span>Update</span><strong>8-token score estimate</strong><p>Subtract a sampled mean score from the token’s score.</p></div><span class="ppo-flow-arrow" aria-hidden="true">→</span><div class="ppo-flow-node"><span>Constrain</span><strong>Sampler–learner KL</strong><p>Keep the learner close to the sampler.</p></div></div><p class="ppo-flow-note"><strong>StableReinforce.</strong> Score-centering mechanism inferred by Martin Marek; the full objective is not officially disclosed.</p></div>
 </div>
@@ -349,6 +349,28 @@ Control errors from asynchronous sampling, mismatched probabilities, and noisy c
 
   This assigns unlogged tokens probability $\hat q_a=\rho p_a$ and uses $\sum_a p_a\psi_a=0$ to avoid summing over the tail. Hold the correction coefficients fixed when differentiating the loss. With importance weights, center $w_a\psi_a$ by subtracting $\mathbb E_{a\sim q}[w_a\psi_a]$ instead.
 
+### [REINFORCE Zero](https://hijkzzz.github.io/REINFORCE-Zero/) {#reinforce-zero}
+
+**REINFORCE Zero: Kernel Alignment Unlocks Stable Asynchronous RL with Importance Sampling** separates two sources of rollout–learner mismatch. Asynchronous rollouts use older weights. Numerical execution can also change token probabilities at identical weights and histories. Here, *kernels* are GPU computation kernels.
+
+- **Align execution:** Trainer–inference invariance (TII) matches rollout and learner probabilities using batch-invariant kernels and matched operators. This removes the numerical component of mismatch.
+- **Correct policy lag:** Use the full token-level importance ratio, with the actual recorded sampling probability in the denominator. There is no PPO ratio clipping or token/sequence rejection gate.
+
+The [algorithm](https://github.com/hijkzzz/REINFORCE-Zero/blob/main/ALGORITHM.md) uses group-mean advantages and no learned critic:
+
+$$
+A_i=R_i-\frac{1}{G}\sum_{j\in\mathcal G(i)}R_j,
+\qquad
+\widehat L(\theta)=-\frac{1}{B}\sum_{i=1}^{B}\frac{1}{T_i}
+\sum_{t=1}^{T_i}A_i\frac{\pi_\theta(a_{it}\mid h_{it})}{\mu_i(a_{it}\mid h_{it})}.
+$$
+
+Here $\mathcal G(i)$ contains the $G$ responses to the same prompt, $B$ is the batch size, and $T_i$ counts generated action tokens. Tool observations do not contribute to the loss. Differentiate the numerator while holding advantages and recorded behavior probabilities fixed. Unlike FlashREINFORCE’s batch-wide baseline, this baseline uses multiple responses per prompt.
+
+Why align kernels if importance sampling already corrects the update? **A correct mean does not control variance.** Rare actions with large importance weights can produce large updates. The paper’s Gaussian model shows that mismatch can make expected squared error grow even as the mean parameter approaches the optimum. At a fixed history, full IS recovers the target conditional update; Score Centering alone retains the covariance under the sampling policy. Token-level IS does not correct the distribution of entire histories.
+
+The [paper](https://github.com/hijkzzz/REINFORCE-Zero/blob/main/REINFORCE-Zero.pdf) reports stable training through 20,000 updates on DeepSeek-R1-Distill-Qwen-1.5B at nominal lags 2 and 8. On 16 GPUs, 12,000 updates take 68.55 hours versus 164.77 for synchronous TII, excluding evaluation: **2.40× training-step throughput**, with comparable reasoning quality. This measures wall-clock efficiency, not a 2.40× reduction in samples. The results support unclipped IS under aligned execution; they do not establish that clipping is unnecessary for every PPO workload.
+
 ### [EasyPPO](https://arxiv.org/html/2609.36802v1#S3) {#easyppo}
 
 - **Actor-only truncation filtering:** Let $C_i=1$ if response $i$ finishes within the length limit. Apply $C_i$ only to actor loss; keep every rollout in critic training. The critic then learns $\mathbb E[R\mid s]$, rather than $\mathbb E[R\mid s,C=1]$.
@@ -415,9 +437,9 @@ The probe uses **Qwen3.5-4B with rank-1 LoRA**. An Adam step with $\varepsilon=1
 
 ## Details {#comparison}
 
-**Agent:** FlashREINFORCE, SPO, TEMPO, SAPO, LVRL, SAO, EasyPPO, CoPE.
+**Agent:** REINFORCE Zero, FlashREINFORCE, SPO, TEMPO, SAPO, LVRL, SAO, EasyPPO, CoPE.
 
-**LLM:** FlashREINFORCE, AC2, BPCO, Score Centering, EasyPPO.
+**LLM:** REINFORCE Zero, FlashREINFORCE, AC2, BPCO, Score Centering, EasyPPO.
 
 <div class="table-scroll ppo-literature-table" role="region" aria-label="PPO methods, experimental settings, models, critics and tasks" tabindex="0" markdown="1">
 
@@ -433,6 +455,7 @@ The probe uses **Qwen3.5-4B with rank-1 LoRA**. An Adam step with $\varepsilon=1
 | [LVRL](https://arxiv.org/html/2610.15840v1)                                                | Agent         | Value estimates · step credit       | A frozen LLM uses trajectory and group context to estimate values. Anchored value differences give action-level advantages; no critic optimization.                                                                      | **Models:** Qwen3-4B/8B for AppWorld and BabyAI; Qwen3-8B/32B for repository tasks.<br><br>**Tasks:** [AppWorld, BabyAI](tasks/#agents); [R2E-Gym → SWE-bench Verified](tasks/#coding).                        | Frozen Claude Opus 4.6 value critic. LVOPD uses Qwen3-235B-A22B-Thinking-2507-FP8 as teacher and critic. |
 | [SAO](https://arxiv.org/html/2607.07508v1)                                                 | Agent         | Rollouts · GAE · updates            | One rollout per prompt, asynchronous collection, skip-observation GAE, strict token masking, and more frequent critic updates.                                                                                           | **Models:** Qwen3-30B-A3B-Thinking-2507; TIR-finetuned initialization for math.<br><br>**Tasks:** [Math with Python](tasks/#math); [SWE-bench Verified](tasks/#coding) with OpenHands.                         | Separate value model initialized from the policy checkpoint.                                             |
 | [Score Centering](https://arxiv.org/html/2609.20807v1)                                     | LLM           | Actor gradient                      | Centers the weighted score: $w\psi_\theta-c(s)$, where $w$ is the importance weight, $\psi_\theta=\nabla\log\pi_\theta$ and $c(s)=\mathbb E_{a\sim\mu}[w\psi_\theta]$. Addresses drift from training–inference mismatch. | **Models:** Qwen3-0.6B-Instruct; Qwen3-30B-A3B-Base.<br><br>**Tasks:** [Countdown and INTELLECT-2 math](tasks/#math), under controlled sampler–trainer mismatch.                                               | No learned critic in the controlled comparison; group-centered REINFORCE.                                |
+| [REINFORCE Zero](https://hijkzzz.github.io/REINFORCE-Zero/) | Both | Kernel alignment · asynchronous updates | Aligns rollout and learner execution; uses unclipped token-level IS and per-prompt group-mean advantages, without rejection gates. | **Models:** DeepSeek-R1-Distill-Qwen-1.5B; Qwen3-4B; Qwen3-30B-A3B; Nemotron-3-Nano-Omni-30B.<br><br>**Tasks:** Mathematical reasoning, Python tool use and OSWorld. | No learned critic; multiple responses per prompt. |
 | [EasyPPO](https://arxiv.org/html/2609.36802v1)                                             | Both          | Critic weighting · updates          | Uses $\omega_x\propto1/\max(\hat\sigma_x,\varepsilon)$, retains truncated samples for the critic, filters them for the actor, and uses smaller critic minibatches.                                                       | **Models:** Qwen3.5-9B-Base for math/search; Qwen3.5-9B after SFT for coding.<br><br>**Tasks:** DAPO-Math-17K → AIME24; [FrontierSmith → FrontierCS](tasks/#coding); [Search-R1](tasks/#agents).               | Learned token-value critic. DeepSeek-V3.1 supplies coding SFT trajectories.                              |
 | [StableReinforce](https://tinker-docs.thinkingmachines.ai/tinker/losses/stable-reinforce/) | Not specified | Update stability                    | Marek’s probe matches REINFORCE with 8-token Monte Carlo score centering; optional sampler–learner KL. Full objective not officially disclosed.                                                                          | **Probe:** Qwen3.5-4B, rank-1 LoRA; gradient matching, not a task benchmark.<br><br>**Official experiments:** Models and tasks not specified.                                                                  | Advantages supplied by caller.                                                                           |
 

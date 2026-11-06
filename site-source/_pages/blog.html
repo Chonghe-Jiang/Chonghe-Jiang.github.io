@@ -18,15 +18,11 @@ research_blog: true
   {% assign entries = site.posts | where: 'series', series.id | sort: 'series_order' %}
   {% if entries.size > 0 %}
   <section class="writing-card" aria-labelledby="{{ series.id }}">
-    <div class="writing-meta"><span>Collection</span></div>
+    {% assign entry = entries | first %}
     <div class="writing-card-copy">
-      <h2 id="{{ series.id }}"><a href="{{ series.url | relative_url }}">{{ series.title }}</a></h2>
+      <h2 id="{{ series.id }}"><a href="{{ entry.url | relative_url }}">{{ series.title }}</a></h2>
       <p>{{ series.description }}</p>
-      <ol class="writing-series-list">
-      {% for entry in entries %}
-      <li><a href="{{ entry.url | relative_url }}"><span class="writing-series-number" aria-hidden="true">{{ forloop.index | prepend: '0' }}</span><span><strong>{{ entry.series_label }}</strong><small>{{ entry.description }}</small></span><span aria-hidden="true">→</span></a></li>
-      {% endfor %}
-    </ol>
+      <a class="essay-read" href="{{ entry.url | relative_url }}">Read the article <span aria-hidden="true">→</span></a>
     </div>
   </section>
   {% endif %}

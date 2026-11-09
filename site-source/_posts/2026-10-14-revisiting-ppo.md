@@ -186,6 +186,83 @@ The appendix derives importance correction for reused prefixes; segment updates 
 
 - **Full-rollout audits:** Complete a fraction of ready problems to check critic predictions against actual outcomes.
 
+<figure class="critic-compare" id="tempo-ac2-comparison" aria-labelledby="critic-compare-title">
+<header class="critic-compare-heading">
+<h3 id="critic-compare-title">AC2 and TEMPO: learning before the rollout ends</h3>
+<p>Both use endpoint values to learn from partial rollouts. They differ in the unit of interaction and how the critic learns.</p>
+</header>
+<div class="critic-compare-controls" role="group" aria-label="Compare a training stage" hidden>
+<button type="button" data-compare-stage="sample" aria-pressed="true" aria-controls="critic-compare-sample">1 · Sample</button>
+<button type="button" data-compare-stage="estimate" aria-pressed="false" aria-controls="critic-compare-estimate">2 · Estimate</button>
+<button type="button" data-compare-stage="update" aria-pressed="false" aria-controls="critic-compare-update">3 · Update</button>
+</div>
+<div class="critic-compare-display" aria-live="polite">
+<section id="critic-compare-sample" data-compare-panel="sample" aria-label="Sampling comparison">
+<div class="critic-compare-columns">
+<div class="critic-compare-method">
+<h4>TEMPO <small>Environment interactions</small></h4>
+<div class="critic-compare-origin">Restore a saved environment state + history</div>
+<div class="critic-compare-arrow" aria-hidden="true">↓</div>
+<div class="critic-compare-segment"><strong>H interaction rounds</strong><span>Action → observation → action → …</span></div>
+<div class="critic-compare-arrow" aria-hidden="true">↓</div>
+<div class="critic-compare-endpoint">Endpoint state → critic value</div>
+<div class="critic-compare-future">Remaining episode is not executed for this update</div>
+<p>Save selected endpoints to continue the task in later updates.</p>
+</div>
+<div class="critic-compare-method">
+<h4>AC2 <small>Text continuations</small></h4>
+<div class="critic-compare-origin">Cut a text prefix from a replayed response</div>
+<div class="critic-compare-arrow" aria-hidden="true">↓</div>
+<div class="critic-compare-segment"><strong>Up to b new tokens</strong><span>Token → token → token → …</span></div>
+<div class="critic-compare-arrow" aria-hidden="true">↓</div>
+<div class="critic-compare-endpoint">Extended prefix → critic value</div>
+<div class="critic-compare-future">Remaining response is not generated for this update</div>
+<p>This short path requires critic readiness. Unready problems and audit samples use full rollouts.</p>
+</div>
+</div>
+</section>
+<section id="critic-compare-estimate" data-compare-panel="estimate" aria-label="Value estimation comparison">
+<div class="critic-compare-columns">
+<div class="critic-compare-method">
+<h4>TEMPO <small>Reason about future return</small></h4>
+<div class="critic-compare-origin">Sample several macro-steps from the same state</div>
+<div class="critic-compare-arrow" aria-hidden="true">↓</div>
+<div class="critic-compare-segment"><strong>Rewards so far + endpoint value</strong><span>Gᵢ = segment rewards + V̂(endpointᵢ)</span></div>
+<p>The generative critic can reason, use tools and consult privileged environment information.</p>
+</div>
+<div class="critic-compare-method">
+<h4>AC2 <small>Predict the final proof score</small></h4>
+<div class="critic-compare-origin">Sample several continuations of the same prefix</div>
+<div class="critic-compare-arrow" aria-hidden="true">↓</div>
+<div class="critic-compare-segment"><strong>Endpoint value or terminal reward</strong><span>vᵢ = V(prefix + chunkᵢ), or Rᵢ if complete</span></div>
+<p>The critic outputs a value on the grid {0, 0.1, …, 1}; a known-correct solution can provide context.</p>
+</div>
+</div>
+</section>
+<section id="critic-compare-update" data-compare-panel="update" aria-label="Actor and critic update comparison">
+<div class="critic-compare-columns">
+<div class="critic-compare-method">
+<h4>TEMPO <small>RL for actor and critic</small></h4>
+<div class="critic-compare-origin"><strong>Actor</strong><span>GRPO using macro-step returns Gᵢ</span></div>
+<div class="critic-compare-target">Critic target y = meanᵢ Gᵢ</div>
+<div class="critic-compare-arrow" aria-hidden="true">↓</div>
+<div class="critic-compare-segment"><strong>Reward estimation accuracy</strong><span>Sample estimates → score errors → GRPO</span></div>
+<p>Accuracy rewards train the critic’s reasoning. Complete-trajectory returns provide the initial warm-up targets.</p>
+</div>
+<div class="critic-compare-method">
+<h4>AC2 <small>RL actor + supervised critic</small></h4>
+<div class="critic-compare-origin"><strong>Actor</strong><span>Clipped policy gradient; Aᵢ = vᵢ − meanⱼ vⱼ</span></div>
+<div class="critic-compare-target">Critic target y = rounded meanᵢ vᵢ</div>
+<div class="critic-compare-arrow" aria-hidden="true">↓</div>
+<div class="critic-compare-segment"><strong>Fit the target value token</strong><span>Prefix + target → next-token prediction loss</span></div>
+<p>Only new chunk tokens receive actor loss. The replayed prefix is conditioning context.</p>
+</div>
+</div>
+</section>
+</div>
+<figcaption>Both share actor and critic parameters. TEMPO trains the reasoning used to estimate value; AC2 directly supervises the value output. <a href="https://studio.dots.ai/dots/tempo-blog.html">TEMPO report</a> · <a href="https://arxiv.org/html/2609.39247v2#S3">AC2, Section 3</a>.</figcaption>
+</figure>
+
 ### [SAPO](https://arxiv.org/html/2608.19842v4#S4) {#sapo}
 
 **Single-Rollout Autoregressive Policy Optimization**. [Code](https://github.com/dy-liang/SAPO).

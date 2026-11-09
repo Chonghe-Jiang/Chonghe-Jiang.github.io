@@ -276,3 +276,21 @@
     });
   });
 })();
+
+// Keep each stage side by side; without JavaScript, all comparisons remain readable.
+(() => {
+  document.querySelectorAll(".critic-compare").forEach((figure) => {
+    const controls = figure.querySelector(".critic-compare-controls");
+    const buttons = [...controls.querySelectorAll("button")];
+    const panels = [...figure.querySelectorAll("[data-compare-panel]")];
+    const select = (button) => {
+      buttons.forEach((item) => item.setAttribute("aria-pressed", String(item === button)));
+      panels.forEach((panel) => {
+        panel.hidden = panel.dataset.comparePanel !== button.dataset.compareStage;
+      });
+    };
+    buttons.forEach((button) => button.addEventListener("click", () => select(button)));
+    select(buttons[0]);
+    controls.hidden = false;
+  });
+})();

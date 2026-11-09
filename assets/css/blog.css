@@ -2202,3 +2202,139 @@ html[data-theme="dark"] .ar-figure {
   .cl-window-path { gap: 0.25rem; font-size: 0.69rem; }
 }
 @media print { .cl-window-controls { display: none; } }
+
+/* Dedicated comparison of partial-rollout actor–critic methods. */
+.critic-compare {
+  margin: 2.5rem 0;
+  padding: 1.4rem;
+  border: 1px solid var(--essay-line);
+  border-radius: 12px;
+  background: var(--essay-card);
+}
+.critic-compare .critic-compare-heading h3 {
+  margin: 0 0 0.6rem;
+  font-size: 1.2rem;
+  line-height: 1.4;
+}
+.critic-compare .critic-compare-heading p {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.65;
+}
+.critic-compare-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1.2rem 0;
+}
+.critic-compare-controls button {
+  appearance: none;
+  border: 1px solid var(--essay-line);
+  border-radius: 6px;
+  padding: 0.5rem 0.8rem;
+  font: inherit;
+  font-size: 0.8rem;
+  color: var(--essay-ink);
+  background: var(--essay-surface);
+  cursor: pointer;
+}
+.critic-compare-controls button[aria-pressed="true"] {
+  border-color: var(--essay-accent);
+  background: var(--essay-accent);
+  color: var(--essay-on-accent);
+}
+.critic-compare-columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+.critic-compare-method {
+  min-width: 0;
+  padding: 1rem;
+  border: 1px solid var(--essay-line);
+  border-radius: 8px;
+  background: var(--essay-surface);
+}
+.critic-compare .critic-compare-method h4 {
+  margin: 0 0 1rem;
+  font-size: 1.1rem;
+  line-height: 1.4;
+}
+.critic-compare-method h4 small {
+  display: block;
+  margin-top: 0.3rem;
+  font-size: 0.76rem;
+  font-weight: 400;
+  color: var(--essay-muted);
+}
+.critic-compare-origin,
+.critic-compare-segment,
+.critic-compare-endpoint,
+.critic-compare-target {
+  padding: 0.8rem;
+  border: 1px solid var(--essay-line);
+  border-radius: 6px;
+  font-size: 0.8rem;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+.critic-compare-origin strong,
+.critic-compare-segment strong,
+.critic-compare-origin span,
+.critic-compare-segment span {
+  display: block;
+}
+.critic-compare-origin strong,
+.critic-compare-segment strong {
+  margin-bottom: 0.25rem;
+}
+.critic-compare-segment {
+  border-color: var(--essay-accent);
+  border-left-width: 3px;
+}
+.critic-compare-arrow {
+  padding: 0.25rem;
+  text-align: center;
+  color: var(--essay-accent);
+}
+.critic-compare-target {
+  margin-top: 0.7rem;
+}
+.critic-compare-future {
+  margin-top: 0.7rem;
+  padding: 0.7rem;
+  border: 1px dashed var(--essay-muted);
+  border-radius: 6px;
+  font-size: 0.74rem;
+  line-height: 1.6;
+}
+.critic-compare .critic-compare-method p {
+  margin: 0.8rem 0 0;
+  font-size: 0.8rem;
+  line-height: 1.65;
+}
+.critic-compare figcaption {
+  margin-top: 1rem;
+  font-size: 0.78rem;
+  line-height: 1.7;
+}
+.critic-compare [data-compare-panel] + [data-compare-panel]:not([hidden]) {
+  margin-top: 1rem;
+}
+@media (max-width: 600px) {
+  .critic-compare {
+    padding: 0.85rem;
+  }
+  .critic-compare-columns {
+    grid-template-columns: 1fr;
+  }
+}
+@media print {
+  .critic-compare-controls {
+    display: none;
+  }
+  .research-post .critic-compare [data-compare-panel][hidden] {
+    display: block !important;
+    margin-top: 1rem;
+  }
+}

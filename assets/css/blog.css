@@ -554,6 +554,8 @@
   font-size: 1.1rem;
 }
 .writing-card {
+  display: block;
+  border-bottom: 0;
   border-top: 1px solid var(--essay-line);
   padding: 2.3rem 0 2.6rem;
 }

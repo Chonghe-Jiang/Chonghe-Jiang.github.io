@@ -554,29 +554,21 @@
   font-size: 1.1rem;
 }
 .writing-card {
-  display: grid;
-  grid-template-columns: 170px 1fr;
-  gap: 2.5rem;
   border-top: 1px solid var(--essay-line);
-  border-bottom: 1px solid var(--essay-line);
   padding: 2.3rem 0 2.6rem;
 }
-.writing-meta {
-  font-size: 0.78rem;
-  color: var(--essay-muted);
-  display: flex;
-  flex-direction: column;
-  gap: 0.55rem;
+.writing-card:last-child {
+  border-bottom: 1px solid var(--essay-line);
 }
-.writing-meta span {
-  font-size: 0.68rem;
+.writing-card-copy {
+  max-width: 850px;
 }
 .writing-card-copy h2 {
   font-size: 1.9rem;
   line-height: 1.3;
   letter-spacing: -0.02em;
   font-weight: 600;
-  margin: 0.8rem 0 1rem;
+  margin: 0 0 1rem;
 }
 .writing-card-copy h2 a {
   color: var(--essay-ink);
@@ -700,14 +692,6 @@
   .milestones {
     grid-template-columns: repeat(2, 1fr);
     gap: 1.2rem;
-  }
-  .writing-card {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-  }
-  .writing-meta {
-    flex-direction: row;
-    justify-content: space-between;
   }
   .writing-card-copy h2 {
     font-size: 1.7rem;

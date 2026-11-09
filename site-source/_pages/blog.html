@@ -14,31 +14,20 @@ research_blog: true
     <h1 id="writing-title">Writing</h1>
     <p>Notes on papers and research ideas.</p>
   </header>
+  {% assign writing_posts = '' | split: ',' %}
   {% for series in site.data.writing_series %}
-  {% assign entries = site.posts | where: 'series', series.id | sort: 'series_order' %}
-  {% if entries.size > 0 %}
-  <section class="writing-card" aria-labelledby="{{ series.id }}">
-    {% assign entry = entries | first %}
-    <div class="writing-card-copy">
-      <h2 id="{{ series.id }}"><a href="{{ entry.url | relative_url }}">{{ series.title }}</a></h2>
-      <p>{{ series.description }}</p>
-      <a class="essay-read" href="{{ entry.url | relative_url }}">Read the article <span aria-hidden="true">→</span></a>
-    </div>
-  </section>
-  {% endif %}
+    {% assign entries = site.posts | where: 'series', series.id | sort: 'series_order' %}
+    {% assign writing_posts = writing_posts | concat: entries %}
   {% endfor %}
-  {% assign standalone_posts = site.posts | sort: 'title' %}
-  {% for post in standalone_posts %}
-  {% unless post.series %}
-  <article class="writing-card">
-    <div class="writing-meta"><span>Article</span></div>
+  {% assign standalone_posts = site.posts | where_exp: 'post', 'post.series == nil' | sort: 'title' %}
+  {% assign writing_posts = writing_posts | concat: standalone_posts %}
+  {% for post in writing_posts %}
+  <article class="writing-card" aria-labelledby="writing-post-{{ forloop.index }}">
     <div class="writing-card-copy">
-      <p class="essay-eyebrow">{{ post.topic }}</p>
-      <h2><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h2>
+      <h2 id="writing-post-{{ forloop.index }}"><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h2>
       <p>{{ post.description }}</p>
-      <a class="essay-read" href="{{ post.url | relative_url }}">Read the essay <span aria-hidden="true">→</span></a>
+      <a class="essay-read" href="{{ post.url | relative_url }}">Read the article <span aria-hidden="true">→</span></a>
     </div>
   </article>
-  {% endunless %}
   {% endfor %}
 </section>

@@ -411,7 +411,20 @@ Control errors from asynchronous sampling, mismatched probabilities, and noisy c
   \end{aligned}
   $$
 
-  This assigns unlogged tokens probability $\hat q_a=\rho p_a$ and uses $\sum_a p_a\psi_a=0$ to avoid summing over the tail. Hold the correction coefficients fixed when differentiating the loss. With importance weights, center $w_a\psi_a$ by subtracting $\mathbb E_{a\sim q}[w_a\psi_a]$ instead.
+  This assigns unlogged tokens probability $\hat q_a=\rho p_a$ and uses $\sum_a p_a\psi_a=0$ to avoid summing over the tail. Hold the correction coefficients fixed when differentiating the loss.
+
+- **IS + score centering:** With importance weight $w_a=f(p_a/q_a)$,
+
+  $$
+  g_{\mathrm{IS+SC}}(s)
+  =\mathbb E_{a\sim q}\!\left[
+  A_a\left(
+  \underbrace{w_a\psi_a}_{\mathrm{IS}}
+  -\underbrace{\sum_b q_b w_b\psi_b}_{\mathrm{score\ centering}}
+  \right)\right].
+  $$
+
+  IS reweights the sampled score; centering subtracts its mean under the sampler. For exact, unclipped IS ($w_a=p_a/q_a$), the centering term is zero.
 
 ### [REINFORCE Zero](https://hijkzzz.github.io/REINFORCE-Zero/) {#reinforce-zero}
 

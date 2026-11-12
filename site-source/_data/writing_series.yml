@@ -1,8 +1,8 @@
 - id: revisiting-rl
   title: Revisiting RL for LLM Post-Training
-  description: Sample-efficient policy optimization methods for LLM post-training.
+  description: How policy-gradient methods use feedback to improve the efficiency and stability of LLM post-training.
   url: /blog/revisiting-rl/
 - id: multi-agent-scaling
-  title: Multi-Agent Scaling
-  description: How agent teams coordinate, learn, and use additional compute.
+  title: Revisiting Multi-Agent Scaling
+  description: How agent teams coordinate work and learn to use additional compute effectively.
   url: /blog/multi-agent-scaling/

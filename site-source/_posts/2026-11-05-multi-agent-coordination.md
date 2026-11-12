@@ -1,7 +1,7 @@
 ---
 layout: research-post
-title: "Multi-Agent Scaling"
-description: "Seven approaches to organizing agent teams, from shared workspaces and markets to learned participation and collective rewards."
+title: "Revisiting Multi-Agent Scaling"
+description: "How agent teams coordinate work and learn to use additional compute effectively."
 topic: Multi-Agent Scaling · Coordination · Reinforcement Learning
 date: 2026-11-05 00:00:00 -0800
 permalink: /blog/2026/multi-agent-coordination/
@@ -24,9 +24,7 @@ sections:
   - { id: comparing, title: What to compare }
 ---
 
-An agent team has to decide who works on which problem, what information to share, and how to combine its contributions. Adding more agents gives the system more opportunities to work, but also creates more decisions about coordination. I am interested in how these decisions can improve with experience, and whether that improvement makes additional compute more useful.
-
-This post looks at seven approaches through two questions: **who coordinates the work, and what changes when the system receives feedback?**
+Agent teams must decide how to divide work, share information, and combine their contributions as more agents join. This post reviews seven approaches, asking who coordinates the work and how feedback changes the system, with or without updating model parameters.
 
 <div id="reading-the-map"></div>
 

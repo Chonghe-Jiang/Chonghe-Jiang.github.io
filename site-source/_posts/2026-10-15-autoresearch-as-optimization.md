@@ -1,7 +1,7 @@
 ---
 layout: research-post
-title: "Revisiting Recent Trends in Self-Improving Agents for Autoresearch"
-description: "LLM agents work on one problem, using evaluation feedback to search for the best solution within a fixed evaluation budget."
+title: "Revisiting Self-Improving Agents for Autoresearch"
+description: "How research agents use evaluation feedback to improve solutions within a fixed budget."
 topic: Scientific discovery · Agents · Optimization
 date: 2026-10-15 00:00:00 -0400
 permalink: /blog/2026/revisiting-autoresearch/
@@ -12,6 +12,8 @@ sections:
   - { id: takeaways, title: Takeaways }
   - { id: next-step, title: What’s next? }
 ---
+
+Research agents propose solutions, evaluate them, and use the results to decide what to try next. This post reviews how methods manage search history, generate candidates, and learn research decisions to make better use of a limited evaluation budget.
 
 ## Methods {#methods}
 

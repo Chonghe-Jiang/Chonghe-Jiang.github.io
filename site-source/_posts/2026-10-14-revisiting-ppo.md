@@ -1,7 +1,7 @@
 ---
 layout: research-post
 title: "Revisiting RL for LLM Post-Training"
-description: "PPO and related policy-gradient methods for LLM post-training."
+description: "How policy-gradient methods use feedback to improve the efficiency and stability of LLM post-training."
 topic: Reinforcement learning · LLM post-training
 date: 2026-10-14 00:00:00 -0400
 permalink: /blog/2026/revisiting-ppo/
@@ -20,7 +20,7 @@ sections:
   - { id: comparison, title: Details }
 ---
 
-This post reviews **PPO and related policy-gradient methods for large language models** from five perspectives.
+Policy-gradient methods turn rollout feedback into model updates, with different choices about how to estimate advantages and control update size. This post reviews PPO and related methods through five perspectives on learning efficiency, the role of critics, and update stability.
 
 <span id="ppo-review"></span>
 Need a refresher on PPO? [Start with the basics]({{ '/blog/2026/revisiting-ppo/foundations/' | relative_url }}).

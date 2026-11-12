@@ -497,3 +497,13 @@
     break-inside: avoid;
   }
 }
+
+/* Three methods share the same training-stage controls. */
+.ma-training-trio {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+@media (max-width: 900px) {
+  .ma-training-trio {
+    grid-template-columns: 1fr;
+  }
+}

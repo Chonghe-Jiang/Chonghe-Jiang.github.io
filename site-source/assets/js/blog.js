@@ -77,6 +77,9 @@
   const nodes = [...map.querySelectorAll("[data-component]")];
   const defaults = new Map(nodes.map((node) => [node.dataset.component, node.querySelector(".ar-node-copy").textContent]));
   const operations = {
+    SwarmEvolve: {
+      propose: "Filter latent trajectories for diversity, then decode programs from their combined KV caches.",
+    },
     CCTS: {
       parent: "Fit good/bad concept distributions; reweight parents by their likelihood ratio.",
     },

@@ -16,21 +16,23 @@ sections:
   - { id: critic-roles, title: What critics do }
   - { id: critic-inputs, title: What critics see }
   - { id: update-stability, title: Stable updates }
+  - { id: to-critic-or-not, title: To Critic or Not to Critic }
   - { id: comparison, title: Details }
 ---
 
-This post reviews **PPO and related policy-gradient methods for large language models** from four perspectives.
+This post reviews **PPO and related policy-gradient methods for large language models** from five perspectives.
 
 <span id="ppo-review"></span>
 Need a refresher on PPO? [Start with the basics]({{ '/blog/2026/revisiting-ppo/foundations/' | relative_url }}).
 
 <span id="literature"></span>
 <span id="ppo-paper-map"></span>
-<nav class="ppo-directions" aria-label="Four directions in policy optimization">
+<nav class="ppo-directions" aria-label="Five directions in policy optimization">
 <a href="#without-critic"><span class="ppo-direction-number">01</span><span><strong>Learning without value networks</strong><small>FlashREINFORCE · SPO · CoPE</small></span><span aria-hidden="true">↗</span></a>
 <a href="#critic-roles"><span class="ppo-direction-number">02</span><span><strong>Changing what critics do</strong><small>TEMPO · AC2 · SAPO</small></span><span aria-hidden="true">↗</span></a>
-<a href="#critic-inputs"><span class="ppo-direction-number">03</span><span><strong>Changing what critics see</strong><small>BPCO · LVRL</small></span><span aria-hidden="true">↗</span></a>
+<a href="#critic-inputs"><span class="ppo-direction-number">03</span><span><strong>Changing what critics see</strong><small>BPCO · LVRL · Agentic judging · Post-Thinking</small></span><span aria-hidden="true">↗</span></a>
 <a href="#update-stability"><span class="ppo-direction-number">04</span><span><strong>Stabilizing policy updates</strong><small>SAO · Score Centering · REINFORCE Zero · EasyPPO · StableReinforce</small></span><span aria-hidden="true">↗</span></a>
+<a href="#to-critic-or-not"><span class="ppo-direction-number">05</span><span><strong>To Critic or Not to Critic</strong><small>Batch size · bootstrapping · task horizon</small></span><span aria-hidden="true">↗</span></a>
 </nav>
 
 <span id="mechanisms"></span>
@@ -281,12 +283,14 @@ The appendix derives importance correction for reused prefixes; segment updates 
 
 ## Changing what critics see {#critic-inputs}
 
-Give the critic additional evidence for estimating value and assigning credit.
+Give evaluators more evidence: reference answers, completed traces, tool checks, or the model’s own response. The methods below use that evidence for value estimation, credit assignment, or self-judging; these are different learning signals.
 
 <figure class="ppo-family-figure" aria-label="critic inputs mechanism comparison">
-<div class="ppo-variant-controls" role="group" aria-label="Choose a method" hidden><button type="button" data-variant="bpco" aria-pressed="true" aria-controls="critic-inputs-bpco">BPCO</button><button type="button" data-variant="lvrl" aria-pressed="false" aria-controls="critic-inputs-lvrl">LVRL</button></div>
+<div class="ppo-variant-controls" role="group" aria-label="Choose a method" hidden><button type="button" data-variant="bpco" aria-pressed="true" aria-controls="critic-inputs-bpco">BPCO</button><button type="button" data-variant="lvrl" aria-pressed="false" aria-controls="critic-inputs-lvrl">LVRL</button><button type="button" data-variant="judge" aria-pressed="false" aria-controls="critic-inputs-judge">Agentic judge</button><button type="button" data-variant="spot" aria-pressed="false" aria-controls="critic-inputs-spot">Post-Thinking</button></div>
 <div class="ppo-variant-display" aria-live="polite"><div class="ppo-variant" id="critic-inputs-bpco" data-variant="bpco"><div class="ppo-flow"><div class="ppo-flow-node is-focus"><span>Extra input</span><strong>Answer or rubric</strong><p>Optional reward-defining information.</p></div><span class="ppo-flow-arrow" aria-hidden="true">→</span><div class="ppo-flow-node"><span>Estimate</span><strong>Trainable critic</strong><p>Predict return from the response prefix.</p></div><span class="ppo-flow-arrow" aria-hidden="true">→</span><div class="ppo-flow-node"><span>Learn</span><strong>Actor advantages</strong><p>The actor never receives the extra input.</p></div></div><p class="ppo-flow-note"><strong>BPCO.</strong> BPCO also bounds values, uses outcome targets, and preserves raw advantages.</p></div>
 <div class="ppo-variant" id="critic-inputs-lvrl" data-variant="lvrl"><div class="ppo-flow"><div class="ppo-flow-node is-focus"><span>Extra input</span><strong>Completed trajectories</strong><p>The target trace, its outcome, and related rollouts.</p></div><span class="ppo-flow-arrow" aria-hidden="true">→</span><div class="ppo-flow-node"><span>Estimate</span><strong>Frozen LLM critic</strong><p>Assign intermediate values in hindsight.</p></div><span class="ppo-flow-arrow" aria-hidden="true">→</span><div class="ppo-flow-node"><span>Learn</span><strong>Action-level credit</strong><p>Take adjacent differences with anchored endpoints.</p></div></div><p class="ppo-flow-note"><strong>LVRL.</strong> Group reward fixes the starting value; the observed outcome fixes the ending value.</p></div>
+<div class="ppo-variant" id="critic-inputs-judge" data-variant="judge"><div class="ppo-flow"><div class="ppo-flow-node"><span>Evidence</span><strong>Trace + verifier</strong><p>Reference solution and checking tools.</p></div><span class="ppo-flow-arrow" aria-hidden="true">→</span><div class="ppo-flow-node is-focus"><span>Judge</span><strong>Label token spans</strong><p>Progress, corrections, errors and repetition.</p></div><span class="ppo-flow-arrow" aria-hidden="true">→</span><div class="ppo-flow-node"><span>Update</span><strong>Adjust local credit</strong><p>Retain the outcome advantage.</p></div></div></div>
+<div class="ppo-variant" id="critic-inputs-spot" data-variant="spot"><div class="ppo-flow"><div class="ppo-flow-node"><span>Generate</span><strong>Answer</strong></div><span class="ppo-flow-arrow" aria-hidden="true">→</span><div class="ppo-flow-node is-focus"><span>Inspect</span><strong>Post-thought + verdict</strong></div><span class="ppo-flow-arrow" aria-hidden="true">→</span><div class="ppo-flow-node"><span>Learn</span><strong>Answer + judgment</strong><p>Separate feedback for each.</p></div></div></div>
 </div>
 </figure>
 
@@ -336,6 +340,35 @@ Give the critic additional evidence for estimating value and assigning credit.
   $$
 
   Actual outcomes fix the total credit; the LLM decides its distribution across actions. Divide $\bar A_t$ by the group-wide step standard deviation for training. All tokens in one action share its advantage; anchoring does not guarantee correct local attribution.
+
+### [Honey I judged the rollouts](https://chinmaykarkar.com/blog/llm_credit_assignment/) {#agentic-judge}
+
+Chinmay Karkar’s experiment gives an agentic judge the full trace, verifier verdict and reference answer, with a worked solution when available. It checks calculations and labels spans, adding bounded credit to the outcome advantage:
+
+$$
+\widetilde A_{i,t}=A_i+\lambda c_{i,t},
+\qquad
+\frac{1}{T_i}\sum_t|\lambda c_{i,t}|\le 0.25.
+$$
+
+Here $c_{i,t}$ is span credit and $\lambda$ controls its strength, not GAE decay. Unlike LVRL’s anchored value differences, this is an additive adjustment.
+
+The study uses Qwen3.5-4B, rank-16 LoRA, 875 training prompts and 100 held-out prompts, with a 32K response cap. Three 40-step runs compare outcome-only training with $\lambda=0.25$ and $1.0$, using gpt-6-luna as judge. Benchmark differences were near noise; traces mainly showed earlier commitment to answers. This short experiment does not establish an accuracy gain from finer credit.
+
+### [Self-Improving Post-Thinking](https://facebookresearch.github.io/RAM/blogs/post_thinking/) {#post-thinking}
+
+The model generates an answer, then a post-thought that judges that answer. This teaches evaluation after generation rather than estimating a partial trajectory’s future return.
+
+With a strong teacher, post-thoughts receive supervised targets alongside answer optimization. With verifiable answers, the model can learn both roles through RL:
+
+$$
+\begin{aligned}
+R_{\mathrm{answer}}&=\mathbf 1[\text{answer correct}],\\
+R_{\mathrm{judge}}&=\mathbf 1[\text{verdict matches correctness}].
+\end{aligned}
+$$
+
+This schematic omits the malformed-verdict penalty. A correct judgment of a wrong answer can receive positive judging reward. Teacher supervision or a verifier supplies the check; the model’s own verdict is not treated as ground truth. At inference, judgments can help select candidates or decide when to abstain. The reported applications cover safety, reasoning and confidence calibration.
 
 ## Stabilizing policy updates {#update-stability}
 
@@ -426,6 +459,24 @@ Control errors from asynchronous sampling, mismatched probabilities, and noisy c
 
   IS reweights the sampled score; centering subtracts its mean under the sampler. For exact, unclipped IS ($w_a=p_a/q_a$), the centering term is zero.
 
+#### A feedback-loop view {#score-centering-feedback}
+
+[Cameron Wolfe’s illustrated explanation](https://cameronrwolfe.substack.com/p/score-centering) connects mismatch to repeated updates: the trainer moves, the sampler refreshes, and mismatch can affect the next update again. Small discrepancies can therefore accumulate. The [paper’s experiments](https://arxiv.org/html/2609.20807v1#S5) distinguish quantization from policy staleness; score centering and importance sampling can be useful together. Centering removes the sampler-mean score, rather than centering rewards again.
+
+#### The same correction in logit space {#score-centering-logits}
+
+Qiuyang Mang’s discussion suggests examining logits directly. The following derivation makes that view explicit for unweighted, full-vocabulary score centering at a fixed prefix. Let $p=\operatorname{softmax}(z)$, let $q$ be the detached sampler distribution, and let $e_a$ select token $a$:
+
+$$
+\begin{aligned}
+\nabla_z\log p_a&=e_a-p,\\
+\mathbb E_{a\sim q}[\nabla_z\log p_a]&=q-p,\\
+(e_a-p)-(q-p)&=e_a-q.
+\end{aligned}
+$$
+
+The centered contribution is $A_a(e_a-q)$. If all actions have the same advantage, its expectation under $q$ is zero; the uncentered contribution retains $A(q-p)$. The cancellation is local to this prefix. In parameter space, the logit Jacobian still matters; importance weighting, masking and top-$k$ approximations change the expression.
+
 ### [REINFORCE Zero](https://hijkzzz.github.io/REINFORCE-Zero/) {#reinforce-zero}
 
 **REINFORCE Zero: Kernel Alignment Unlocks Stable Asynchronous RL with Importance Sampling** separates two sources of rollout–learner mismatch. Asynchronous rollouts use older weights. Numerical execution can also change token probabilities at identical weights and histories. Here, *kernels* are GPU computation kernels.
@@ -512,11 +563,35 @@ The probe uses **Qwen3.5-4B with rank-1 LoRA**. An Adam step with $\varepsilon=1
 
 <span id="models"></span>
 
+## To Critic or Not to Critic {#to-critic-or-not}
+
+[**To Critic Or Not To Critic**](https://labs.scale.com/papers/to-critic-or-not-to-critic) compares PPO and GRPO under a shared actor objective, varying trajectory batch size, critic reliance and task horizon. Across more than 1,200 runs, including 96 LLM runs, a critic generally helps most at small batches. Larger batches let GRPO catch up, especially when PPO bootstraps heavily from imperfect values.
+
+The [authors’ analysis](https://labs.scale.com/blog/to-critic-or-not-to-critic-grpo-vs-ppo) separates expected-gradient alignment $c$ from gradient noise scale $\nu$:
+
+$$
+\mathbb E[\cos(\hat g_B,g)]\approx\frac{c}{\sqrt{1+\nu/B}}.
+$$
+
+Here $g$ is the true policy gradient and $\hat g_B$ is its batch estimate. Increasing $B$ reduces noise; it does not remove directional bias. Smaller GAE $\lambda$ relies more on the critic. Longer or more complex tasks generally require larger batches before GRPO catches up.
+
+<div class="table-scroll" role="region" aria-label="Observed critic tradeoffs" tabindex="0" markdown="1">
+
+| Regime | What the study finds |
+| :--- | :--- |
+| Small batch / limited compute | Critic variance reduction can offset its training cost. |
+| Larger batch | Sampling reduces noise; critic bias and overhead remain. |
+| Longer horizon | The crossover shifts toward larger batches. |
+
+</div>
+
+LLM experiments use Qwen2.5-3B Base on DeepScaleR and Qwen3.5-4B on TMax-15K terminal tasks. Math uses three seeds; terminal training uses one. Reported compute includes rollout and actor–critic costs, estimated in H100 GPU-hours. These are conditional comparisons, not a universal batch-size threshold or a ranking of every critic method above.
+
 ## Details {#comparison}
 
 **Agent:** REINFORCE Zero, FlashREINFORCE, SPO, TEMPO, SAPO, LVRL, SAO, EasyPPO, CoPE.
 
-**LLM:** REINFORCE Zero, FlashREINFORCE, AC2, BPCO, Score Centering, EasyPPO.
+**LLM:** Agentic judge experiment, Post-Thinking, REINFORCE Zero, FlashREINFORCE, AC2, BPCO, Score Centering, EasyPPO.
 
 <div class="table-scroll ppo-literature-table" role="region" aria-label="PPO methods, experimental settings, models, critics and tasks" tabindex="0" markdown="1">
 
@@ -530,6 +605,8 @@ The probe uses **Qwen3.5-4B with rank-1 LoRA**. An Adam step with $\varepsilon=1
 | [SAPO](https://arxiv.org/html/2608.19842v4) | Agent | Shared policy/value model · turn-level GAE | Reads $V$ and $Q$ from policy logits; combines PPO, value regression and auxiliary SARSA with one rollout per task. | **Models:** Qwen2.5-1.5B/7B-Instruct; Qwen3-14B.<br><br>**Tasks:** [ALFWorld and WebShop](tasks/#agents). | Learned values share the policy transformer and LM head; no separate critic model or value head. |
 | [BPCO](https://arxiv.org/html/2608.23566v2)                                                | LLM           | Critic · GAE · clipping             | Bounds values to the reward range, uses $Y_t=R$, preserves raw advantages, and adapts $\lambda_\pi$ to length. Optional privileged critic inputs; Divergence PPO clipping.                                               | **Models:** DeepSeek-R1-Distill-Qwen-1.5B; Qwen3-30B-A3B Base/non-Base; Qwen3-4B-Base for rubrics.<br><br>**Tasks:** [Math](tasks/#math): DeepScaleR or DAPO-Math-17K → AIME25; [OpenRubrics](tasks/#rubrics). | Learned critic; optional answer/rubric inputs. Qwen3-4B-Instruct-2507 is the rubric judge.               |
 | [LVRL](https://arxiv.org/html/2610.15840v1)                                                | Agent         | Value estimates · step credit       | A frozen LLM uses trajectory and group context to estimate values. Anchored value differences give action-level advantages; no critic optimization.                                                                      | **Models:** Qwen3-4B/8B for AppWorld and BabyAI; Qwen3-8B/32B for repository tasks.<br><br>**Tasks:** [AppWorld, BabyAI](tasks/#agents); [R2E-Gym → SWE-bench Verified](tasks/#coding).                        | Frozen Claude Opus 4.6 value critic. LVOPD uses Qwen3-235B-A22B-Thinking-2507-FP8 as teacher and critic. |
+| [Agentic judge experiment](https://chinmaykarkar.com/blog/llm_credit_assignment/) | LLM | Span credit | Bounded judge credit supplements outcome advantage. | Qwen3.5-4B; filtered DeepScaleR / DAPO math; 40-step runs. | Frozen gpt-6-luna with checking tools. |
+| [Post-Thinking](https://facebookresearch.github.io/RAM/blogs/post_thinking/) | LLM | Self-judging | Trains a post-answer verdict alongside generation. | Safety, reasoning and calibration. | Same policy; teacher or verifier supervises judgments. |
 | [SAO](https://arxiv.org/html/2607.07508v1)                                                 | Agent         | Rollouts · GAE · updates            | One rollout per prompt, asynchronous collection, skip-observation GAE, strict token masking, and more frequent critic updates.                                                                                           | **Models:** Qwen3-30B-A3B-Thinking-2507; TIR-finetuned initialization for math.<br><br>**Tasks:** [Math with Python](tasks/#math); [SWE-bench Verified](tasks/#coding) with OpenHands.                         | Separate value model initialized from the policy checkpoint.                                             |
 | [Score Centering](https://arxiv.org/html/2609.20807v1)                                     | LLM           | Actor gradient                      | Centers the weighted score: $w\psi_\theta-c(s)$, where $w$ is the importance weight, $\psi_\theta=\nabla\log\pi_\theta$ and $c(s)=\mathbb E_{a\sim\mu}[w\psi_\theta]$. Addresses drift from training–inference mismatch. | **Models:** Qwen3-0.6B-Instruct; Qwen3-30B-A3B-Base.<br><br>**Tasks:** [Countdown and INTELLECT-2 math](tasks/#math), under controlled sampler–trainer mismatch.                                               | No learned critic in the controlled comparison; group-centered REINFORCE.                                |
 | [REINFORCE Zero](https://hijkzzz.github.io/REINFORCE-Zero/) | Both | Kernel alignment · asynchronous updates | Aligns rollout and learner execution; uses unclipped token-level IS and per-prompt group-mean advantages, without rejection gates. | **Models:** DeepSeek-R1-Distill-Qwen-1.5B; Qwen3-4B; Qwen3-30B-A3B; Nemotron-3-Nano-Omni-30B.<br><br>**Tasks:** Mathematical reasoning, Python tool use and OSWorld. | No learned critic; multiple responses per prompt. |

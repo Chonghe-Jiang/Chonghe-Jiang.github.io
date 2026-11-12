@@ -8,6 +8,7 @@ permalink: /blog/2026/revisiting-autoresearch/
 research_blog: true
 sections:
   - { id: methods, title: Methods }
+  - { id: swarmevolve, title: SwarmEvolve }
   - { id: takeaways, title: Takeaways }
   - { id: next-step, title: What’s next? }
 ---
@@ -29,6 +30,7 @@ sections:
 <button type="button" aria-pressed="false" data-components="parent propose evaluate" data-title="IdeaScientist" data-description="GRPO trains gap finding, innovation and report writing; a fixed orchestrator coordinates research proposal generation." data-url="https://arxiv.org/abs/2610.04074" data-training-label="Trained ideation roles · fixed orchestrator" data-method="IdeaScientist">IdeaScientist <span class="ar-training-dot" role="img" aria-label="Updates model parameters" title="Updates model parameters"></span></button>
 <button type="button" aria-pressed="false" data-components="parent propose" data-method="Guidance-TTT" data-title="Evolving in Thought Space" data-description="Train strategic guidance at test time; a frozen executor implements it." data-training-label="Test-time training · frozen executor" data-url="https://arxiv.org/abs/2610.06269">Evolving in Thought Space <span class="ar-training-dot" role="img" aria-label="Updates model parameters" title="Updates model parameters"></span></button>
 </div></div>
+<div class="ar-method-group" role="group" aria-labelledby="ar-group-proposals"><span class="ar-group-label" id="ar-group-proposals">Proposal generation</span><div class="ar-group-papers"><button type="button" aria-pressed="false" data-components="propose" data-title="SwarmEvolve" data-description="Filter latent proposals for diversity; combine their KV caches to generate programs." data-url="https://arxiv.org/abs/2611.08483" data-method="SwarmEvolve">SwarmEvolve</button></div></div>
 </div>
 <div class="ar-evo-canvas">
 <svg class="ar-evo-edges ar-evo-wide" viewBox="0 0 720 322" preserveAspectRatio="none" aria-hidden="true"><defs><marker id="ar-arrow-wide" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="currentColor"/></marker></defs><g fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#ar-arrow-wide)"><path d="M336 72H382"/><path d="M552 144V176"/><path d="M384 250H338"/><path d="M168 178V146"/></g></svg>
@@ -44,9 +46,19 @@ sections:
 <figcaption>Select a paper to see its changes. <span class="ar-training-key"><span class="ar-training-dot" aria-hidden="true"></span> Updates model parameters</span></figcaption>
 </figure>
 
+### [SwarmEvolve: Latent Agent Swarms for Evolutionary Discovery and Optimization](https://arxiv.org/html/2611.08483v1#S3) {#swarmevolve}
+
+SwarmEvolve changes how candidate programs are proposed. Each round runs 10 swarms of 45 agents for 40 latent steps. Within each swarm, a novelty filter retains 30 diverse trajectories. A summarizer reads their KV caches and writes one program; evaluation then updates the archive. Diversity is measured in hidden-state space, not guaranteed at the level of program behavior.
+
+<figure class="ppo-family-figure" aria-label="SwarmEvolve proposal generation">
+<div class="ppo-flow"><div class="ppo-flow-node"><span>Explore</span><strong>Latent agents</strong><p>Parents + distinct prompts</p></div><span class="ppo-flow-arrow" aria-hidden="true">→</span><div class="ppo-flow-node is-focus"><span>Select</span><strong>Diverse KV caches</strong><p>Novelty filter</p></div><span class="ppo-flow-arrow" aria-hidden="true">→</span><div class="ppo-flow-node"><span>Decode</span><strong>One program per swarm</strong><p>Evaluate → archive</p></div></div>
+</figure>
+
+The LLM weights stay fixed. Unlike parameter training, the loop improves programs and the search archive. Experiments cover 21 discovery and scientific-computing tasks, using Qwen3 8B, 14B and 32B-FP8 for 60 minutes on one GPU. Reported speedups concern this search setup; they do not make arbitrary evaluators cheaper.
+
 ## Takeaways {#takeaways}
 
-These papers highlight two ways to improve research agents: change what they see in context, or train the roles that decide what to investigate next.
+Research agents can improve through context management, cheaper proposal generation, or training the roles that decide what to investigate. The comparison below focuses on context and learned decisions; SwarmEvolve adds a way to explore more proposals per unit of compute.
 
 <figure class="ar-takeaway" id="ar-takeaways" aria-label="Two perspectives on research agents">
 <div class="ar-takeaway-modes" hidden role="tablist" aria-label="Training approach">

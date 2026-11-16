@@ -77,6 +77,15 @@
   const nodes = [...map.querySelectorAll("[data-component]")];
   const defaults = new Map(nodes.map((node) => [node.dataset.component, node.querySelector(".ar-node-copy").textContent]));
   const operations = {
+    Scorpio: {
+      evaluate: "Compare candidates in random groups; average scores across repeated partitions.",
+    },
+    TTSP: {
+      parent: "Train a target-conditioned curriculum.",
+      propose: "Generate and solve practice problems.",
+      evaluate: "Execute synthetic tests for rewards.",
+      memory: "Replay useful exercises and update both adapters.",
+    },
     SwarmEvolve: {
       propose: "Filter latent trajectories for diversity, then decode programs from their combined KV caches.",
     },
@@ -191,6 +200,18 @@
       note: "When progress stalls, planners propose portfolios with verbalized probabilities to surface less-obvious ideas. Model weights and native search rules stay fixed.",
       url: "https://rsi-top.github.io/",
       sourceLabel: "Read the blog ↗",
+    },
+    ttsp: {
+      first: "Proposer adapter",
+      firstCopy: "Generate target-related exercises.",
+      middleRole: "Learn",
+      second: "Solver adapter",
+      secondCopy: "Practice on generated tasks.",
+      third: "Synthetic tests",
+      thirdCopy: "Execute reference programs.",
+      feedback: "GRPO updates both adapters",
+      note: "The target verifier is unused during training; synthetic tasks supply execution rewards.",
+      url: "https://arxiv.org/abs/2611.07367",
     },
     guidance: {
       first: "Guidance model θ",

@@ -10,6 +10,9 @@ sections:
   - { id: methods, title: Methods }
   - { id: swarmevolve, title: SwarmEvolve }
   - { id: takeaways, title: Takeaways }
+  - { id: idea-basins, title: Exploration and stagnation }
+  - { id: scorpio, title: Evaluation and selection }
+  - { id: ttsp, title: Test-time training }
   - { id: next-step, title: What’s next? }
 ---
 
@@ -31,8 +34,10 @@ Research agents propose solutions, evaluate them, and use the results to decide 
 <button type="button" aria-pressed="false" data-components="parent" data-title="MIRA-AC" data-description="Learn research decisions from their downstream returns while keeping the executor fixed." data-url="https://arxiv.org/abs/2610.02525" data-training-label="Trained decision policy · fixed executor" data-method="MIRA-AC">MIRA-AC <span class="ar-training-dot" role="img" aria-label="Updates model parameters" title="Updates model parameters"></span></button>
 <button type="button" aria-pressed="false" data-components="parent propose evaluate" data-title="IdeaScientist" data-description="GRPO trains gap finding, innovation and report writing; a fixed orchestrator coordinates research proposal generation." data-url="https://arxiv.org/abs/2610.04074" data-training-label="Trained ideation roles · fixed orchestrator" data-method="IdeaScientist">IdeaScientist <span class="ar-training-dot" role="img" aria-label="Updates model parameters" title="Updates model parameters"></span></button>
 <button type="button" aria-pressed="false" data-components="parent propose" data-method="Guidance-TTT" data-title="Evolving in Thought Space" data-description="Train strategic guidance at test time; a frozen executor implements it." data-training-label="Test-time training · frozen executor" data-url="https://arxiv.org/abs/2610.06269">Evolving in Thought Space <span class="ar-training-dot" role="img" aria-label="Updates model parameters" title="Updates model parameters"></span></button>
+<button type="button" aria-pressed="false" data-components="parent propose evaluate memory" data-method="TTSP" data-title="Test-Time Self-Play" data-description="Train a synthetic curriculum and solver for the current target." data-training-label="Test-time training · two LoRA adapters" data-url="https://arxiv.org/abs/2611.07367">TTSP <span class="ar-training-dot" role="img" aria-label="Updates model parameters" title="Updates model parameters"></span></button>
 </div></div>
 <div class="ar-method-group" role="group" aria-labelledby="ar-group-proposals"><span class="ar-group-label" id="ar-group-proposals">Proposal generation</span><div class="ar-group-papers"><button type="button" aria-pressed="false" data-components="propose" data-title="SwarmEvolve" data-description="Filter latent proposals for diversity; combine their KV caches to generate programs." data-url="https://arxiv.org/abs/2611.08483" data-method="SwarmEvolve">SwarmEvolve</button></div></div>
+<div class="ar-method-group" role="group" aria-labelledby="ar-group-evaluation"><span class="ar-group-label" id="ar-group-evaluation">Evaluation and selection</span><div class="ar-group-papers"><button type="button" aria-pressed="false" data-components="evaluate" data-title="Scorpio" data-description="Jointly score random groups of candidates, then average across rounds." data-url="https://arxiv.org/abs/2611.00350" data-method="Scorpio">Scorpio</button></div></div>
 </div>
 <div class="ar-evo-canvas">
 <svg class="ar-evo-edges ar-evo-wide" viewBox="0 0 720 322" preserveAspectRatio="none" aria-hidden="true"><defs><marker id="ar-arrow-wide" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="currentColor"/></marker></defs><g fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#ar-arrow-wide)"><path d="M336 72H382"/><path d="M552 144V176"/><path d="M384 250H338"/><path d="M168 178V146"/></g></svg>
@@ -60,7 +65,7 @@ The LLM weights stay fixed. Unlike parameter training, the loop improves program
 
 ## Takeaways {#takeaways}
 
-Research agents can improve through context management, cheaper proposal generation, or training the roles that decide what to investigate. The comparison below focuses on context and learned decisions; SwarmEvolve adds a way to explore more proposals per unit of compute.
+Research agents can improve through context management, cheaper proposal generation, or training the roles that decide what to investigate. The comparison below covers context management and trainable roles. The following studies examine exploration, candidate selection and learning on the current target.
 
 <figure class="ar-takeaway" id="ar-takeaways" aria-label="Two perspectives on research agents">
 <div class="ar-takeaway-modes" hidden role="tablist" aria-label="Training approach">
@@ -89,11 +94,12 @@ Research agents can improve through context management, cheaper proposal generat
 </div>
 
 <div class="ar-takeaway-panel" id="ar-learning-takeaway">
-<header class="ar-takeaway-heading"><h3 id="ar-learning-title">Train the research decisions.</h3><p>Give high-level decisions a dedicated learning role, with feedback on the work they produce.</p></header>
+<header class="ar-takeaway-heading"><h3 id="ar-learning-title">Train decisions and problem solving</h3><p>Compare which roles learn, when they learn, and where their feedback comes from.</p></header>
 <div class="ar-takeaway-switch" hidden role="group" aria-label="Compare trainable research roles">
 <button type="button" data-variant="mira" aria-pressed="false">MIRA-AC</button>
 <button type="button" data-variant="idea" aria-pressed="false">IdeaScientist</button>
 <button type="button" data-variant="guidance" aria-pressed="true">Evolving in Thought Space</button>
+<button type="button" data-variant="ttsp" aria-pressed="false">TTSP</button>
 </div>
 <div class="ar-takeaway-diagram" aria-live="polite" aria-atomic="true">
 <div class="ar-takeaway-flow">
@@ -109,6 +115,40 @@ Research agents can improve through context management, cheaper proposal generat
 </div>
 
 </figure>
+
+### Exploration and stagnation: [How Models Explore Ideas](https://bespokelabs.ai/blog/how-models-explore-ideas) {#idea-basins}
+
+Bespoke Labs groups AutoResearchExam submissions by their underlying method, then tracks how agents move between these *idea basins*. Code summaries and model judgments produce a map of methods, independent of submission scores. Across 348 runs of 12 models, 47% never leave their first basin during the 24-hour budget.
+
+<div class="table-scroll" role="region" aria-label="Ways an autoresearch trajectory can change" tabindex="0" markdown="1">
+
+| Search step | What the analysis observes |
+| :--- | :--- |
+| Refine the current idea | More submissions mostly add local refinement. |
+| Return to an earlier idea | Gains resemble staying in the current basin. |
+| Try a new idea | Larger gains follow these switches, especially early. |
+
+</div>
+
+This provides evidence for studying the stagnation that Fork-and-Flush and Forgetting address. Frequent switching alone does not predict better scores. The reported associations do not establish the causal benefit of forcing a switch; late exploration remains an open design problem.
+
+### Evaluation and candidate selection: [Scorpio](https://arxiv.org/abs/2611.00350) {#scorpio}
+
+**On the Limits of Test-Time Compute for Self-Evaluation** studies why selecting an answer falls short of pass@N even when the candidate pool contains correct solutions. Its ranking-error decomposition separates bias from variance: more scoring compute reduces variance, while bias eventually plateaus.
+
+Scorpio randomly partitions candidates into small groups, scores each group jointly, and repeats with fresh partitions. Averaging these scores improves selection without updating model weights.
+
+<figure class="ppo-family-figure" aria-label="Scorpio candidate scoring">
+<div class="ppo-flow"><div class="ppo-flow-node"><span>Partition</span><strong>Random candidate groups</strong></div><span class="ppo-flow-arrow" aria-hidden="true">→</span><div class="ppo-flow-node is-focus"><span>Compare</span><strong>Joint scores</strong></div><span class="ppo-flow-arrow" aria-hidden="true">→</span><div class="ppo-flow-node"><span>Repeat</span><strong>Average and select</strong><p>New partitions each round</p></div></div>
+</figure>
+
+Experiments cover math, code and puzzles, including final-answer selection, tree search and aggregation. For autoresearch, this motivates testing how candidate comparisons affect selection quality. An LLM score remains an estimate; the paper does not validate it as a replacement for executing research experiments.
+
+### Test-time training: [Test-Time Self-Play: Scaling without a Verifier](https://arxiv.org/abs/2611.07367) {#ttsp}
+
+TTSP generates practice problems conditioned on one difficult target. A proposer writes reference programs and tests; a solver learns from execution rewards. Both receive GRPO updates through separate LoRA adapters on a frozen Qwen3-8B backbone. Proposer rewards favor problems the solver succeeds on about half the time.
+
+“Without a verifier” refers to the target problem. Synthetic exercises still use execution-based checks. Unlike Evolving in Thought Space, TTSP trains the solver as well as the proposer. Tests use difficulty-filtered LiveCodeBench subsets; gains weaken when the base policy almost never generates a correct target solution.
 
 ## What’s the Next Step? {#next-step}
 

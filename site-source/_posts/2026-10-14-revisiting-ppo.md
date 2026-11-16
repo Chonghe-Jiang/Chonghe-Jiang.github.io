@@ -12,6 +12,7 @@ back_url: /blog/
 back_label: All writing
 math: true
 sections:
+  - { id: specific-purpose, title: "00 · For Specific Purpose" }
   - { id: without-critic, title: Without value networks }
   - { id: critic-roles, title: What critics do }
   - { id: critic-inputs, title: What critics see }
@@ -20,22 +21,47 @@ sections:
   - { id: comparison, title: Details }
 ---
 
-Policy-gradient methods turn rollout feedback into model updates, with different choices about how to estimate advantages and control update size. This post reviews PPO and related methods through five perspectives on learning efficiency, the role of critics, and update stability.
+Policy-gradient methods turn rollout feedback into model updates, with different choices about how to estimate advantages and control update size. This post starts with task-specific agent training, then reviews five perspectives on learning efficiency, the role of critics, and update stability.
 
 <span id="ppo-review"></span>
 Need a refresher on PPO? [Start with the basics]({{ '/blog/2026/revisiting-ppo/foundations/' | relative_url }}).
 
 <span id="literature"></span>
 <span id="ppo-paper-map"></span>
-<nav class="ppo-directions" aria-label="Five directions in policy optimization">
+<nav class="ppo-directions" aria-label="Agent training and five directions in policy optimization">
+<a href="#specific-purpose"><span class="ppo-direction-number">00</span><span><strong>For Specific Purpose</strong><small>Harness-S · RIME</small></span><span aria-hidden="true">↗</span></a>
 <a href="#without-critic"><span class="ppo-direction-number">01</span><span><strong>Learning without value networks</strong><small>FlashREINFORCE · SPO · CoPE</small></span><span aria-hidden="true">↗</span></a>
 <a href="#critic-roles"><span class="ppo-direction-number">02</span><span><strong>Changing what critics do</strong><small>TEMPO · AC2 · SAPO</small></span><span aria-hidden="true">↗</span></a>
-<a href="#critic-inputs"><span class="ppo-direction-number">03</span><span><strong>Changing what critics see</strong><small>BPCO · LVRL · Agentic judging · Post-Thinking</small></span><span aria-hidden="true">↗</span></a>
-<a href="#update-stability"><span class="ppo-direction-number">04</span><span><strong>Stabilizing policy updates</strong><small>SAO · Score Centering · REINFORCE Zero · EasyPPO · StableReinforce</small></span><span aria-hidden="true">↗</span></a>
+<a href="#critic-inputs"><span class="ppo-direction-number">03</span><span><strong>Changing what critics see</strong><small>BPCO · LVRL · Agentic judging · Post-Thinking · Targeted Guidance</small></span><span aria-hidden="true">↗</span></a>
+<a href="#update-stability"><span class="ppo-direction-number">04</span><span><strong>Stabilizing policy updates</strong><small>SAO · Score Centering · Drift and Distance · REINFORCE Zero · EasyPPO · StableReinforce</small></span><span aria-hidden="true">↗</span></a>
 <a href="#to-critic-or-not"><span class="ppo-direction-number">05</span><span><strong>To Critic or Not to Critic</strong><small>Batch size · bootstrapping · task horizon</small></span><span aria-hidden="true">↗</span></a>
 </nav>
 
 <span id="mechanisms"></span>
+
+## 00 · For Specific Purpose {#specific-purpose}
+
+Agent training can target how experience is collected and reused. Harness-S uses alternate execution setups to recover learning opportunities; RIME trains actions and memory writing across a task stream.
+
+<figure class="ppo-family-figure" aria-label="Task-specific agent training">
+<div class="ppo-variant-controls" role="group" aria-label="Choose a training purpose" hidden><button type="button" data-variant="harness" aria-pressed="true" aria-controls="purpose-harness">Harness-S</button><button type="button" data-variant="rime" aria-pressed="false" aria-controls="purpose-rime">RIME</button></div>
+<div class="ppo-variant-display" aria-live="polite">
+<div class="ppo-variant" id="purpose-harness" data-variant="harness"><div class="ppo-flow"><div class="ppo-flow-node"><span>Trigger</span><strong>All attempts fail</strong><p>Under the base harness</p></div><span class="ppo-flow-arrow" aria-hidden="true">→</span><div class="ppo-flow-node is-focus"><span>Rescue</span><strong>Try sibling harnesses</strong><p>Same policy, fresh rollouts</p></div><span class="ppo-flow-arrow" aria-hidden="true">→</span><div class="ppo-flow-node"><span>Train</span><strong>Update the shared policy</strong><p>Evaluate under the base harness</p></div></div></div>
+<div class="ppo-variant" id="purpose-rime" data-variant="rime"><div class="ppo-flow"><div class="ppo-flow-node"><span>ACT</span><strong>Solve and explore</strong><p>Use the current memory</p></div><span class="ppo-flow-arrow" aria-hidden="true">→</span><div class="ppo-flow-node is-focus"><span>WRITE</span><strong>Revise memory</strong><p>Preserve useful experience</p></div><span class="ppo-flow-arrow" aria-hidden="true">→</span><div class="ppo-flow-node"><span>Continue</span><strong>Solve later tasks</strong><p>Reward useful memory and exploration</p></div></div></div>
+</div>
+</figure>
+
+### [Harness-S: Learning from Sibling Harnesses for Generalizable Agent Training](https://arxiv.org/abs/2611.04277) {#harness-s}
+
+A *harness* supplies prompts, tool interfaces and execution rules. Harness-S first builds complementary variants of a base harness, then fixes this pool during policy training. When every initial attempt on a task fails, a router selects sibling harnesses and the same policy makes fresh attempts. These replace the failed group for GRPO, restoring reward contrasts when some rescues succeed.
+
+Routing evidence is refreshed as the policy learns. Evaluation returns to the original harness to test whether the policy retains the improvement without auxiliary support. Results cover AppWorld, SWE-Gym and DBBench. The siblings supply alternative training experience; they do not form a cooperating agent team.
+
+### [How to Train Memory Writing for Continual Learning](https://cmu-aire.github.io/RIME/) {#rime}
+
+RIME trains one model to act and write memory across related tasks. The writer receives credit for improvement on later tasks relative to earlier performance. The actor receives task reward and an exploration bonus, judged from whether its experience adds useful information to memory or corrects it.
+
+Training only the writer can fail when the actor stops collecting informative experience. Joint training gives the actor a reason to explore and the writer a reason to preserve what helps later. Experiments cover Symbolic Alchemy and codebase adaptation. At deployment, experience accumulates through external memory; this is not continual parameter updating on the task stream.
 
 ## Learning without value networks {#without-critic}
 
@@ -283,14 +309,15 @@ The appendix derives importance correction for reused prefixes; segment updates 
 
 ## Changing what critics see {#critic-inputs}
 
-Give evaluators more evidence: reference answers, completed traces, tool checks, or the model’s own response. The methods below use that evidence for value estimation, credit assignment, or self-judging; these are different learning signals.
+Give evaluators more evidence: reference answers, completed traces, tool checks, or the model’s own response. The methods below use that evidence for value estimation, credit assignment, self-judging, or feedback-conditioned self-distillation. Targeted Guidance uses a teacher distribution rather than a value critic.
 
 <figure class="ppo-family-figure" aria-label="critic inputs mechanism comparison">
-<div class="ppo-variant-controls" role="group" aria-label="Choose a method" hidden><button type="button" data-variant="bpco" aria-pressed="true" aria-controls="critic-inputs-bpco">BPCO</button><button type="button" data-variant="lvrl" aria-pressed="false" aria-controls="critic-inputs-lvrl">LVRL</button><button type="button" data-variant="judge" aria-pressed="false" aria-controls="critic-inputs-judge">Agentic judge</button><button type="button" data-variant="spot" aria-pressed="false" aria-controls="critic-inputs-spot">Post-Thinking</button></div>
+<div class="ppo-variant-controls" role="group" aria-label="Choose a method" hidden><button type="button" data-variant="bpco" aria-pressed="true" aria-controls="critic-inputs-bpco">BPCO</button><button type="button" data-variant="lvrl" aria-pressed="false" aria-controls="critic-inputs-lvrl">LVRL</button><button type="button" data-variant="judge" aria-pressed="false" aria-controls="critic-inputs-judge">Agentic judge</button><button type="button" data-variant="spot" aria-pressed="false" aria-controls="critic-inputs-spot">Post-Thinking</button><button type="button" data-variant="targeted" aria-pressed="false" aria-controls="critic-inputs-targeted">Targeted Guidance</button></div>
 <div class="ppo-variant-display" aria-live="polite"><div class="ppo-variant" id="critic-inputs-bpco" data-variant="bpco"><div class="ppo-flow"><div class="ppo-flow-node is-focus"><span>Extra input</span><strong>Answer or rubric</strong><p>Optional reward-defining information.</p></div><span class="ppo-flow-arrow" aria-hidden="true">→</span><div class="ppo-flow-node"><span>Estimate</span><strong>Trainable critic</strong><p>Predict return from the response prefix.</p></div><span class="ppo-flow-arrow" aria-hidden="true">→</span><div class="ppo-flow-node"><span>Learn</span><strong>Actor advantages</strong><p>The actor never receives the extra input.</p></div></div><p class="ppo-flow-note"><strong>BPCO.</strong> BPCO also bounds values, uses outcome targets, and preserves raw advantages.</p></div>
 <div class="ppo-variant" id="critic-inputs-lvrl" data-variant="lvrl"><div class="ppo-flow"><div class="ppo-flow-node is-focus"><span>Extra input</span><strong>Completed trajectories</strong><p>The target trace, its outcome, and related rollouts.</p></div><span class="ppo-flow-arrow" aria-hidden="true">→</span><div class="ppo-flow-node"><span>Estimate</span><strong>Frozen LLM critic</strong><p>Assign intermediate values in hindsight.</p></div><span class="ppo-flow-arrow" aria-hidden="true">→</span><div class="ppo-flow-node"><span>Learn</span><strong>Action-level credit</strong><p>Take adjacent differences with anchored endpoints.</p></div></div><p class="ppo-flow-note"><strong>LVRL.</strong> Group reward fixes the starting value; the observed outcome fixes the ending value.</p></div>
 <div class="ppo-variant" id="critic-inputs-judge" data-variant="judge"><div class="ppo-flow"><div class="ppo-flow-node"><span>Evidence</span><strong>Trace + verifier</strong><p>Reference solution and checking tools.</p></div><span class="ppo-flow-arrow" aria-hidden="true">→</span><div class="ppo-flow-node is-focus"><span>Judge</span><strong>Label token spans</strong><p>Progress, corrections, errors and repetition.</p></div><span class="ppo-flow-arrow" aria-hidden="true">→</span><div class="ppo-flow-node"><span>Update</span><strong>Adjust local credit</strong><p>Retain the outcome advantage.</p></div></div></div>
 <div class="ppo-variant" id="critic-inputs-spot" data-variant="spot"><div class="ppo-flow"><div class="ppo-flow-node"><span>Generate</span><strong>Answer</strong></div><span class="ppo-flow-arrow" aria-hidden="true">→</span><div class="ppo-flow-node is-focus"><span>Inspect</span><strong>Post-thought + verdict</strong></div><span class="ppo-flow-arrow" aria-hidden="true">→</span><div class="ppo-flow-node"><span>Learn</span><strong>Answer + judgment</strong><p>Separate feedback for each.</p></div></div></div>
+<div class="ppo-variant" id="critic-inputs-targeted" data-variant="targeted"><div class="ppo-flow"><div class="ppo-flow-node"><span>Locate</span><strong>Failed turn</strong><p>A criterion is unmet</p></div><span class="ppo-flow-arrow" aria-hidden="true">→</span><div class="ppo-flow-node is-focus"><span>Guide</span><strong>Feedback-conditioned teacher</strong><p>Same weights, extra textual feedback</p></div><span class="ppo-flow-arrow" aria-hidden="true">→</span><div class="ppo-flow-node"><span>Train</span><strong>RL + self-distillation</strong><p>Apply guidance to that turn</p></div></div></div>
 </div>
 </figure>
 
@@ -369,6 +396,14 @@ R_{\mathrm{judge}}&=\mathbf 1[\text{verdict matches correctness}].
 $$
 
 This schematic omits the malformed-verdict penalty. A correct judgment of a wrong answer can receive positive judging reward. Teacher supervision or a verifier supplies the check; the model’s own verdict is not treated as ground truth. At inference, judgments can help select candidates or decide when to abstain. The reported applications cover safety, reasoning and confidence calibration.
+
+### [Stabilizing On-Policy Targeted Guidance in Agentic Reinforcement Learning](https://arxiv.org/abs/2611.05266) {#targeted-guidance}
+
+A scalar reward gives little direction when a policy rarely produces the desired behavior. Targeted Guidance inserts a criterion-specific feedback string before a failed turn. The same model, conditioned on this feedback, supplies a teacher distribution; a KL-based distillation loss guides the unassisted policy on that turn, alongside task and per-criterion RL rewards.
+
+Restricting guidance to failures and controlling its weight helps preserve coding performance. Including thinking tokens reduces oscillations between competing criteria. Excessive distillation can instead cause entropy spikes and collapse.
+
+Experiments use Qwen3-Coder-30B in multi-turn software engineering, targeting tool formats and communication style. The demonstrated goal is to learn these behaviors while maintaining coding pass rate, rather than to establish a general reasoning improvement.
 
 ## Stabilizing policy updates {#update-stability}
 
@@ -476,6 +511,24 @@ $$
 $$
 
 The centered contribution is $A_a(e_a-q)$. If all actions have the same advantage, its expectation under $q$ is zero; the uncentered contribution retains $A(q-p)$. The cancellation is local to this prefix. In parameter space, the logit Jacobian still matters; importance weighting, masking and top-$k$ approximations change the expression.
+
+#### [Drift and Distance: When Is Score Centering Enough in Async RL?](https://www.paperinstruments.com/blog/sc-drift-and-distance) {#drift-and-distance}
+
+This experimental study asks why SC alone stabilizes some setups but fails in others. It separates the unwanted drift removed by centering from the distance that still develops between sampler and trainer.
+
+<div class="table-scroll" role="region" aria-label="Drift and policy distance" tabindex="0" markdown="1">
+
+| Issue | What changes it? |
+| :--- | :--- |
+| Drift from a nonzero sampler-mean score | Score centering removes this component. |
+| Noise-driven policy distance | Larger batches reduce gradient noise. |
+| Distance accumulated through learning on stale data | Fresher rollouts or a lower learning rate limit movement. |
+
+</div>
+
+Truncated IS does not prevent collapse in the tested small-batch, high-staleness cases. A sampler–trainer KL penalty stabilizes training, but performs no better than lowering the learning rate in the reported comparisons.
+
+The study uses SGD, Qwen3.5-0.8B/4B, and repeated updates between sampler synchronizations to simulate staleness on math tasks. Its findings do not establish that IS or KL control is unnecessary for other optimizers and asynchronous systems.
 
 ### [REINFORCE Zero](https://hijkzzz.github.io/REINFORCE-Zero/) {#reinforce-zero}
 
@@ -589,14 +642,18 @@ LLM experiments use Qwen2.5-3B Base on DeepScaleR and Qwen3.5-4B on TMax-15K ter
 
 ## Details {#comparison}
 
-**Agent:** REINFORCE Zero, FlashREINFORCE, SPO, TEMPO, SAPO, LVRL, SAO, EasyPPO, CoPE.
+**Agent:** Harness-S, RIME, Targeted Guidance, REINFORCE Zero, FlashREINFORCE, SPO, TEMPO, SAPO, LVRL, SAO, EasyPPO, CoPE.
 
-**LLM:** Agentic judge experiment, Post-Thinking, REINFORCE Zero, FlashREINFORCE, AC2, BPCO, Score Centering, EasyPPO.
+**LLM:** Drift and Distance, Agentic judge experiment, Post-Thinking, REINFORCE Zero, FlashREINFORCE, AC2, BPCO, Score Centering, EasyPPO.
 
 <div class="table-scroll ppo-literature-table" role="region" aria-label="PPO methods, experimental settings, models, critics and tasks" tabindex="0" markdown="1">
 
 | Work                                                                                       | RL setting    | Component                           | What changes                                                                                                                                                                                                             | Models & Tasks                                                                                                                                                                                                 | Critic / judge                                                                                           |
 | :----------------------------------------------------------------------------------------- | :------------ | :---------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------- |
+| [Harness-S](https://arxiv.org/abs/2611.04277) | Agent | Training experience | Rescue all-failure tasks with sibling harnesses; train a shared policy. | AppWorld, SWE-Gym, DBBench. | Verifier outcomes; router selects harnesses. |
+| [RIME](https://cmu-aire.github.io/RIME/) | Agent | Memory writing | Jointly train acting and memory updates. | Symbolic Alchemy; codebase adaptation. | Task outcomes and a memory-change judge. |
+| [Targeted Guidance](https://arxiv.org/abs/2611.05266) | Agent | Textual feedback | Distill a feedback-conditioned teacher on failed turns alongside RL. | Qwen3-Coder-30B; agentic coding. | Same-weight teacher; criterion checks. |
+| [Drift and Distance](https://www.paperinstruments.com/blog/sc-drift-and-distance) | LLM | Update stability | Study SC with batch size, staleness and learning rate. | Qwen3.5-0.8B/4B; math; SGD. | Group-centered rewards. |
 | [FlashREINFORCE](https://yifanzhang-pro.github.io/FlashREINFORCE/)                         | Both          | Rollouts · baseline                 | Uses $R_i-\bar R_{\mathrm{batch}}$, sequence admission and per-trajectory averaging. No learned critic or $L_V$.                                                                                                         | **Models:** DeepSeek-R1-Distill-Qwen-1.5B; Qwen2.5-Math-1.5B; Qwen2.5-7B-Instruct; Qwen3-30B-A3B.<br><br>**Tasks:** [Math and Python tool use](tasks/#math); [ALFWorld](tasks/#agents).                        | No critic.                                                                                               |
 | [SPO](https://arxiv.org/html/2509.13232v2)                                                 | Agent         | Baseline · sampling                 | Uses a per-prompt, KL-adaptive value tracker and batch-wide advantage normalization.                                                                                                                                     | **Models:** Qwen3-8B.<br><br>**Tasks:** [DAPO math with Python → AIME24/25, BeyondAIME, BRUMO25 and HMMT25](tasks/#math).                                                                                      | No critic network; a tabular Bayesian tracker estimates success rates.                                   |
 | [CoPE](https://arxiv.org/html/2610.20597v2)                                                | Agent         | Auxiliary policy loss               | Adds successful-trajectory action forecasting to GRPO on a shared backbone. It changes supervision, without adding a value critic.                                                                                       | **Models:** Qwen2.5-7B-Instruct; Qwen2.5-14B-Instruct for AppWorld.<br><br>**Tasks:** [ALFWorld, ScienceWorld, WebShop, τ²-bench and AppWorld](tasks/#agents).                                                 | No value critic; acting and forecasting share one backbone.                                              |

@@ -83,7 +83,7 @@ nav_order: 2
 <div class="bio-rows">
 <div class="bio-row"><h3>Dongxuan He</h3><p class="bio-detail">Purdue Undergrad, 2026 Summer</p></div>
 <div class="bio-row"><h3>Zhiyun Guo</h3><p class="bio-detail">SJTU Undergrad, 2026 Summer</p></div>
-<div class="bio-row"><h3>Wenchu Zhang</h3><p class="bio-detail">Tongji PhD, 2025-2026, <a href="https://www.researchgate.net/publication/413556962_Portfolio_Optimization_with_Incremental_Risk_Control">Paper</a></p></div>
+<div class="bio-row"><h3>Wenchu Zhang</h3><p class="bio-detail">Tongji PhD, 2025-2026, <a href="https://www.researchgate.net/publication/413556962_Portfolio_Optimization_with_Incremental_Risk_Control">Paper</a>, submitted to <em>Mathematics of Operations Research</em></p></div>
 </div>
 </section>
 <section class="bio-section" id="outside" aria-labelledby="outside-heading"><h2 id="outside-heading">Outside Research</h2>
